@@ -1,0 +1,33 @@
+﻿@model IEnumerable<LibraryMangement.Models.Reservation>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Reservation Requests";
+}
+
+<h2>Pending Reservation Requests</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Patron Name</th>
+            <th>Material Title</th>
+            <th>Reservation Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var res in Model)
+        {
+            <tr>
+                <td>@res.Patron.PatronName</td>
+                <td>@res.Material.Title</td>
+                <td>@res.ReservationDate</td>
+                <td>
+                    <a href="@Url.Action("ApproveReservation", new { id = res.ReservationID })">Approve</a> |
+                    <a href="@Url.Action("RejectReservation", new { id = res.ReservationID })">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,192 @@
+﻿@model List<LibraryMangement.Models.MaterialBulkUploadPreviewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Bulk Upload Materials";
+}
+
+<h2>Bulk Upload Materials</h2>
+
+<p>Please upload an Excel (.xlsx) file with the following columns in this order:</p>
+<ul>
+    <li>
+        <strong>Sl. No</strong>, <strong>Acc.No.</strong>, <strong>Call. No</strong>,
+        <strong>Title of the Book</strong>, <strong>Author</strong>,
+        <strong>Place of Publishers</strong>, <strong>Year</strong>,
+        <strong>Edition</strong>, <strong>pages</strong>, <strong>Vol.</strong>,
+        <strong>Source</strong>, <strong>Price</strong>,
+        <strong>Bill No. and Date</strong>, <strong>Remarks</strong>
+    </li>
+</ul>
+
+<form id="bulkUploadForm" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label">Select Excel File (.xlsx)</label>
+        <input type="file" id="uploadFile" accept=".xlsx" class="form-control" />
+    </div>
+
+    <button type="button" class="btn btn-primary" id="previewBtn">Preview</button>
+    <div id="previewTableContainer" class="mt-3"></div>
+    <button type="button" class="btn btn-success" id="saveBtn" style="display:none;">Save All</button>
+</form>
+
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script>
+    let previewData = [];
+
+    const expectedHeaders = [
+        "Sl. No", "Acc.No.", "Call. No", "Title of the Book", "Author",
+        "Place of Publishers", "Year", "Edition", "pages", "Vol.",
+        "Source", "Price", "Bill No. and Date", "Remarks"
+    ];
+
+    document.getElementById('previewBtn').addEventListener('click', function () {
+        const fileInput = document.getElementById('uploadFile');
+        if (!fileInput.files.length) {
+            alert("Please select an Excel file");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+
+            const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+            if (!rawData.length) {
+                alert("No data found in Excel!");
+                return;
+            }
+
+            const excelHeaders = rawData[0];
+            const missingHeaders = expectedHeaders.filter(h => !excelHeaders.includes(h));
+            if (missingHeaders.length) {
+                alert("Excel headers are invalid or missing:\n" + missingHeaders.join(", "));
+                return;
+            }
+
+            const dataRows = rawData.slice(1);
+            previewData = dataRows.map((row, index) => ({
+                RowIndex: parseInt(row[0]) || index + 1,
+                AccountNumber: row[1] || "",
+                CallNumber: row[2] || "",
+                Title: row[3] || "",
+                AuthorName: row[4] || "",
+                PlaceofPublishers: row[5] || "",
+                YearPublished: parseInt(row[6]) || 0,
+                Edition: row[7] || "",
+                Pages: parseInt(row[8]) || 0,
+                Vol: row[9] || "",
+                Source: row[10] || "",
+                Price: parseFloat(row[11]) || null,
+                Discription: row[12] || "",
+                Publisher: row[13] || "",
+                AvailableQuantity: 0,
+                TotalQuantity: 0,
+                CopyCount: 0,
+                IsDuplicate: false,
+                IsDeleted: false
+            }));
+
+            renderPreviewTable(previewData);
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+
+    function renderPreviewTable(data) {
+        if (!data.length) return;
+
+        let html = `<table class="table table-bordered mt-3"><thead><tr>`;
+        const tableHeaders = [
+            "RowIndex", "AccountNumber", "CallNumber", "Title", "AuthorName", "PlaceofPublishers",
+            "YearPublished", "Edition", "Pages", "Vol", "Source", "Price", "Discription", "Publisher",
+            "AvailableQuantity", "TotalQuantity", "CopyCount"
+        ];
+        tableHeaders.forEach(header => html += `<th>${header}</th>`);
+        html += `<th>Action</th></tr></thead><tbody>`;
+
+        data.forEach((row, index) => {
+            html += `<tr data-index="${index}">`;
+            tableHeaders.forEach(header => {
+                html += `<td><input type="text" class="form-control" value="${row[header] ?? ''}" data-key="${header}" /></td>`;
+            });
+            html += `<td><button type="button" class="btn btn-danger btn-sm deleteRow">Delete</button></td>`;
+            html += `</tr>`;
+        });
+
+        html += `</tbody></table>`;
+        document.getElementById('previewTableContainer').innerHTML = html;
+        document.getElementById('saveBtn').style.display = 'inline-block';
+
+        // Delete row with confirmation
+        document.querySelectorAll('.deleteRow').forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (!confirm("Are you sure you want to delete this row?")) return;
+                const tr = this.closest('tr');
+                const idx = tr.dataset.index;
+                previewData.splice(idx, 1);
+                tr.remove();
+                document.querySelectorAll('#previewTableContainer tbody tr').forEach((row, i) => {
+                    row.dataset.index = i;
+                });
+            });
+        });
+
+        // Update previewData on input change with correct type conversion
+        document.querySelectorAll('#previewTableContainer input').forEach(input => {
+            input.addEventListener('change', function () {
+                const tr = this.closest('tr');
+                const idx = tr.dataset.index;
+                const key = this.dataset.key;
+                let value = this.value;
+
+                if (["Pages", "YearPublished", "AvailableQuantity", "TotalQuantity", "CopyCount", "RowIndex"].includes(key)) {
+                    previewData[idx][key] = parseInt(value) || 0;
+                } else if (key === "Price") {
+                    previewData[idx][key] = parseFloat(value) || null;
+                } else {
+                    previewData[idx][key] = value;
+                }
+            });
+        });
+    }
+
+    // AJAX Save
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        if (!previewData.length) {
+            alert("No data to save!");
+            return;
+        }
+
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        $.ajax({
+            url: '/Librarian/BulkUploadMaterialsAjax',
+            type: 'POST',
+            headers: { 'RequestVerificationToken': token },
+            data: { materialsJson: JSON.stringify(previewData) },
+            success: function (res) {
+                if (res.success) {
+                    alert("Materials saved successfully!");
+                    previewData = [];
+                    $('#previewTableContainer').html('');
+                    $('#saveBtn').hide();
+                    $('#uploadFile').val('');
+                } else {
+                    alert("Error: " + res.message);
+                }
+            },
+            error: function (err) {
+                console.error(err);
+                alert("Error saving materials.");
+            }
+        });
+    });
+</script>

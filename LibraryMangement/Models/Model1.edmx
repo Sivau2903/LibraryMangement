@@ -1,0 +1,1156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="LMSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Authors">
+          <Key>
+            <PropertyRef Name="AuthorID" />
+          </Key>
+          <Property Name="AuthorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="BarcodeHistory">
+          <Key>
+            <PropertyRef Name="BarcodeHistoryID" />
+          </Key>
+          <Property Name="BarcodeHistoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CopyID" Type="int" />
+          <Property Name="GeneratedBarcode" Type="varchar" MaxLength="50" />
+          <Property Name="GeneratedAt" Type="datetime" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="CartItems">
+          <Key>
+            <PropertyRef Name="CartItemID" />
+          </Key>
+          <Property Name="CartItemID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PatronID" Type="int" Nullable="false" />
+          <Property Name="MaterialID" Type="int" Nullable="false" />
+          <Property Name="AddedAt" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Cataloguing">
+          <Key>
+            <PropertyRef Name="CataloguingID" />
+          </Key>
+          <Property Name="CataloguingID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MaterialID" Type="int" Nullable="false" />
+          <Property Name="MARCField" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MARCData" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="Circulation">
+          <Key>
+            <PropertyRef Name="CirculationID" />
+          </Key>
+          <Property Name="CirculationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CopyID" Type="int" />
+          <Property Name="PatronID" Type="int" />
+          <Property Name="IssueDate" Type="datetime" />
+          <Property Name="DueDate" Type="datetime" />
+          <Property Name="ReturnDate" Type="datetime" />
+          <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="FineAmount" Type="decimal" Precision="8" Scale="2" />
+          <Property Name="UniversityID" Type="int" />
+          <Property Name="RequestID" Type="int" />
+          <Property Name="MaterialID" Type="int" />
+        </EntityType>
+        <EntityType Name="FineDetails">
+          <Key>
+            <PropertyRef Name="FineID" />
+          </Key>
+          <Property Name="FineID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CirculationID" Type="int" />
+          <Property Name="PatronID" Type="int" />
+          <Property Name="Amount" Type="decimal" Precision="8" Scale="2" />
+          <Property Name="Reason" Type="varchar" MaxLength="255" />
+          <Property Name="AppliedDate" Type="datetime" />
+          <Property Name="Paid" Type="bit" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="IssuanceRequests">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PatronID" Type="int" Nullable="false" />
+          <Property Name="RequestDate" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="Librarians">
+          <Key>
+            <PropertyRef Name="LibrarianID" />
+          </Key>
+          <Property Name="LibrarianID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="255" />
+          <Property Name="Email" Type="varchar" MaxLength="255" />
+          <Property Name="PasswordHash" Type="varchar" MaxLength="255" />
+          <Property Name="ContactPhone" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MaterialCopies">
+          <Key>
+            <PropertyRef Name="CopyID" />
+          </Key>
+          <Property Name="CopyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MaterialID" Type="int" />
+          <Property Name="AccountNumber" Type="varchar" MaxLength="50" />
+          <Property Name="BarcodeNumber" Type="varchar" MaxLength="50" />
+          <Property Name="CallNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="Materials">
+          <Key>
+            <PropertyRef Name="MaterialID" />
+          </Key>
+          <Property Name="MaterialID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+          <Property Name="Title" Type="varchar" MaxLength="255" />
+          <Property Name="Publisher" Type="varchar" MaxLength="255" />
+          <Property Name="YearPublished" Type="int" />
+          <Property Name="ISBN" Type="varchar" MaxLength="20" />
+          <Property Name="MaterialType" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="AvailableQuantity" Type="int" />
+          <Property Name="TotalQuantity" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="AuthorID" Type="int" />
+          <Property Name="Edition" Type="nvarchar" MaxLength="100" />
+          <Property Name="PlaceofPublishers" Type="nvarchar" MaxLength="200" />
+          <Property Name="Discription" Type="nvarchar" MaxLength="500" />
+          <Property Name="Pages" Type="int" />
+          <Property Name="Vol" Type="nvarchar" MaxLength="50" />
+          <Property Name="Source" Type="nvarchar" MaxLength="200" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Patrons">
+          <Key>
+            <PropertyRef Name="PatronID" />
+          </Key>
+          <Property Name="PatronID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+          <Property Name="PatronName" Type="varchar" MaxLength="255" />
+          <Property Name="PatronEmail" Type="varchar" MaxLength="255" />
+          <Property Name="PatronPhone" Type="varchar" MaxLength="50" />
+          <Property Name="PatronType" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Reports">
+          <Key>
+            <PropertyRef Name="ReportID" />
+          </Key>
+          <Property Name="ReportID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReportType" Type="varchar" MaxLength="100" />
+          <Property Name="GeneratedAt" Type="datetime" />
+          <Property Name="ReportData" Type="text" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="Reservations">
+          <Key>
+            <PropertyRef Name="ReservationID" />
+          </Key>
+          <Property Name="ReservationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MaterialID" Type="int" />
+          <Property Name="PatronID" Type="int" />
+          <Property Name="ReservationDate" Type="datetime" />
+          <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
+        </EntityType>
+        <EntityType Name="Universities">
+          <Key>
+            <PropertyRef Name="UniversityID" />
+          </Key>
+          <Property Name="UniversityID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UniversityName" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Address" Type="text" />
+          <Property Name="ContactEmail" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="PasswordHash" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Role" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="RelatedID" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <Association Name="FK__BarcodeHi__CopyI__10566F31">
+          <End Role="MaterialCopies" Type="Self.MaterialCopies" Multiplicity="0..1" />
+          <End Role="BarcodeHistory" Type="Self.BarcodeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaterialCopies">
+              <PropertyRef Name="CopyID" />
+            </Principal>
+            <Dependent Role="BarcodeHistory">
+              <PropertyRef Name="CopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Circulati__CopyI__05D8E0BE">
+          <End Role="MaterialCopies" Type="Self.MaterialCopies" Multiplicity="0..1" />
+          <End Role="Circulation" Type="Self.Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaterialCopies">
+              <PropertyRef Name="CopyID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="CopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Circulati__Patro__06CD04F7">
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
+          <End Role="Circulation" Type="Self.Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patrons">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FineDetai__Circu__1DB06A4F">
+          <End Role="Circulation" Type="Self.Circulation" Multiplicity="0..1" />
+          <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Circulation">
+              <PropertyRef Name="CirculationID" />
+            </Principal>
+            <Dependent Role="FineDetails">
+              <PropertyRef Name="CirculationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FineDetai__Patro__1EA48E88">
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
+          <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patrons">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="FineDetails">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Librarian__Unive__76969D2E">
+          <End Role="Universities" Type="Self.Universities" Multiplicity="0..1" />
+          <End Role="Librarians" Type="Self.Librarians" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Universities">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Librarians">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaterialC__Statu__01142BA1">
+          <End Role="Materials" Type="Self.Materials" Multiplicity="0..1" />
+          <End Role="MaterialCopies" Type="Self.MaterialCopies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Materials">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="MaterialCopies">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Materials__Unive__7B5B524B">
+          <End Role="Universities" Type="Self.Universities" Multiplicity="0..1" />
+          <End Role="Materials" Type="Self.Materials" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Universities">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Materials">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Patrons__Univers__72C60C4A">
+          <End Role="Universities" Type="Self.Universities" Multiplicity="0..1" />
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Universities">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Patrons">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reservati__Patro__0C85DE4D">
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
+          <End Role="Reservations" Type="Self.Reservations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patrons">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="Reservations">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reservati__Statu__0B91BA14">
+          <End Role="Materials" Type="Self.Materials" Multiplicity="0..1" />
+          <End Role="Reservations" Type="Self.Reservations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Materials">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="Reservations">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Material">
+          <End Role="Materials" Type="Self.Materials" Multiplicity="1" />
+          <End Role="CartItems" Type="Self.CartItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Materials">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="CartItems">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Patron">
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="1" />
+          <End Role="CartItems" Type="Self.CartItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patrons">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="CartItems">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cataloguing_Material">
+          <End Role="Materials" Type="Self.Materials" Multiplicity="1" />
+          <End Role="Cataloguing" Type="Self.Cataloguing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Materials">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="Cataloguing">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IssuanceRequests_Patrons">
+          <End Role="Patrons" Type="Self.Patrons" Multiplicity="1" />
+          <End Role="IssuanceRequests" Type="Self.IssuanceRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patrons">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="IssuanceRequests">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Materials_Authors">
+          <End Role="Authors" Type="Self.Authors" Multiplicity="0..1" />
+          <End Role="Materials" Type="Self.Materials" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Authors">
+              <PropertyRef Name="AuthorID" />
+            </Principal>
+            <Dependent Role="Materials">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LMSModelStoreContainer">
+          <EntitySet Name="Authors" EntityType="Self.Authors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BarcodeHistory" EntityType="Self.BarcodeHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CartItems" EntityType="Self.CartItems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cataloguing" EntityType="Self.Cataloguing" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Circulation" EntityType="Self.Circulation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FineDetails" EntityType="Self.FineDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IssuanceRequests" EntityType="Self.IssuanceRequests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Librarians" EntityType="Self.Librarians" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MaterialCopies" EntityType="Self.MaterialCopies" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Materials" EntityType="Self.Materials" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Patrons" EntityType="Self.Patrons" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Reports" EntityType="Self.Reports" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Reservations" EntityType="Self.Reservations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Universities" EntityType="Self.Universities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__BarcodeHi__CopyI__10566F31" Association="Self.FK__BarcodeHi__CopyI__10566F31">
+            <End Role="MaterialCopies" EntitySet="MaterialCopies" />
+            <End Role="BarcodeHistory" EntitySet="BarcodeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Circulati__CopyI__05D8E0BE" Association="Self.FK__Circulati__CopyI__05D8E0BE">
+            <End Role="MaterialCopies" EntitySet="MaterialCopies" />
+            <End Role="Circulation" EntitySet="Circulation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Circulati__Patro__06CD04F7" Association="Self.FK__Circulati__Patro__06CD04F7">
+            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="Circulation" EntitySet="Circulation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FineDetai__Circu__1DB06A4F" Association="Self.FK__FineDetai__Circu__1DB06A4F">
+            <End Role="Circulation" EntitySet="Circulation" />
+            <End Role="FineDetails" EntitySet="FineDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FineDetai__Patro__1EA48E88" Association="Self.FK__FineDetai__Patro__1EA48E88">
+            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="FineDetails" EntitySet="FineDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Librarian__Unive__76969D2E" Association="Self.FK__Librarian__Unive__76969D2E">
+            <End Role="Universities" EntitySet="Universities" />
+            <End Role="Librarians" EntitySet="Librarians" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaterialC__Statu__01142BA1" Association="Self.FK__MaterialC__Statu__01142BA1">
+            <End Role="Materials" EntitySet="Materials" />
+            <End Role="MaterialCopies" EntitySet="MaterialCopies" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Materials__Unive__7B5B524B" Association="Self.FK__Materials__Unive__7B5B524B">
+            <End Role="Universities" EntitySet="Universities" />
+            <End Role="Materials" EntitySet="Materials" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Patrons__Univers__72C60C4A" Association="Self.FK__Patrons__Univers__72C60C4A">
+            <End Role="Universities" EntitySet="Universities" />
+            <End Role="Patrons" EntitySet="Patrons" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reservati__Patro__0C85DE4D" Association="Self.FK__Reservati__Patro__0C85DE4D">
+            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="Reservations" EntitySet="Reservations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reservati__Statu__0B91BA14" Association="Self.FK__Reservati__Statu__0B91BA14">
+            <End Role="Materials" EntitySet="Materials" />
+            <End Role="Reservations" EntitySet="Reservations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Material" Association="Self.FK_Cart_Material">
+            <End Role="Materials" EntitySet="Materials" />
+            <End Role="CartItems" EntitySet="CartItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Patron" Association="Self.FK_Cart_Patron">
+            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="CartItems" EntitySet="CartItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cataloguing_Material" Association="Self.FK_Cataloguing_Material">
+            <End Role="Materials" EntitySet="Materials" />
+            <End Role="Cataloguing" EntitySet="Cataloguing" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IssuanceRequests_Patrons" Association="Self.FK_IssuanceRequests_Patrons">
+            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="IssuanceRequests" EntitySet="IssuanceRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Materials_Authors" Association="Self.FK_Materials_Authors">
+            <End Role="Authors" EntitySet="Authors" />
+            <End Role="Materials" EntitySet="Materials" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="LMSEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BarcodeHistories" EntityType="LMSModel.BarcodeHistory" />
+          <EntitySet Name="FineDetails" EntityType="LMSModel.FineDetail" />
+          <EntitySet Name="Librarians" EntityType="LMSModel.Librarian" />
+          <EntitySet Name="MaterialCopies" EntityType="LMSModel.MaterialCopy" />
+          <EntitySet Name="Patrons" EntityType="LMSModel.Patron" />
+          <EntitySet Name="Reports" EntityType="LMSModel.Report" />
+          <EntitySet Name="Reservations" EntityType="LMSModel.Reservation" />
+          <EntitySet Name="Universities" EntityType="LMSModel.University" />
+          <EntitySet Name="Users" EntityType="LMSModel.User" />
+          <AssociationSet Name="FK__BarcodeHi__CopyI__10566F31" Association="LMSModel.FK__BarcodeHi__CopyI__10566F31">
+            <End Role="MaterialCopy" EntitySet="MaterialCopies" />
+            <End Role="BarcodeHistory" EntitySet="BarcodeHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FineDetai__Patro__1EA48E88" Association="LMSModel.FK__FineDetai__Patro__1EA48E88">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="FineDetail" EntitySet="FineDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Librarian__Unive__76969D2E" Association="LMSModel.FK__Librarian__Unive__76969D2E">
+            <End Role="University" EntitySet="Universities" />
+            <End Role="Librarian" EntitySet="Librarians" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Patrons__Univers__72C60C4A" Association="LMSModel.FK__Patrons__Univers__72C60C4A">
+            <End Role="University" EntitySet="Universities" />
+            <End Role="Patron" EntitySet="Patrons" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reservati__Patro__0C85DE4D" Association="LMSModel.FK__Reservati__Patro__0C85DE4D">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="Reservation" EntitySet="Reservations" />
+          </AssociationSet>
+          <EntitySet Name="Cataloguings" EntityType="LMSModel.Cataloguing" />
+          <EntitySet Name="Authors" EntityType="LMSModel.Author" />
+          <EntitySet Name="Materials" EntityType="LMSModel.Material" />
+          <AssociationSet Name="FK_Materials_Authors" Association="LMSModel.FK_Materials_Authors">
+            <End Role="Author" EntitySet="Authors" />
+            <End Role="Material" EntitySet="Materials" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cataloguing_Material" Association="LMSModel.FK_Cataloguing_Material">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="Cataloguing" EntitySet="Cataloguings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaterialC__Statu__01142BA1" Association="LMSModel.FK__MaterialC__Statu__01142BA1">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="MaterialCopy" EntitySet="MaterialCopies" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Materials__Unive__7B5B524B" Association="LMSModel.FK__Materials__Unive__7B5B524B">
+            <End Role="University" EntitySet="Universities" />
+            <End Role="Material" EntitySet="Materials" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reservati__Statu__0B91BA14" Association="LMSModel.FK__Reservati__Statu__0B91BA14">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="Reservation" EntitySet="Reservations" />
+          </AssociationSet>
+          <EntitySet Name="CartItems" EntityType="LMSModel.CartItem" />
+          <AssociationSet Name="FK_Cart_Material" Association="LMSModel.FK_Cart_Material">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="CartItem" EntitySet="CartItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Patron" Association="LMSModel.FK_Cart_Patron">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="CartItem" EntitySet="CartItems" />
+          </AssociationSet>
+          <EntitySet Name="IssuanceRequests" EntityType="LMSModel.IssuanceRequest" />
+          <AssociationSet Name="FK_IssuanceRequests_Patrons" Association="LMSModel.FK_IssuanceRequests_Patrons">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="IssuanceRequest" EntitySet="IssuanceRequests" />
+          </AssociationSet>
+          <EntitySet Name="Circulations" EntityType="LMSModel.Circulation" />
+          <AssociationSet Name="FK__Circulati__CopyI__05D8E0BE" Association="LMSModel.FK__Circulati__CopyI__05D8E0BE">
+            <End Role="MaterialCopy" EntitySet="MaterialCopies" />
+            <End Role="Circulation" EntitySet="Circulations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Circulati__Patro__06CD04F7" Association="LMSModel.FK__Circulati__Patro__06CD04F7">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="Circulation" EntitySet="Circulations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FineDetai__Circu__1DB06A4F" Association="LMSModel.FK__FineDetai__Circu__1DB06A4F">
+            <End Role="Circulation" EntitySet="Circulations" />
+            <End Role="FineDetail" EntitySet="FineDetails" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="BarcodeHistory">
+          <Key>
+            <PropertyRef Name="BarcodeHistoryID" />
+          </Key>
+          <Property Name="BarcodeHistoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CopyID" Type="Int32" />
+          <Property Name="GeneratedBarcode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GeneratedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MaterialCopy" Relationship="LMSModel.FK__BarcodeHi__CopyI__10566F31" FromRole="BarcodeHistory" ToRole="MaterialCopy" />
+          <Property Name="UniversityID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="FineDetail">
+          <Key>
+            <PropertyRef Name="FineID" />
+          </Key>
+          <Property Name="FineID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CirculationID" Type="Int32" />
+          <Property Name="PatronID" Type="Int32" />
+          <Property Name="Amount" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="Reason" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="AppliedDate" Type="DateTime" Precision="3" />
+          <Property Name="Paid" Type="Boolean" />
+          <NavigationProperty Name="Patron" Relationship="LMSModel.FK__FineDetai__Patro__1EA48E88" FromRole="FineDetail" ToRole="Patron" />
+          <Property Name="UniversityID" Type="Int32" />
+          <NavigationProperty Name="Circulation" Relationship="LMSModel.FK__FineDetai__Circu__1DB06A4F" FromRole="FineDetail" ToRole="Circulation" />
+        </EntityType>
+        <EntityType Name="Librarian">
+          <Key>
+            <PropertyRef Name="LibrarianID" />
+          </Key>
+          <Property Name="LibrarianID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UniversityID" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ContactPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="University" Relationship="LMSModel.FK__Librarian__Unive__76969D2E" FromRole="Librarian" ToRole="University" />
+        </EntityType>
+        <EntityType Name="MaterialCopy">
+          <Key>
+            <PropertyRef Name="CopyID" />
+          </Key>
+          <Property Name="CopyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaterialID" Type="Int32" />
+          <Property Name="AccountNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CallNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="BarcodeHistories" Relationship="LMSModel.FK__BarcodeHi__CopyI__10566F31" FromRole="MaterialCopy" ToRole="BarcodeHistory" />
+          <Property Name="UniversityID" Type="Int32" />
+          <NavigationProperty Name="Material" Relationship="LMSModel.FK__MaterialC__Statu__01142BA1" FromRole="MaterialCopy" ToRole="Material" />
+          <NavigationProperty Name="Circulations" Relationship="LMSModel.FK__Circulati__CopyI__05D8E0BE" FromRole="MaterialCopy" ToRole="Circulation" />
+        </EntityType>
+        <EntityType Name="Patron">
+          <Key>
+            <PropertyRef Name="PatronID" />
+          </Key>
+          <Property Name="PatronID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UniversityID" Type="Int32" />
+          <Property Name="PatronName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PatronEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PatronPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PatronType" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="FineDetails" Relationship="LMSModel.FK__FineDetai__Patro__1EA48E88" FromRole="Patron" ToRole="FineDetail" />
+          <NavigationProperty Name="University" Relationship="LMSModel.FK__Patrons__Univers__72C60C4A" FromRole="Patron" ToRole="University" />
+          <NavigationProperty Name="Reservations" Relationship="LMSModel.FK__Reservati__Patro__0C85DE4D" FromRole="Patron" ToRole="Reservation" />
+          <NavigationProperty Name="CartItems" Relationship="LMSModel.FK_Cart_Patron" FromRole="Patron" ToRole="CartItem" />
+          <NavigationProperty Name="IssuanceRequests" Relationship="LMSModel.FK_IssuanceRequests_Patrons" FromRole="Patron" ToRole="IssuanceRequest" />
+          <NavigationProperty Name="Circulations" Relationship="LMSModel.FK__Circulati__Patro__06CD04F7" FromRole="Patron" ToRole="Circulation" />
+        </EntityType>
+        <EntityType Name="Report">
+          <Key>
+            <PropertyRef Name="ReportID" />
+          </Key>
+          <Property Name="ReportID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReportType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="GeneratedAt" Type="DateTime" Precision="3" />
+          <Property Name="ReportData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UniversityID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Reservation">
+          <Key>
+            <PropertyRef Name="ReservationID" />
+          </Key>
+          <Property Name="ReservationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaterialID" Type="Int32" />
+          <Property Name="PatronID" Type="Int32" />
+          <Property Name="ReservationDate" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Patron" Relationship="LMSModel.FK__Reservati__Patro__0C85DE4D" FromRole="Reservation" ToRole="Patron" />
+          <Property Name="UniversityID" Type="Int32" />
+          <NavigationProperty Name="Material" Relationship="LMSModel.FK__Reservati__Statu__0B91BA14" FromRole="Reservation" ToRole="Material" />
+        </EntityType>
+        <EntityType Name="University">
+          <Key>
+            <PropertyRef Name="UniversityID" />
+          </Key>
+          <Property Name="UniversityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UniversityName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Librarians" Relationship="LMSModel.FK__Librarian__Unive__76969D2E" FromRole="University" ToRole="Librarian" />
+          <NavigationProperty Name="Patrons" Relationship="LMSModel.FK__Patrons__Univers__72C60C4A" FromRole="University" ToRole="Patron" />
+          <NavigationProperty Name="Materials" Relationship="LMSModel.FK__Materials__Unive__7B5B524B" FromRole="University" ToRole="Material" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordHash" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RelatedID" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK__BarcodeHi__CopyI__10566F31">
+          <End Type="LMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="0..1" />
+          <End Type="LMSModel.BarcodeHistory" Role="BarcodeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaterialCopy">
+              <PropertyRef Name="CopyID" />
+            </Principal>
+            <Dependent Role="BarcodeHistory">
+              <PropertyRef Name="CopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FineDetai__Patro__1EA48E88">
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="0..1" />
+          <End Type="LMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="FineDetail">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Librarian__Unive__76969D2E">
+          <End Type="LMSModel.University" Role="University" Multiplicity="0..1" />
+          <End Type="LMSModel.Librarian" Role="Librarian" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="University">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Librarian">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Patrons__Univers__72C60C4A">
+          <End Type="LMSModel.University" Role="University" Multiplicity="0..1" />
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="University">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Patron">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reservati__Patro__0C85DE4D">
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="0..1" />
+          <End Type="LMSModel.Reservation" Role="Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="Reservation">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Cataloguing">
+          <Key>
+            <PropertyRef Name="CataloguingID" />
+          </Key>
+          <Property Name="CataloguingID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaterialID" Type="Int32" Nullable="false" />
+          <Property Name="MARCField" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MARCData" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="Int32" />
+          <NavigationProperty Name="Material" Relationship="LMSModel.FK_Cataloguing_Material" FromRole="Cataloguing" ToRole="Material" />
+        </EntityType>
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="AuthorID" />
+          </Key>
+          <Property Name="AuthorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Materials" Relationship="LMSModel.FK_Materials_Authors" FromRole="Author" ToRole="Material" />
+        </EntityType>
+        <EntityType Name="Material">
+          <Key>
+            <PropertyRef Name="MaterialID" />
+          </Key>
+          <Property Name="MaterialID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UniversityID" Type="Int32" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Publisher" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="YearPublished" Type="Int32" />
+          <Property Name="ISBN" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="MaterialType" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="AvailableQuantity" Type="Int32" />
+          <Property Name="TotalQuantity" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="AuthorID" Type="Int32" />
+          <Property Name="Edition" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PlaceofPublishers" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Discription" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Pages" Type="Int32" />
+          <Property Name="Vol" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Author" Relationship="LMSModel.FK_Materials_Authors" FromRole="Material" ToRole="Author" />
+          <NavigationProperty Name="Cataloguings" Relationship="LMSModel.FK_Cataloguing_Material" FromRole="Material" ToRole="Cataloguing" />
+          <NavigationProperty Name="MaterialCopies" Relationship="LMSModel.FK__MaterialC__Statu__01142BA1" FromRole="Material" ToRole="MaterialCopy" />
+          <NavigationProperty Name="University" Relationship="LMSModel.FK__Materials__Unive__7B5B524B" FromRole="Material" ToRole="University" />
+          <NavigationProperty Name="Reservations" Relationship="LMSModel.FK__Reservati__Statu__0B91BA14" FromRole="Material" ToRole="Reservation" />
+          <NavigationProperty Name="CartItems" Relationship="LMSModel.FK_Cart_Material" FromRole="Material" ToRole="CartItem" />
+        </EntityType>
+        <Association Name="FK_Materials_Authors">
+          <End Type="LMSModel.Author" Role="Author" Multiplicity="0..1" />
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="AuthorID" />
+            </Principal>
+            <Dependent Role="Material">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cataloguing_Material">
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="1" />
+          <End Type="LMSModel.Cataloguing" Role="Cataloguing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="Cataloguing">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaterialC__Statu__01142BA1">
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="0..1" />
+          <End Type="LMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="MaterialCopy">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Materials__Unive__7B5B524B">
+          <End Type="LMSModel.University" Role="University" Multiplicity="0..1" />
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="University">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="Material">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reservati__Statu__0B91BA14">
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="0..1" />
+          <End Type="LMSModel.Reservation" Role="Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="Reservation">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CartItem">
+          <Key>
+            <PropertyRef Name="CartItemID" />
+          </Key>
+          <Property Name="CartItemID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PatronID" Type="Int32" Nullable="false" />
+          <Property Name="MaterialID" Type="Int32" Nullable="false" />
+          <Property Name="AddedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Material" Relationship="LMSModel.FK_Cart_Material" FromRole="CartItem" ToRole="Material" />
+          <NavigationProperty Name="Patron" Relationship="LMSModel.FK_Cart_Patron" FromRole="CartItem" ToRole="Patron" />
+        </EntityType>
+        <Association Name="FK_Cart_Material">
+          <End Type="LMSModel.Material" Role="Material" Multiplicity="1" />
+          <End Type="LMSModel.CartItem" Role="CartItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="CartItem">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Patron">
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="1" />
+          <End Type="LMSModel.CartItem" Role="CartItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="CartItem">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="IssuanceRequest">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PatronID" Type="Int32" Nullable="false" />
+          <Property Name="RequestDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Patron" Relationship="LMSModel.FK_IssuanceRequests_Patrons" FromRole="IssuanceRequest" ToRole="Patron" />
+          <Property Name="UniversityID" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_IssuanceRequests_Patrons">
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="1" />
+          <End Type="LMSModel.IssuanceRequest" Role="IssuanceRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="IssuanceRequest">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Circulation">
+          <Key>
+            <PropertyRef Name="CirculationID" />
+          </Key>
+          <Property Name="CirculationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CopyID" Type="Int32" />
+          <Property Name="PatronID" Type="Int32" />
+          <Property Name="IssueDate" Type="DateTime" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="ReturnDate" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FineAmount" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="UniversityID" Type="Int32" />
+          <Property Name="RequestID" Type="Int32" />
+          <NavigationProperty Name="MaterialCopy" Relationship="LMSModel.FK__Circulati__CopyI__05D8E0BE" FromRole="Circulation" ToRole="MaterialCopy" />
+          <NavigationProperty Name="Patron" Relationship="LMSModel.FK__Circulati__Patro__06CD04F7" FromRole="Circulation" ToRole="Patron" />
+          <NavigationProperty Name="FineDetails" Relationship="LMSModel.FK__FineDetai__Circu__1DB06A4F" FromRole="Circulation" ToRole="FineDetail" />
+          <Property Name="MaterialID" Type="Int32" />
+        </EntityType>
+        <Association Name="FK__Circulati__CopyI__05D8E0BE">
+          <End Type="LMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="0..1" />
+          <End Type="LMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaterialCopy">
+              <PropertyRef Name="CopyID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="CopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Circulati__Patro__06CD04F7">
+          <End Type="LMSModel.Patron" Role="Patron" Multiplicity="0..1" />
+          <End Type="LMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="PatronID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FineDetai__Circu__1DB06A4F">
+          <End Type="LMSModel.Circulation" Role="Circulation" Multiplicity="0..1" />
+          <End Type="LMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Circulation">
+              <PropertyRef Name="CirculationID" />
+            </Principal>
+            <Dependent Role="FineDetail">
+              <PropertyRef Name="CirculationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LMSModelStoreContainer" CdmEntityContainer="LMSEntities">
+          <EntitySetMapping Name="BarcodeHistories">
+            <EntityTypeMapping TypeName="LMSModel.BarcodeHistory">
+              <MappingFragment StoreEntitySet="BarcodeHistory">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="GeneratedAt" ColumnName="GeneratedAt" />
+                <ScalarProperty Name="GeneratedBarcode" ColumnName="GeneratedBarcode" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+                <ScalarProperty Name="BarcodeHistoryID" ColumnName="BarcodeHistoryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FineDetails">
+            <EntityTypeMapping TypeName="LMSModel.FineDetail">
+              <MappingFragment StoreEntitySet="FineDetails">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Paid" ColumnName="Paid" />
+                <ScalarProperty Name="AppliedDate" ColumnName="AppliedDate" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
+                <ScalarProperty Name="FineID" ColumnName="FineID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Librarians">
+            <EntityTypeMapping TypeName="LMSModel.Librarian">
+              <MappingFragment StoreEntitySet="Librarians">
+                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="LibrarianID" ColumnName="LibrarianID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MaterialCopies">
+            <EntityTypeMapping TypeName="LMSModel.MaterialCopy">
+              <MappingFragment StoreEntitySet="MaterialCopies">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CallNumber" ColumnName="CallNumber" />
+                <ScalarProperty Name="BarcodeNumber" ColumnName="BarcodeNumber" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Patrons">
+            <EntityTypeMapping TypeName="LMSModel.Patron">
+              <MappingFragment StoreEntitySet="Patrons">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="PatronType" ColumnName="PatronType" />
+                <ScalarProperty Name="PatronPhone" ColumnName="PatronPhone" />
+                <ScalarProperty Name="PatronEmail" ColumnName="PatronEmail" />
+                <ScalarProperty Name="PatronName" ColumnName="PatronName" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reports">
+            <EntityTypeMapping TypeName="LMSModel.Report">
+              <MappingFragment StoreEntitySet="Reports">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="ReportData" ColumnName="ReportData" />
+                <ScalarProperty Name="GeneratedAt" ColumnName="GeneratedAt" />
+                <ScalarProperty Name="ReportType" ColumnName="ReportType" />
+                <ScalarProperty Name="ReportID" ColumnName="ReportID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reservations">
+            <EntityTypeMapping TypeName="LMSModel.Reservation">
+              <MappingFragment StoreEntitySet="Reservations">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReservationDate" ColumnName="ReservationDate" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="ReservationID" ColumnName="ReservationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Universities">
+            <EntityTypeMapping TypeName="LMSModel.University">
+              <MappingFragment StoreEntitySet="Universities">
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="UniversityName" ColumnName="UniversityName" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="LMSModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="RelatedID" ColumnName="RelatedID" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cataloguings">
+            <EntityTypeMapping TypeName="LMSModel.Cataloguing">
+              <MappingFragment StoreEntitySet="Cataloguing">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="MARCData" ColumnName="MARCData" />
+                <ScalarProperty Name="MARCField" ColumnName="MARCField" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="CataloguingID" ColumnName="CataloguingID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Authors">
+            <EntityTypeMapping TypeName="LMSModel.Author">
+              <MappingFragment StoreEntitySet="Authors">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AuthorID" ColumnName="AuthorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Materials">
+            <EntityTypeMapping TypeName="LMSModel.Material">
+              <MappingFragment StoreEntitySet="Materials">
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Vol" ColumnName="Vol" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="Discription" ColumnName="Discription" />
+                <ScalarProperty Name="PlaceofPublishers" ColumnName="PlaceofPublishers" />
+                <ScalarProperty Name="Edition" ColumnName="Edition" />
+                <ScalarProperty Name="AuthorID" ColumnName="AuthorID" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="TotalQuantity" ColumnName="TotalQuantity" />
+                <ScalarProperty Name="AvailableQuantity" ColumnName="AvailableQuantity" />
+                <ScalarProperty Name="MaterialType" ColumnName="MaterialType" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="YearPublished" ColumnName="YearPublished" />
+                <ScalarProperty Name="Publisher" ColumnName="Publisher" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CartItems">
+            <EntityTypeMapping TypeName="LMSModel.CartItem">
+              <MappingFragment StoreEntitySet="CartItems">
+                <ScalarProperty Name="AddedAt" ColumnName="AddedAt" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="CartItemID" ColumnName="CartItemID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IssuanceRequests">
+            <EntityTypeMapping TypeName="LMSModel.IssuanceRequest">
+              <MappingFragment StoreEntitySet="IssuanceRequests">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Circulations">
+            <EntityTypeMapping TypeName="LMSModel.Circulation">
+              <MappingFragment StoreEntitySet="Circulation">
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="FineAmount" ColumnName="FineAmount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="IssueDate" ColumnName="IssueDate" />
+                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

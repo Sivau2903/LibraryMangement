@@ -1,0 +1,30 @@
+﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Overdue Reports";
+}
+
+<h2>Overdue Materials</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Patron Name</th>
+            <th>Material Title</th>
+            <th>Due Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model)
+        {
+            <tr>
+                <td>@record.Patron.PatronName</td>
+                <td>@record.MaterialCopy.Material.Title</td>
+                <td>@record.DueDate?.ToString("yyyy-MM-dd")</td>
+                <td>@record.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

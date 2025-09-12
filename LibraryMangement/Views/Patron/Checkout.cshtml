@@ -1,0 +1,31 @@
+﻿@model IEnumerable<LibraryMangement.Models.MaterialViewModel>
+
+@{
+    Layout = "~/Views/Shared/_PatronLayout.cshtml";
+    ViewBag.Title = "Checkout Cart";
+}
+
+<h2>Confirm Checkout</h2>
+
+<table class="table table-striped">
+   
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Available Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var material in Model)
+        {
+            <tr>
+                <td>@material.Title</td>
+                <td>@material.AvailableQuantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form method="post" action="@Url.Action("ProcessCheckout")">
+    <button type="submit" class="btn btn-success">Confirm and Checkout</button>
+</form>

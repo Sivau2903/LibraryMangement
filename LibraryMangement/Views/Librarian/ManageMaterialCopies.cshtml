@@ -1,0 +1,73 @@
+﻿@model IEnumerable<LibraryMangement.Models.MaterialCopy>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Manage Material Copies";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Manage Material Copies</h2>
+    <a class="btn btn-success shadow-sm" href="@Url.Action("AddMaterialCopy", "Librarian")">
+        <i class="bi bi-plus-lg me-1"></i> Add New Copy
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table id="MaterialCopiesTable" class="table table-hover table-striped display nowrap" style="width:100%">
+            <thead class="table-primary text-uppercase small">
+                <tr>
+                    <th>Material Title</th>
+                    <th>Account Number</th>
+                    <th>Barcode Number</th>
+                    <th>Call Number</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var copy in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@copy.Material.Title</td>
+                        <td>@copy.AccountNumber</td>
+                        <td>@copy.BarcodeNumber</td>
+                        <td>@copy.CallNumber</td>
+                        <td>
+                            @if (copy.Status.ToLower() == "available")
+                            {
+                                <span class="badge bg-success">@copy.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">@copy.Status</span>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-primary shadow-sm" href="@Url.Action("EditMaterialCopy", new { id = copy.CopyID })">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#MaterialCopiesTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                responsive: true,
+                columnDefs: [
+                    { orderable: false, targets: 5 } // Disable sorting for Actions column
+                ]
+            });
+        });
+    </script>
+}

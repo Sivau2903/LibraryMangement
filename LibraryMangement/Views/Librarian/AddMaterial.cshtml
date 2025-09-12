@@ -1,0 +1,138 @@
+﻿@model LibraryMangement.Models.MaterialViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Add Material";
+    var currentYear = DateTime.Now.Year;
+}
+
+<h2>Add New Material</h2>
+
+<form method="post" action="@Url.Action("AddMaterial", "Librarian")">
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label>Title</label>
+            <input type="text" name="Title" class="form-control" required />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Author</label>
+            <input type="text" id="Author" name="Author" class="form-control" required placeholder="Start typing author name..." />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Publisher</label>
+            <input type="text" name="Publisher" class="form-control" required />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Place of Publishers</label>
+            <input type="text" name="PlaceofPublishers" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Year Published</label>
+            <select name="YearPublished" class="form-control" required>
+                <option value="">Select Year</option>
+                @for (int year = currentYear; year >= 1940; year--)
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Edition</label>
+            <select name="Edition" class="form-control">
+                <option value="">Select Edition</option>
+                @for (int i = 1; i <= 30; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Material Type</label>
+            <select name="MaterialType" class="form-control" required>
+                <option value="">Select Material Type</option>
+                <option value="Book">Book</option>
+                <option value="Journal">Journal</option>
+                <option value="Magazine">Magazine</option>
+                <option value="Thesis">Thesis</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Description</label>
+            <textarea name="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Pages</label>
+            <input type="number" name="Pages" class="form-control" min="1" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Vol</label>
+            <input type="text" name="Vol" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Source</label>
+            <input type="text" name="Source" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Price</label>
+            <input type="number" step="0.01" name="Price" class="form-control" min="0" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>ISBN</label>
+            <input type="text" name="ISBN" class="form-control" required />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Available Quantity</label>
+            <input type="number" name="AvailableQuantity" class="form-control" required min="1" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Total Quantity</label>
+            <input type="number" name="TotalQuantity" class="form-control" required min="1" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label>Call Number <small class="text-muted">(Optional)</small></label>
+            <input type="text" name="CallNumber" class="form-control" placeholder="Optional" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Material</button>
+</form>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $("#Author").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetAuthors", "Librarian")',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
+}

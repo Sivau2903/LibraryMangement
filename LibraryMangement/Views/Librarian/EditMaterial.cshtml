@@ -1,0 +1,100 @@
+﻿@model LibraryMangement.Models.MaterialViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Material";
+    var currentYear = DateTime.Now.Year;
+}
+
+<h2>Edit Material</h2>
+
+<form method="post" action="@Url.Action("EditMaterial")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="MaterialID" value="@Model.MaterialID" />
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label>Title</label>
+            <input type="text" name="Title" class="form-control" value="@Model.Title" required />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Author</label>
+            <input type="text" name="Author" class="form-control" value="@Model.Author" required />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Publisher</label>
+            <input type="text" name="Publisher" class="form-control" value="@Model.Publisher" required />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Place of Publishers</label>
+            <input type="text" name="PlaceofPublishers" class="form-control" value="@Model.PlaceofPublishers" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Year Published</label>
+            <select name="YearPublished" class="form-control" required>
+                <option value="">Select Year</option>
+                @for (int year = currentYear; year >= 1940; year--)
+                {
+                    <option value="@year" @(Model.YearPublished == year ? "selected" : "")>@year</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Edition</label>
+            <select name="Edition" class="form-control">
+                <option value="">Select Edition</option>
+                @for (int i = 1; i <= 30; i++)
+                {
+                    <option value="@i" @(Model.Edition == i.ToString() ? "selected" : "")>@i</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Description</label>
+            <textarea name="Description" class="form-control">@Model.Description</textarea>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Pages</label>
+            <input type="number" name="Pages" class="form-control" value="@Model.Pages" min="1" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Vol</label>
+            <input type="text" name="Vol" class="form-control" value="@Model.Vol" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Source</label>
+            <input type="text" name="Source" class="form-control" value="@Model.Source" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Price</label>
+            <input type="number" name="Price" class="form-control" step="0.01" value="@Model.Price" min="0" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>ISBN</label>
+            <input type="text" name="ISBN" class="form-control" value="@Model.ISBN" required />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Available Quantity</label>
+            <input type="number" name="AvailableQuantity" class="form-control" value="@Model.AvailableQuantity" required />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label>Total Quantity</label>
+            <input type="number" name="TotalQuantity" class="form-control" value="@Model.TotalQuantity" required />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

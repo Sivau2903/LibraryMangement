@@ -1,0 +1,77 @@
+﻿@model LibraryMangement.Models.PatronDashboardViewModel
+
+@{
+    Layout = "~/Views/Shared/_PatronLayout.cshtml";
+    ViewBag.Title = "Patron Dashboard";
+}
+
+<h2>Welcome, @Model.PatronName</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white p-3">
+            <h5>Total Active Issued</h5>
+            <p>@Model.ActiveIssuedCount</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-warning text-white p-3">
+            <h5>Overdue Items</h5>
+            <p>@Model.OverdueCount</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-info text-white p-3">
+            <h5>Pending Reservations</h5>
+            <p>@Model.PendingReservations</p>
+        </div>
+    </div>
+</div>
+
+<h3>Active Issued Materials</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Account Number</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var issue in Model.ActiveIssues)
+        {
+            <tr>
+                <td>@issue.MaterialCopy.Material.Title</td>
+                <td>@issue.MaterialCopy.AccountNumber</td>
+                <td>@issue.IssueDate</td>
+                <td>@issue.DueDate</td>
+                <td>@issue.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*<h3>Pending Reservation Requests</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Reservation Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var res in Model.PendingReservationList)
+        {
+            <tr>
+                <td>@res.Material.Title</td>
+                <td>@res.ReservationDate</td>
+                <td>@res.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>*@

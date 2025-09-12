@@ -1,0 +1,104 @@
+﻿@model LibraryMangement.Models.User
+@{
+    Layout = null;
+    ViewBag.Title = "Create User";
+}
+
+<div class="login-wrapper d-flex justify-content-center align-items-center">
+    <div class="login-card">
+        <h2>Create User</h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+        }
+
+        @using (Html.BeginForm("Create", "Login", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group mb-3">
+                <label>Username</label>
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Enter username" })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Password</label>
+                @Html.PasswordFor(m => m.PasswordHash, new { @class = "form-control", placeholder = "Enter password" })
+                @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Role</label>
+                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", placeholder = "Enter role (e.g., Patron/Librarian)" })
+                @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Related ID</label>
+                @Html.TextBoxFor(m => m.RelatedID, new { @class = "form-control", placeholder = "Enter Related ID if any" })
+                @Html.ValidationMessageFor(m => m.RelatedID, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Created Date</label>
+                @Html.TextBoxFor(m => m.CreatedAt, new { @class = "form-control", type ="date",placeholder = "Enter Date if any" })
+                @Html.ValidationMessageFor(m => m.CreatedAt, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Save User</button>
+        }
+    </div>
+</div>
+
+<style>
+    .login-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #1E3A8A, #EF4444);
+        padding: 15px;
+    }
+
+    .login-card {
+        background: #fff;
+        padding: 40px 30px;
+        border-radius: 12px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+    }
+
+        .login-card h2 {
+            color: #1E3A8A;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+    .form-control {
+        border-radius: 6px;
+        padding: 12px 14px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #1E3A8A, #EF4444);
+        border: none;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #145ca0, #dc2626);
+            transform: translateY(-2px);
+        }
+</style>

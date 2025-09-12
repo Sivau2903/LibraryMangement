@@ -1,0 +1,96 @@
+﻿@model IEnumerable<LibraryMangement.Models.MaterialViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Manage Materials";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Manage Materials</h2>
+    <div>
+        <a class="btn btn-success shadow-sm me-2" href="@Url.Action("AddMaterial", "Librarian")">
+            <i class="bi bi-plus-lg me-1"></i> Add New Material
+        </a>
+        <a class="btn btn-success shadow-sm" href="@Url.Action("BulkUploadMaterials", "Librarian")">
+            <i class="bi bi-file-earmark-excel me-1"></i> Bulk Upload (Excel)
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table id="Materials" class="table table-hover table-striped display " style="width:100%">
+            <thead class="table-primary text-uppercase small">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Edition</th>
+                    <th>Description</th>
+                    <th>Publisher</th>
+                    <th>Place of Publisher</th>
+                    <th>Year Published</th>
+                    <th>Pages</th>
+                    <th>Vol</th>
+                    <th>Source</th>
+                    <th>Price</th>
+                    <th>ISBN</th>
+                    <th>Available Qty</th>
+                    <th>Total Qty</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var material in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@material.Title</td>
+                        <td>@material.Author</td>
+                        <td>@material.Edition</td>
+                        <td>@material.Description</td>
+                        <td>@material.Publisher</td>
+                        <td>@material.PlaceofPublishers</td>
+                        <td>@material.YearPublished</td>
+                        <td>@material.Pages</td>
+                        <td>@material.Vol</td>
+                        <td>@material.Source</td>
+                        <td>@material.Price</td>
+                        <td>@material.ISBN</td>
+                        <td>
+                            @if (material.AvailableQuantity > 0)
+                            {
+                                <span class="badge bg-success">@material.AvailableQuantity</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">0</span>
+                            }
+                        </td>
+                        <td>@material.TotalQuantity</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary shadow-sm" href="@Url.Action("EditMaterial", new { id = material.MaterialID })">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Materials').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                responsive: true,
+                columnDefs: [
+                    { orderable: false, targets: 14 } // Disable sorting for Actions column
+                ]
+            });
+        });
+    </script>
+}

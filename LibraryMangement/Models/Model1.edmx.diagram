@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="83d36f6ffaae485ea2e6bca4226c86bd" Name="Diagram1">
+        <EntityTypeShape EntityType="LMSModel.BarcodeHistory" Width="1.5" PointX="7.5" PointY="23.375" />
+        <EntityTypeShape EntityType="LMSModel.FineDetail" Width="1.5" PointX="9.75" PointY="9.125" />
+        <EntityTypeShape EntityType="LMSModel.Librarian" Width="1.5" PointX="3" PointY="9.5" />
+        <EntityTypeShape EntityType="LMSModel.MaterialCopy" Width="1.5" PointX="5.25" PointY="19.125" />
+        <EntityTypeShape EntityType="LMSModel.Patron" Width="1.5" PointX="3" PointY="5.625" />
+        <EntityTypeShape EntityType="LMSModel.Report" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="LMSModel.Reservation" Width="1.5" PointX="5.25" PointY="9.875" />
+        <EntityTypeShape EntityType="LMSModel.University" Width="1.5" PointX="0.75" PointY="9.875" />
+        <EntityTypeShape EntityType="LMSModel.User" Width="1.5" PointX="2.75" PointY="0.75" />
+        <AssociationConnector Association="LMSModel.FK__BarcodeHi__CopyI__10566F31" />
+        <AssociationConnector Association="LMSModel.FK__FineDetai__Patro__1EA48E88" />
+        <AssociationConnector Association="LMSModel.FK__Librarian__Unive__76969D2E" />
+        <AssociationConnector Association="LMSModel.FK__Patrons__Univers__72C60C4A" />
+        <AssociationConnector Association="LMSModel.FK__Reservati__Patro__0C85DE4D" />
+        <EntityTypeShape EntityType="LMSModel.Cataloguing" Width="1.5" PointX="10.5" PointY="17.875" />
+        <EntityTypeShape EntityType="LMSModel.Author" Width="1.5" PointX="5.375" PointY="0.875" />
+        <EntityTypeShape EntityType="LMSModel.Material" Width="1.5" PointX="7.625" PointY="2.875" />
+        <AssociationConnector Association="LMSModel.FK_Materials_Authors" />
+        <AssociationConnector Association="LMSModel.FK_Cataloguing_Material" />
+        <AssociationConnector Association="LMSModel.FK__MaterialC__Statu__01142BA1" />
+        <AssociationConnector Association="LMSModel.FK__Materials__Unive__7B5B524B" />
+        <AssociationConnector Association="LMSModel.FK__Reservati__Statu__0B91BA14" />
+        <EntityTypeShape EntityType="LMSModel.CartItem" Width="1.5" PointX="9.875" PointY="4.875" />
+        <AssociationConnector Association="LMSModel.FK_Cart_Material" />
+        <AssociationConnector Association="LMSModel.FK_Cart_Patron" />
+        <EntityTypeShape EntityType="LMSModel.IssuanceRequest" Width="1.5" PointX="5.25" PointY="6.375" />
+        <AssociationConnector Association="LMSModel.FK_IssuanceRequests_Patrons" />
+        <EntityTypeShape EntityType="LMSModel.Circulation" Width="1.5" PointX="7.5" PointY="12.125" />
+        <AssociationConnector Association="LMSModel.FK__Circulati__CopyI__05D8E0BE" />
+        <AssociationConnector Association="LMSModel.FK__Circulati__Patro__06CD04F7" />
+        <AssociationConnector Association="LMSModel.FK__FineDetai__Circu__1DB06A4F" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Return Material";
+}
+
+<h2>Return Material</h2>
+
+<form method="post" action="@Url.Action("ReturnMaterial")">
+    <div>
+        <label>Material Copy Barcode Number:</label>
+        <input type="text" name="barcodeNumber" required />
+    </div>
+    <button type="submit">Return Material</button>
+</form>

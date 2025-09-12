@@ -1,0 +1,49 @@
+﻿@model LibraryMangement.Models.MaterialCopyViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Material Copy";
+}
+
+<h2>Edit Material Copy</h2>
+
+<form method="post" action="@Url.Action("EditMaterialCopy")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="CopyID" value="@Model.CopyID" />
+
+    <div class="mb-3">
+        <label>Material</label>
+        <select name="MaterialID" class="form-select" required>
+            <option value="">-- Select Material --</option>
+            @foreach (var m in ViewBag.Materials as SelectList)
+            {
+                <option value="@m.Value" @(m.Value == Model.MaterialID.ToString() ? "selected" : "")>@m.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Account Number</label>
+        <input type="text" name="AccountNumber" class="form-control" value="@Model.AccountNumber" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Barcode Number</label>
+        <input type="text" name="BarcodeNumber" class="form-control" value="@Model.BarcodeNumber" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Call Number</label>
+        <input type="text" name="CallNumber" class="form-control" value="@Model.CallNumber" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Status</label>
+        <select name="Status" class="form-select" required>
+            <option value="Available" @(Model.Status == "Available" ? "selected" : "")>Available</option>
+            <option value="Issued" @(Model.Status == "Issued" ? "selected" : "")>Issued</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

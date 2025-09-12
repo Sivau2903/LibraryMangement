@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Barcode Generation";
+}
+
+<h2>Generate Barcode for Material Copy</h2>
+
+<form method="post" action="@Url.Action("BarcodeGeneration")">
+    <div>
+        <label>Material ID:</label>
+        <input type="number" name="materialId" required />
+    </div>
+    <div>
+        <label>Account Number:</label>
+        <input type="text" name="accountNumber" required />
+    </div>
+    <div>
+        <label>Call Number:</label>
+        <input type="text" name="callNumber" required />
+    </div>
+    <button type="submit">Generate Barcode</button>
+</form>
