@@ -1,0 +1,64 @@
+﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Overdue List";
+}
+
+<h2 class="text-center my-4">Overdue Materials</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success text-center">
+        🎉 No overdue books! All patrons are up to date.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Issue ID</th>
+                <th>Material Title</th>
+                <th>Patron</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Fine</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var overdue in Model)
+            {
+                var daysOver = (DateTime.Now - (overdue.DueDate ?? DateTime.Now)).Days;
+                var fine = (overdue.FineAmount ?? 0) > 0 ? (overdue.FineAmount ?? 0).ToString("C") : "0";
+
+                <tr>
+                    <td>@overdue.CirculationID</td>
+                    <td>@overdue.Material?.Title</td>
+                    <td>@overdue.Patron?.FullName</td>
+                    <td>@overdue.IssueDate?.ToString("dd-MMM-yyyy")</td>
+                    <td>@overdue.DueDate?.ToString("dd-MMM-yyyy")</td>
+                    <td>@daysOver</td>
+                    <td>@fine</td>
+                    <td>
+                        <span class="badge bg-danger">Overdue</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="@Url.Action("ReturnMaterial", "Librarian", new { id = overdue.CirculationID })"
+                           class="btn btn-sm btn-danger">
+                            Return
+                        </a>
+                        <a href="@Url.Action("RenewMaterial", "Librarian", new { id = overdue.CirculationID })"
+                           class="btn btn-sm btn-warning">
+                            Renew
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

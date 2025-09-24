@@ -17,14 +17,13 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Material()
         {
-            this.Cataloguings = new HashSet<Cataloguing>();
+            this.Circulations = new HashSet<Circulation>();
             this.MaterialCopies = new HashSet<MaterialCopy>();
-            this.Reservations = new HashSet<Reservation>();
-            this.CartItems = new HashSet<CartItem>();
+            this.Bookinglisteds = new HashSet<Bookinglisted>();
         }
     
         public int MaterialID { get; set; }
-        public Nullable<int> UniversityID { get; set; }
+        public string UniversityID { get; set; }
         public string Title { get; set; }
         public string Publisher { get; set; }
         public Nullable<int> YearPublished { get; set; }
@@ -41,16 +40,15 @@ namespace LibraryMangement.Models
         public string Vol { get; set; }
         public string Source { get; set; }
         public Nullable<decimal> Price { get; set; }
+        public Nullable<int> LibraryCategoryID { get; set; }
     
         public virtual Author Author { get; set; }
+        public virtual Librarycatgeory Librarycatgeory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cataloguing> Cataloguings { get; set; }
+        public virtual ICollection<Circulation> Circulations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MaterialCopy> MaterialCopies { get; set; }
-        public virtual University University { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Reservation> Reservations { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CartItem> CartItems { get; set; }
+        public virtual ICollection<Bookinglisted> Bookinglisteds { get; set; }
     }
 }

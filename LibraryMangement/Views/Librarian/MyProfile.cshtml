@@ -1,0 +1,168 @@
+﻿@model LibraryMangement.Models.MyProfileViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "My Profile";
+}
+
+<div class="container py-2">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 position-relative">
+
+                <div class="card-body p-2 bg-light position-relative">
+                    <!-- Success Overlay -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="success-overlay d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <i class="bi bi-check-circle-fill display-2 text-success animate-pop"></i>
+                                <h5 class="mt-2 text-success fw-bold">@TempData["SuccessMessage"]</h5>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Error Message -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger mb-2">@TempData["ErrorMessage"]</div>
+                    }
+
+
+                    @using (Html.BeginForm("MyProfileLibrarian", "Librarian", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.UserID)
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-envelope me-1"></i> Email / Username
+                            </label>
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control rounded-3 shadow-sm", @readonly = "readonly" })
+                            @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                            <small class="text-muted">Changing this will also update your email in the system.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-person me-1"></i> Email
+                            </label>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control rounded-3 shadow-sm" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-person me-1"></i> Name
+                            </label>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control rounded-3 shadow-sm" })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-telephone me-1"></i> Phone
+                            </label>
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control rounded-3 shadow-sm" })
+                            @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                        </div>
+
+                        if (Model.IsLibrarian)
+                        {
+                            <div class="mb-2">
+                                <label class="form-label fw-bold mb-1">
+                                    <i class="bi bi-building me-1"></i> Department
+                                </label>
+                                @Html.TextBoxFor(m => m.DepartmentName, new { @class = "form-control rounded-3 shadow-sm", @readonly = "readonly" })
+                            </div>
+                        }
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-mortarboard me-1"></i> University
+                            </label>
+                            @Html.TextBoxFor(m => m.UniversityName, new { @class = "form-control rounded-3 shadow-sm", @readonly = "readonly" })
+                        </div>
+
+                        <button id="updateBtn"
+                                type="submit"
+                                class="btn w-100 text-white rounded-3 mt-2"
+                                style="background: linear-gradient(135deg, #6c63ff, #3f3d56);">
+                            <i class="bi bi-check-circle me-1"></i> Update Profile
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval") <!-- Enables client-side validation -->
+    <script>
+        $(function () {
+            const form = $('form');
+            const original = form.serialize();
+            const button = $('#updateBtn');
+
+            // Enable button only when something changed
+            form.on('input change', function () {
+                button.prop('disabled', form.serialize() === original);
+            });
+
+            // Auto-hide success overlay
+            if ($('.success-overlay').length) {
+                setTimeout(() => {
+                    $('.success-overlay').fadeOut(600);
+                }, 2500);
+            }
+        });
+    </script>
+
+    <style>
+        .success-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.7);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-pop {
+            animation: pop 0.5s ease forwards;
+        }
+
+        @@keyframes pop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+}

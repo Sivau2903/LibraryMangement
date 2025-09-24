@@ -1,0 +1,90 @@
+﻿@model List<LibraryMangement.Models.Author>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Add Authors";
+}
+
+<h2 class="text-center my-4">Manage Authors</h2>
+
+<div class="row">
+    <!-- Left: Existing Authors Table -->
+    <div class="col-md-6">
+        <h4>Existing Authors</h4>
+
+        <div style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+            @if (Model != null && Model.Count > 0)
+            {
+                <table class="table table-striped table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Author Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>@Model[i].Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">No authors added yet.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Right: Add Author Form -->
+    <div class="col-md-6">
+        <h4>Add New Author</h4>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <form method="post" action="@Url.Action("AddAuthor", "Librarian")">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">Author Name</label>
+                <input type="text" id="Author" class="form-control" name="Author" placeholder="Enter author name" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Author</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $("#Author").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetAuthors", "Librarian")',
+                        type: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
+}

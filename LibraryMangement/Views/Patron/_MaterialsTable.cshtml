@@ -1,0 +1,73 @@
+﻿@model IEnumerable<LibraryMangement.Models.MaterialViewModel>
+
+@if (Model != null && Model.Any())
+{
+    using (Html.BeginForm("ReserveMultiple", "Patron", FormMethod.Post))
+    {
+        <table id="MaterialsTable" class="table table-hover table-striped display" style="width:100%">
+            <thead class="table-primary text-uppercase small">
+                <tr>
+                    <th>Select</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Edition</th>
+                    <th>Description</th>
+                    <th>Publishers</th>
+                    <th>Year</th>
+                    <th>Pages</th>
+                    <th>Volume</th>
+                    <th>Material Type</th>
+                    <th>Department</th>
+                    <th>Status Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var material in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (material.AvailableQuantity > 0)
+                            {
+                                <input type="checkbox" name="selectedMaterialIds" value="@material.MaterialID" />
+                            }
+                        </td>
+                        <td>@material.Title</td>
+                        <td>@material.Author</td>
+                        <td>@material.Edition</td>
+                        <td>@material.Description</td>
+                        <td>@material.PlaceofPublishers</td>
+                        <td>@material.YearPublished</td>
+                        <td>@material.Pages</td>
+                        <td>@material.Vol</td>
+                        <td>@material.MaterialType</td>
+                        <td>@material.LibraryCategoryName</td>
+                        <td>
+                            @if (material.AvailableQuantity > 0)
+                            {
+                                <a class="btn btn-sm btn-success" href="@Url.Action("ReserveSingle", "Patron", new { materialId = material.MaterialID })">Reserve</a>
+                            }
+                            else
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="materialId" value="@material.MaterialID" />
+                                <button type="submit"
+                                        class="btn btn-sm btn-warning"
+                                        formaction="@Url.Action("AddToBookingList", "Patron")"
+                                        formmethod="post">
+                                    Add To Booking List
+                                </button>
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary mt-3">Reserve Selected</button>
+    }
+}
+else
+{
+    <p class="text-center text-muted">Please perform a search to view materials.</p>
+}

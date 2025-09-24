@@ -15,12 +15,16 @@ namespace LibraryMangement.Models
     public partial class Librarian
     {
         public int LibrarianID { get; set; }
-        public Nullable<int> UniversityID { get; set; }
+        public Nullable<int> LibraryCategoryID { get; set; }
+        public string UserID { get; set; }
+        public string EmailID { get; set; }
+        public string UniversityID { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string ContactPhone { get; set; }
+        public string ContactNumber { get; set; }
     
-        public virtual University University { get; set; }
+        public virtual Librarian Librarians1 { get; set; }
+        public virtual Librarian Librarian1 { get; set; }
+        public virtual tblUniversity tblUniversity { get; set; }
+        public virtual tblUser tblUser { get; set; }
     }
 }

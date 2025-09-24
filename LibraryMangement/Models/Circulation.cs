@@ -18,6 +18,7 @@ namespace LibraryMangement.Models
         public Circulation()
         {
             this.FineDetails = new HashSet<FineDetail>();
+            this.FineDetails1 = new HashSet<FineDetail>();
         }
     
         public int CirculationID { get; set; }
@@ -28,14 +29,23 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> ReturnDate { get; set; }
         public string Status { get; set; }
         public Nullable<decimal> FineAmount { get; set; }
-        public Nullable<int> UniversityID { get; set; }
-        public Nullable<int> RequestID { get; set; }
+        public string UniversityID { get; set; }
         public Nullable<int> MaterialID { get; set; }
-        public virtual IssuanceRequest IssuanceRequest { get; set; }
-
+        public Nullable<System.DateTime> RequestedDate { get; set; }
+        public string BarcodeNumber { get; set; }
+        public Nullable<bool> IsOverdue { get; set; }
+        public Nullable<System.DateTime> LastFineUpdateDate { get; set; }
+        public Nullable<System.DateTime> ExpiryDate { get; set; }
+        public Nullable<int> LibraryCategoryID { get; set; }
+    
         public virtual MaterialCopy MaterialCopy { get; set; }
-        public virtual Patron Patron { get; set; }
+        public virtual MaterialCopy MaterialCopy1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FineDetail> FineDetails1 { get; set; }
+        public virtual Material Material { get; set; }
+        public virtual Patron Patron { get; set; }
+        public virtual Patron Patron1 { get; set; }
     }
 }

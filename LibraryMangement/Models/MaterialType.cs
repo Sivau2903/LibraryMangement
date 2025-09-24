@@ -12,14 +12,11 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class IssuanceRequest
+    public partial class MaterialType
     {
-        public int RequestID { get; set; }
-        public int PatronID { get; set; }
-        public System.DateTime RequestDate { get; set; }
-        public string Status { get; set; }
-        public Nullable<int> UniversityID { get; set; }
-    
-        public virtual Patron Patron { get; set; }
+        public int MaterialTypeID { get; set; }
+        public string TypeName { get; set; }
+        public string UniversityID { get; set; }
+        public string LibraryCategoryID { get; set; }
     }
 }

@@ -12,25 +12,20 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class University
+    public partial class Librarycatgeory
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public University()
+        public Librarycatgeory()
         {
-            this.Librarians = new HashSet<Librarian>();
-            this.Patrons = new HashSet<Patron>();
             this.Materials = new HashSet<Material>();
         }
     
-        public int UniversityID { get; set; }
-        public string UniversityName { get; set; }
-        public string Address { get; set; }
-        public string ContactEmail { get; set; }
+        public int LibraryCategoryID { get; set; }
+        public string LibraryCategoryName { get; set; }
+        public string UniversityID { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<bool> IsActive { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Librarian> Librarians { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Patron> Patrons { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Material> Materials { get; set; }
     }

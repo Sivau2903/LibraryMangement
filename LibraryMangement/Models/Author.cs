@@ -22,6 +22,7 @@ namespace LibraryMangement.Models
     
         public int AuthorID { get; set; }
         public string Name { get; set; }
+        public string LibraryCategoryID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Material> Materials { get; set; }

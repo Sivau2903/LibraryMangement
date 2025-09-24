@@ -12,12 +12,15 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CartItem
+    public partial class Bookinglisted
     {
-        public int CartItemID { get; set; }
+        public int BookingID { get; set; }
         public int PatronID { get; set; }
         public int MaterialID { get; set; }
-        public System.DateTime AddedAt { get; set; }
+        public System.DateTime BookingDate { get; set; }
+        public System.DateTime ExpiryDate { get; set; }
+        public string Status { get; set; }
+        public Nullable<int> LibraryCategoryID { get; set; }
     
         public virtual Material Material { get; set; }
         public virtual Patron Patron { get; set; }

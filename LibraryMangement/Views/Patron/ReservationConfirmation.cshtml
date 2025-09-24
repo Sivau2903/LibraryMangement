@@ -1,0 +1,39 @@
+﻿
+@model List<LibraryMangement.Models.MaterialViewModel>
+
+@{
+    ViewBag.Title = "ReservationConfirmation";
+}
+
+
+<h2>Confirm Reservation</h2>
+
+@using (Html.BeginForm("ConfirmReservation", "Patron", FormMethod.Post))
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Edition</th>
+                <th>Place to PickUp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mat in Model)
+            {
+                <tr>
+                    <td>@mat.Title</td>
+                    <td>@mat.Author</td>
+                    <td>@mat.Edition</td>
+                    <td>@mat.LibraryCategoryName</td>
+                </tr>
+
+                <input type="hidden" name="materialIds" value="@mat.MaterialID" />
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Confirm Reservation</button>
+    <a href="@Url.Action("ManageMaterials", "Patron")" class="btn btn-secondary">Cancel</a>
+}

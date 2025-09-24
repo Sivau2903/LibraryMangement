@@ -21,9 +21,13 @@ namespace LibraryMangement.Models
         public string Reason { get; set; }
         public Nullable<System.DateTime> AppliedDate { get; set; }
         public Nullable<bool> Paid { get; set; }
-        public Nullable<int> UniversityID { get; set; }
+        public string UniversityID { get; set; }
+        public string LibraryCategoryID { get; set; }
     
-        public virtual Patron Patron { get; set; }
         public virtual Circulation Circulation { get; set; }
+        public virtual Circulation Circulation1 { get; set; }
+        public virtual Patron Patron { get; set; }
+        public virtual Patron Patron1 { get; set; }
+        public object Material { get; internal set; }
     }
 }

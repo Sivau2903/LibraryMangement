@@ -54,17 +54,18 @@
             </select>
         </div>
 
+    
         <div class="col-md-3 mb-3">
             <label>Material Type</label>
             <select name="MaterialType" class="form-control" required>
                 <option value="">Select Material Type</option>
-                <option value="Book">Book</option>
-                <option value="Journal">Journal</option>
-                <option value="Magazine">Magazine</option>
-                <option value="Thesis">Thesis</option>
-                <option value="Other">Other</option>
+                @foreach (var type in Model.MaterialTypes)
+                {
+                    <option value="@type.TypeName">@type.TypeName</option>
+                }
             </select>
         </div>
+
 
         <div class="col-md-3 mb-3">
             <label>Description</label>

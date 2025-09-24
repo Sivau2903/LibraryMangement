@@ -1,0 +1,50 @@
+﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Pending Reservations";
+}
+
+<h2 class="text-center my-4">Pending Reservations</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No pending reservations found.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Reservation ID</th>
+                <th>Material Title</th>
+                <th>Patron</th>
+                <th>Requested Date</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var res in Model)
+            {
+                <tr>
+                    <td>@res.CirculationID</td>
+                    <td>@res.Material?.Title</td>
+                    <td>@res.Patron?.FullName</td>
+                    <td>@res.RequestedDate?.ToString("dd-MMM-yyyy")</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">@res.Status</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="@Url.Action("IssueReservedBook", "Librarian", new { id = res.CirculationID })"
+                           class="btn btn-sm btn-primary">
+                            Issue Book
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

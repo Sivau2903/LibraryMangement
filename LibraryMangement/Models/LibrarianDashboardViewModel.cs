@@ -14,6 +14,8 @@ namespace LibraryMangement.Models
         public int OverdueIssues { get; set; }
         public int PendingReservations { get; set; }
         public int MaterialsBelowStockLimit { get; set; }
+        public List<MaterialTypeCount> MaterialsByType { get; set; }
+        public int PendingBookinglist { get; internal set; }
     }
 
 }

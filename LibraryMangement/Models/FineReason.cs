@@ -12,13 +12,11 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class FineReason
     {
-        public int UserID { get; set; }
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
-        public string Role { get; set; }
-        public Nullable<int> RelatedID { get; set; }
-        public Nullable<System.DateTime> CreatedAt { get; set; }
+        public int FineReasonID { get; set; }
+        public string Reason { get; set; }
+        public decimal FineAmount { get; set; }
+        public string LibraryCategoryID { get; set; }
     }
 }

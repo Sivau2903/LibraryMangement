@@ -1,0 +1,62 @@
+﻿@model IEnumerable<LibraryMangement.Models.ActiveBookingViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Pending Bookings";
+}
+
+<h2 class="text-center my-4">Pending Bookings</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No pending bookings found.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Booking ID</th>
+                <th>Material Title</th>
+                <th>Patron Name</th>
+                <th>Booking Date</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.BookingID</td>
+                    <td>@booking.MaterialTitle</td>
+                    <td>@booking.PatronName</td>
+                    <td>@booking.BookingDate</td>
+                    <td>@booking.ExpiryDate</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            @booking.Status
+                        </span>
+                    </td>
+                    <td>
+                        @if (booking.Status == "Pending")
+                        {
+                            <form method="post" action="@Url.Action("RemoveFromBookingList", "Librarian")" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="bookingId" value="@booking.BookingID" />
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">N/A</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

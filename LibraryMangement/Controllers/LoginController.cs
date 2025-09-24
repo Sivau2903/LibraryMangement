@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,7 +13,7 @@ namespace LibraryMangement.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly LMSEntities db = new LMSEntities();
+        private readonly ICFAISMSEntities db = new ICFAISMSEntities();
         // GET: Login
 
         public ActionResult Create()
@@ -22,7 +23,7 @@ namespace LibraryMangement.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User model)
+        public ActionResult Create( tblUser model)
         {
             if (ModelState.IsValid)
             {
@@ -38,10 +39,10 @@ namespace LibraryMangement.Controllers
                     model.PasswordHash = SecureHelper.Encrypt(model.PasswordHash);
 
                     // Ensure required fields are not null
-                    model.Role = model.Role ?? "Patron"; // default if empty
+                    //model.tblUserRoles. = model.Role ?? "Patron"; // default if empty
 
                     // Add user
-                    db.Users.Add(model);
+                    db.tblUsers.Add(model);
                     db.SaveChanges();
 
                     TempData["SuccessMessage"] = "User created successfully!";
@@ -90,6 +91,32 @@ namespace LibraryMangement.Controllers
             }
         }
 
+        private const int SaltSize = 16; // 128-bit
+        private const int HashSize = 32; // 256-bit
+        private const int Iterations = 100_000; // PBKDF2 iterations
+        public static string HashClientPassword(string clientHashedPasswordHex, string saltBase64)
+        {
+            byte[] saltBytes = Convert.FromBase64String(saltBase64);
+
+            // Convert hex string to bytes
+            byte[] passwordBytes = new byte[clientHashedPasswordHex.Length / 2];
+            for (int i = 0; i < passwordBytes.Length; i++)
+            {
+                passwordBytes[i] = Convert.ToByte(clientHashedPasswordHex.Substring(i * 2, 2), 16);
+            }
+
+            using (var pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, saltBytes, Iterations, HashAlgorithmName.SHA256))
+            {
+                byte[] hash = pbkdf2.GetBytes(HashSize);
+                return Convert.ToBase64String(hash);
+            }
+        }
+        public static bool VerifyPassword(string enteredClientHex, string storedHash, string salt)
+        {
+            string hashOfInput = HashClientPassword(enteredClientHex, salt);
+            return hashOfInput == storedHash;
+        }
+
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
@@ -102,7 +129,7 @@ namespace LibraryMangement.Controllers
             }
 
             // 2️⃣ Find user by username/email
-            var user = db.Users.FirstOrDefault(u => u.Username == model.Username);
+            var user = db.tblUsers.Where(u => u.Email == model.Username || u.Username == model.Username ).FirstOrDefault();
             if (user == null)
             {
                 ViewBag.ErrorMessage = "Email ID not found";
@@ -110,27 +137,32 @@ namespace LibraryMangement.Controllers
             }
 
             // 3️⃣ Decrypt stored password
-            string decryptedPassword = SecureHelper.Decrypt(user.PasswordHash);
+            //string decryptedPassword = SecureHelper.Decrypt(user.PasswordHash);
 
             // 4️⃣ Compare decrypted password with input
-            if (decryptedPassword != model.Password)
+            if (!VerifyPassword(model.Password,user.PasswordHash,user.PasswordSalt))
             {
                 ViewBag.ErrorMessage = "Invalid password";
                 return View(model);
             }
 
             // 5️⃣ Store UserID and Role in session
-            Session["UserID"] = user.Username;
-            Session["Role"] = user.Role;
+            Session["UserID"] = user.UserID;
+            Session["UserName"] = user.Email;
+            Session["Role"] =  user.tblUserRoles.FirstOrDefault().tblRole.RoleName;
 
             // 6️⃣ Redirect based on Role
-            if (user.Role == "Librarian")
+            if (user.tblUserRoles.FirstOrDefault().tblRole.RoleName == "Librarian")
             {
                 return RedirectToAction("LibrarianDashboard", "Librarian");
             }
-            else // assume Patron
+            else if (user.tblUserRoles.FirstOrDefault().tblRole.RoleName == "Faculty")
             {
                 return RedirectToAction("PatronDashboard", "Patron");
+            }
+            else
+            {
+              return RedirectToAction("PatronDashboard", "Patron");
             }
         }
 
@@ -138,7 +170,7 @@ namespace LibraryMangement.Controllers
 
         public bool ValidateUser(string email, string dobInput)
         {
-            var user = db.Users.FirstOrDefault(u => u.PasswordHash == email);
+            var user = db.tblUsers.FirstOrDefault(u => u.PasswordHash == email);
             if (user == null) return false;
 
             // Normalize DOB format
@@ -159,10 +191,10 @@ namespace LibraryMangement.Controllers
             return RedirectToAction("Login", "Login");
         }
 
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
+    
+
+
+
 
     }
 }

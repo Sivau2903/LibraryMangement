@@ -1,0 +1,46 @@
+﻿
+
+
+@model IEnumerable<LibraryMangement.Models.FineReportViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Fine Report";
+}
+
+<h2 class="text-center my-4">Fine Report</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No fine records found for your library category.
+    </div>
+}
+else
+{
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patron</th>
+            <th>Material</th>
+            <th>Amount</th>
+            <th>Reason</th>
+            <th>Applied Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fine in Model)
+        {
+            <tr>
+                <td>@fine.PatronName</td>
+                <td>@fine.MaterialTitle</td>
+                <td>@fine.Amount.ToString("C")</td>
+                <td>@fine.Reason</td>
+                <td>@fine.AppliedDate?.ToString("dd-MMM-yyyy")</td>
+                <td>@fine.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}

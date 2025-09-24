@@ -4,10 +4,32 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Overdue Reports";
 }
+<style>
+    @@media (min-width: 768px) {
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 13%;
+    }
+}
+</style>
 
-<h2>Overdue Materials</h2>
+<h2 class="text-center my-4">Overdue Materials Report</h2>
 
-<table class="table">
+<form method="get" action="@Url.Action("OverdueReports", "Librarian")" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label">From Date</label>
+        <input type="date" class="form-control" name="fromDate" value="@Request.QueryString["fromDate"]" style="width:200px;"/>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">To Date</label>
+        <input type="date" class="form-control" name="toDate" value="@Request.QueryString["toDate"]" style="width:200px; margin-right:auto;" />
+    </div>
+    <div class="col-md-3 align-self-end">
+        <button type="submit" class="btn btn-primary" style="margin-left:3px;">Filter</button>
+    </div>
+</form>
+
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Patron Name</th>

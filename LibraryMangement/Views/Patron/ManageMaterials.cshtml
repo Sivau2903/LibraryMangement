@@ -3,66 +3,143 @@
 @{
     Layout = "~/Views/Shared/_PatronLayout.cshtml";
     ViewBag.Title = "Manage Materials";
-    var cart = ViewBag.CartMaterialIDs as List<int> ?? new List<int>();
+    var activeTab = ViewBag.ActiveTab as string ?? "Simple";
+}
+<style>
+    @@media (min-width: 768px) {
+        .col-md-10 {
+            flex: 0 0 auto;
+            width: 40.333333%;
+        }
+    }
+</style>
+<h2>Manage Materials</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<div class="row">
+    <!-- Side Tabs -->
+    <div class="col-md-2">
+        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button class="nav-link @(activeTab=="Simple"?"active":"")" id="v-pills-simple-tab" data-bs-toggle="pill" data-bs-target="#v-pills-simple" type="button" role="tab">Simple Search</button>
+            <button class="nav-link @(activeTab=="Advanced"?"active":"")" id="v-pills-advanced-tab" data-bs-toggle="pill" data-bs-target="#v-pills-advanced" type="button" role="tab">Advanced Search</button>
+        </div>
+    </div>
 
+    <!-- Tab Content -->
+    <div class="col-md-10">
+        <div class="tab-content" id="v-pills-tabContent">
 
-<div class="card shadow-sm border-0">
-    <div class="card-body">
-        <table id="Materials" class="table table-hover table-striped display" style="width:100%">
-            <thead class="table-primary text-uppercase small">
-                <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Edition</th>
-                    <th>Description</th>
-                    <th>Publishers</th>
-                    <th>Year</th>
-                    <th>Pages</th>
-                    <th>Volume</th>
-                    
-                    <th>Available Qty</th>
-                   
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var material in Model)
+            <!-- Simple Search Tab -->
+            <div class="tab-pane fade @(activeTab=="Simple"?"show active":"")" id="v-pills-simple" role="tabpanel">
+                @using (Html.BeginForm("ManageMaterials", "Patron", FormMethod.Get))
                 {
-                    bool inCart = cart.Contains(material.MaterialID);
+                    <div class="input-group mb-3">
+                        <select class="form-select" name="searchField" style="max-width: 180px;">
+                            <option value="Title">Title</option>
+                            <option value="ISBN">ISBN</option>
+                            <option value="Author">Author</option>
+                            <option value="MaterialType">MaterialType</option>
+                            <option value="Year">Year</option>
+                        </select>
+                        <input type="text" name="searchText" class="form-control" placeholder="Enter keyword..." />
+                        <button type="submit" class="btn btn-secondary" name="clear" value="true">Clear</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
 
-                <tr>
-                    <td>@material.Title</td>
-                    <td>@material.Author</td>
-                    <td>@material.Edition</td>
-                    <td>@material.Description</td>
-                    <td>@material.PlaceofPublishers</td>
-                    <td>@material.YearPublished</td>
-                    <td>@material.Pages</td>
-                    <td>@material.Vol</td>
-
-                    <td>@material.AvailableQuantity</td>
-
-
-                    <td>
-                        @if (material.AvailableQuantity > 0 && !cart.Contains(material.MaterialID))
-                        {
-                            <a class="btn btn-sm btn-primary" href="@Url.Action("AddToCart", new { id = material.MaterialID })">Add to Cart</a>
-                        }
-                        else if (cart.Contains(material.MaterialID))
-                        {
-                            <button class="btn btn-sm btn-secondary" disabled>Already in Cart</button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-sm btn-danger" disabled>No Stock</button>
-                        }
-                    </td>
-                </tr>
+                    </div>
                 }
-            </tbody>
-        </table>
+
+                @Html.Partial("_MaterialsTable", Model)
+            </div>
+
+            <!-- Advanced Search Tab -->
+            <div class="tab-pane fade @(activeTab=="Advanced"?"show active":"")" id="v-pills-advanced" role="tabpanel">
+                <form method="post" action="@Url.Action("AdvancedSearchThreeKeywords", "Patron")" id="advancedSearchForm">
+                    <div class="card p-4 shadow-sm border-0 mb-4">
+                        <h5 class="mb-4">Advanced Search</h5>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-sm-2 col-form-label">Keyword 1 Field</label>
+                            <div class="col-sm-4">
+                                <select name="field1" class="form-select">
+                                    <option value="">Select Field</option>
+                                    @foreach (var field in ViewBag.KeywordFields as List<string>)
+                                    {
+                                        <option value="@field">@field</option>
+                                    }
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">Keyword 1 Value</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="keyword1" class="form-control" placeholder="Enter keyword 1..." />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-sm-2 col-form-label">Keyword 2 Field</label>
+                            <div class="col-sm-4">
+                                <select name="field2" class="form-select">
+                                    <option value="">Select Field</option>
+                                    @foreach (var field in ViewBag.KeywordFields as List<string>)
+                                    {
+                                        <option value="@field">@field</option>
+                                    }
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">Keyword 2 Value</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="keyword2" class="form-control" placeholder="Enter keyword 2..." />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-sm-2 col-form-label">Keyword 3 Field</label>
+                            <div class="col-sm-4">
+                                <select name="field3" class="form-select">
+                                    <option value="">Select Field</option>
+                                    @foreach (var field in ViewBag.KeywordFields as List<string>)
+                                    {
+                                        <option value="@field">@field</option>
+                                    }
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">Keyword 3 Value</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="keyword3" class="form-control" placeholder="Enter keyword 3..." />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-secondary" name="clear" value="true">Clear</button>
+                            <button type="submit" class="btn btn-primary">Search</button>
+                            @*<button type="submit" class="btn btn-secondary" name="clear" value="true">Clear</button>*@
+
+                        </div>
+                    </div>
+                </form>
+
+
+
+                <div id="materialsTableContainer">
+                    @if (Model != null && Model.Any())
+                    {
+                        @Html.Partial("_MaterialsTable", Model)
+                    }
+                    else
+                    {
+                        <p class="text-center text-muted">Please perform a search to view materials.</p>
+                    }
+                </div>
+            </div>
+
+
+        </div>
     </div>
 </div>
 
@@ -70,16 +147,16 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#Materials').DataTable({
+            $('#MaterialsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
                 info: true,
                 responsive: true,
-                columnDefs: [
-                    { orderable: false, targets: 9 } // Disable sorting for Actions column
-                ]
+                columnDefs: [{ orderable: false, targets: 10 }] // Status Action
             });
+
         });
+
     </script>
 }

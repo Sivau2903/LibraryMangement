@@ -1,0 +1,51 @@
+﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+
+@{
+    Layout = "~/Views/Shared/_PatronLayout.cshtml";
+    ViewBag.Title = "My Booking List";
+}
+
+<h1 class="text-center my-4">DueList</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary text-uppercase small">
+            <tr>
+                <th>Material Title</th>
+                <th>Requested Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>FineAmount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.Material.Title</td>
+                    <td>@booking.RequestedDate</td>
+                    <td>@booking.DueDate</td>
+                    <td style="color:red; font-weight:bold;">@booking.Status</td>
+                    <td>
+                        @booking.FineAmount
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-center text-muted">Your Due list is empty.</p>
+}

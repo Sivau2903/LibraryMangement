@@ -18,7 +18,9 @@ namespace LibraryMangement.Models
         public MaterialCopy()
         {
             this.BarcodeHistories = new HashSet<BarcodeHistory>();
+            this.BarcodeHistories1 = new HashSet<BarcodeHistory>();
             this.Circulations = new HashSet<Circulation>();
+            this.Circulations1 = new HashSet<Circulation>();
         }
     
         public int CopyID { get; set; }
@@ -27,12 +29,17 @@ namespace LibraryMangement.Models
         public string BarcodeNumber { get; set; }
         public string CallNumber { get; set; }
         public string Status { get; set; }
-        public Nullable<int> UniversityID { get; set; }
+        public string UniversityID { get; set; }
+        public Nullable<int> LibraryCategoryID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories { get; set; }
-        public virtual Material Material { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BarcodeHistory> BarcodeHistories1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Circulation> Circulations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Circulation> Circulations1 { get; set; }
+        public virtual Material Material { get; set; }
     }
 }

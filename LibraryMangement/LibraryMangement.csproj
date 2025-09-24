@@ -60,9 +60,24 @@
     <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.System.Drawing.6.1.1\lib\net462\EPPlus.System.Drawing.dll</HintPath>
     </Reference>
+    <Reference Include="Hangfire.Core, Version=1.8.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.8.21\lib\net46\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.8.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.8.21\lib\net451\Hangfire.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.1.4.1\lib\net46\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.2.3\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.2.3\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -149,35 +164,37 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ActiveBookingViewModel.cs" />
+    <Compile Include="Models\ActiveIssueViewModel.cs" />
     <Compile Include="Models\Author.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BarcodeHistory.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CartItem.cs">
+    <Compile Include="Models\Bookinglisted.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CartItemViewModel.cs" />
-    <Compile Include="Models\Cataloguing.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CheckoutViewModel.cs" />
+    <Compile Include="Models\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Circulation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CirculationDisplay.cs" />
     <Compile Include="Models\FineDetail.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\IssuanceRequest.cs">
+    <Compile Include="Models\FineReason.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\IssuanceRequestItemViewModel.cs" />
-    <Compile Include="Models\IssuanceRequestViewModel.cs" />
+    <Compile Include="Models\FineReasonDTO.cs" />
+    <Compile Include="Models\FineReportViewModel.cs" />
     <Compile Include="Models\Librarian.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\LibrarianDashboardViewModel.cs" />
+    <Compile Include="Models\Librarycatgeory.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\Material.cs">
       <DependentUpon>Model1.tt</DependentUpon>
@@ -187,6 +204,10 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MaterialCopyViewModel.cs" />
+    <Compile Include="Models\MaterialType.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MaterialTypeCount.cs" />
     <Compile Include="Models\MaterialUploadModel.cs" />
     <Compile Include="Models\MaterialViewModel.cs" />
     <Compile Include="Models\Model1.Context.cs">
@@ -204,24 +225,32 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Model1.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\MyProfileViewModel.cs" />
     <Compile Include="Models\Patron.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PatronDashboardViewModel.cs" />
-    <Compile Include="Models\Report.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Reservation.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\ReturnMaterialViewModel.cs" />
     <Compile Include="Models\SecureHelper.cs" />
-    <Compile Include="Models\University.cs">
+    <Compile Include="Models\tblRole.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\User.cs">
+    <Compile Include="Models\tblUniversity.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\tblUser.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\tblUserRole.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\tblUserUniversity.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\LibraryService.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -234,8 +263,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
       <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\Model1.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -294,8 +323,28 @@
     <Content Include="Views\Librarian\EditMaterialCopy.cshtml" />
     <Content Include="Views\Shared\_PatronLayout.cshtml" />
     <Content Include="Views\Patron\ManageMaterials.cshtml" />
-    <Content Include="Views\Patron\Cart.cshtml" />
-    <Content Include="Views\Patron\Checkout.cshtml" />
+    <Content Include="Views\Patron\_MaterialsTable.cshtml" />
+    <Content Include="Views\Patron\ReservationConfirmation.cshtml" />
+    <Content Include="Views\Librarian\_ConfirmFineModal.cshtml" />
+    <Content Include="Views\Librarian\_MaterialsTable.cshtml" />
+    <Content Include="Views\Librarian\AddAuthor.cshtml" />
+    <Content Include="Views\Librarian\AddFineReason.cshtml" />
+    <Content Include="Views\Librarian\AddMaterialType.cshtml" />
+    <Content Include="Views\Login\MyProfile.cshtml" />
+    <Content Include="Views\Librarian\BookingList.cshtml" />
+    <Content Include="Views\Patron\MyBookingList.cshtml" />
+    <Content Include="Views\Librarian\ChangePassword.cshtml" />
+    <Content Include="Views\Patron\ChangePassword.cshtml" />
+    <Content Include="Views\Librarian\MyProfile.cshtml" />
+    <Content Include="Views\Patron\MyProfile.cshtml" />
+    <Content Include="Views\Patron\IssuedHistory.cshtml" />
+    <Content Include="Views\Patron\MyReservations.cshtml" />
+    <Content Include="Views\Patron\OverdueList.cshtml" />
+    <Content Include="Views\Librarian\PendingReservations.cshtml" />
+    <Content Include="Views\Librarian\ActiveIssues.cshtml" />
+    <Content Include="Views\Librarian\Overduelist.cshtml" />
+    <Content Include="Views\Librarian\PatronLists.cshtml" />
+    <Content Include="Views\Librarian\FineReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

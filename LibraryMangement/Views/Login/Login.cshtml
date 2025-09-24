@@ -6,10 +6,10 @@
 
 <div class="login-wrapper">
     <div class="login-card">
-      
+
         <h2>Login</h2>
 
-        @using (Html.BeginForm("Login", "Login", FormMethod.Post))
+        @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { id = "loginForm" }))
         {
             <!-- Username -->
             <div class="form-group">
@@ -137,3 +137,33 @@
             transform: translateY(-2px);
         }
 </style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+
+<script>
+    function refreshCaptcha() {
+        $('#captchaImage').attr('src', '@Url.Action("CaptchaImage","Account")?t=' + new Date().getTime());
+    }
+
+    // Hash password client-side before submit
+    $('#loginForm').submit(function () {
+        const passwordInput = $('input[name="Password"]');
+        if (passwordInput.val()) {
+            // Convert password → SHA256 → hex
+            const hashedHex = CryptoJS.SHA256(passwordInput.val()).toString(CryptoJS.enc.Hex);
+            passwordInput.val(hashedHex);
+        }
+    });
+
+
+    // Toastr notifications
+    @if (TempData["Error"] != null)
+    {
+        <text>toastr.error("@TempData["Error"]");</text>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <text>toastr.success("@TempData["Success"]");</text>
+    }
+</script>

@@ -13,10 +13,10 @@ namespace LibraryMangement.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class LMSEntities : DbContext
+    public partial class ICFAISMSEntities : DbContext
     {
-        public LMSEntities()
-            : base("name=LMSEntities")
+        public ICFAISMSEntities()
+            : base("name=ICFAISMSEntities")
         {
         }
     
@@ -25,20 +25,22 @@ namespace LibraryMangement.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<tblUniversity> tblUniversities { get; set; }
+        public virtual DbSet<tblUserRole> tblUserRoles { get; set; }
+        public virtual DbSet<tblUser> tblUsers { get; set; }
+        public virtual DbSet<tblUserUniversity> tblUserUniversities { get; set; }
+        public virtual DbSet<tblRole> tblRoles { get; set; }
+        public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<BarcodeHistory> BarcodeHistories { get; set; }
         public virtual DbSet<FineDetail> FineDetails { get; set; }
-        public virtual DbSet<Librarian> Librarians { get; set; }
+        public virtual DbSet<FineReason> FineReasons { get; set; }
+        public virtual DbSet<MaterialType> MaterialTypes { get; set; }
+        public virtual DbSet<Librarycatgeory> Librarycatgeories { get; set; }
         public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
-        public virtual DbSet<Patron> Patrons { get; set; }
-        public virtual DbSet<Report> Reports { get; set; }
-        public virtual DbSet<Reservation> Reservations { get; set; }
-        public virtual DbSet<University> Universities { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Cataloguing> Cataloguings { get; set; }
-        public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<Material> Materials { get; set; }
-        public virtual DbSet<CartItem> CartItems { get; set; }
-        public virtual DbSet<IssuanceRequest> IssuanceRequests { get; set; }
         public virtual DbSet<Circulation> Circulations { get; set; }
+        public virtual DbSet<Bookinglisted> Bookinglisteds { get; set; }
+        public virtual DbSet<Patron> Patrons { get; set; }
+        public virtual DbSet<Librarian> Librarians { get; set; }
     }
 }

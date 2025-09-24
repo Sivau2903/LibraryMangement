@@ -1,0 +1,42 @@
+﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+
+@{
+    Layout = "~/Views/Shared/_PatronLayout.cshtml";
+    ViewBag.Title = "My Booking List";
+}
+
+<h2 class="text-center my-4">Issued History List</h2>
+
+
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary text-uppercase small">
+            <tr>
+                <th>Material Title</th>
+                <th>Requested Date</th>
+                <th>Issued Date</th>
+                <th>Return Date</th>
+                <th>Fine Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.Material.Title</td>
+                    <td>@booking.RequestedDate</td>
+                    <td>@booking.IssueDate</td>
+                    <td>@booking.ReturnDate</td>
+                    <td>@booking.FineAmount</td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-center text-muted">Your booking list is empty.</p>
+}

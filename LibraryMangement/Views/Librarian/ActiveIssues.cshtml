@@ -1,0 +1,56 @@
+﻿@model IEnumerable<LibraryMangement.Models.ActiveIssueViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Active Issues";
+}
+
+<h2 class="text-center my-4">Active Issues</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No active issues found.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Issue ID</th>
+                <th>Material Title</th>
+                <th>Patron</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var issue in Model)
+            {
+                <tr>
+                    <td>@issue.CirculationID</td>
+                    <td>@issue.MaterialTitle </td>
+                    <td>@issue.PatronName </td>
+                    <td>@issue.IssueDate</td>
+                    <td>@issue.DueDate</td>
+                    <td>
+                        <span class="badge bg-success">Issued</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="@Url.Action("ReturnMaterial", "Librarian", new { id = issue.CirculationID })"
+                           class="btn btn-sm btn-danger">
+                            Return
+                        </a>
+                        <a href="@Url.Action("ReturnMaterial", "Librarian", new { id = issue.CirculationID })"
+                           class="btn btn-sm btn-warning">
+                            Renew
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

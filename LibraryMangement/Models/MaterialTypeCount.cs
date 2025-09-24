@@ -5,9 +5,9 @@ using System.Web;
 
 namespace LibraryMangement.Models
 {
-    public class CheckoutViewModel
+    public class MaterialTypeCount
     {
-        public List<int> MaterialIDs { get; set; }
+        public string MaterialType { get; set; }
+        public int Count { get; set; }
     }
-
 }

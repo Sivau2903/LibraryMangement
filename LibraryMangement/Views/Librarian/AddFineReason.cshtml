@@ -1,0 +1,98 @@
+﻿@model List<LibraryMangement.Models.FineReason>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Add / Update Fine Reason";
+}
+
+<h2 class="text-center my-4">Manage Fine Reasons</h2>
+
+<div class="row">
+    <!-- Left side: Existing Fine Reasons -->
+    <div class="col-md-6">
+        <h4>Existing Fine Reasons</h4>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Reason</th>
+                    <th>Fine Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Reason</td>
+                            <td>@item.FineAmount</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2" class="text-center text-muted">No fine reasons added yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Right side: Add / Update Form -->
+    <div class="col-md-6">
+        <h4>Add or Update Fine Reason</h4>
+
+        <form method="post" action="@Url.Action("AddFineReason", "Librarian")">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">Select Existing Reason (optional)</label>
+                <select class="form-select" id="existingReason" onchange="fillReasonText()">
+                    <option value="">-- Select existing reason --</option>
+                    @foreach (var reason in Model)
+                    {
+                        <option value="@reason.Reason">@reason.Reason</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fine Reason</label>
+                <input type="text" class="form-control" id="ReasonText" name="ReasonText" placeholder="Enter or select reason" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fine Amount</label>
+                <input type="number" class="form-control" name="FineAmount" step="0.01" placeholder="Enter fine amount" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mt-3">
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger mt-3">
+                @Html.ValidationSummary()
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function fillReasonText() {
+            var selected = document.getElementById("existingReason").value;
+            if (selected) {
+                document.getElementById("ReasonText").value = selected;
+            }
+        }
+    </script>
+}

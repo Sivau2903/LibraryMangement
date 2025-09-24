@@ -24,7 +24,10 @@ namespace LibraryMangement.Models
         public string PlaceofPublishers { get; set; }
         public decimal? Price { get; set; }
         public string CallNumber { get; set; } // Optional
-
+        public object LibraryCategoryName { get; internal set; }
+        public string DepID { get; internal set; }
+        public List<MaterialType> MaterialTypes { get; set; }  // For dropdown
+        public int? LibraryCategoryID { get; internal set; }
     }
 
 }

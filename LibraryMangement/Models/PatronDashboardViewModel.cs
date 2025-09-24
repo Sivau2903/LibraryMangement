@@ -12,8 +12,9 @@ namespace LibraryMangement.Models
         public int ActiveIssuedCount { get; set; }
         public int OverdueCount { get; set; }
         public int PendingReservations { get; set; }
+        public int PendingBookings { get; set; }
         public IEnumerable<Circulation> ActiveIssues { get; set; }
-        public IEnumerable<Reservation> PendingReservationList { get; set; }
+        public IEnumerable<Bookinglisted> PendingBookingList { get; set; }
     }
 
 }

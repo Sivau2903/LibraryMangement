@@ -1,14 +1,164 @@
-﻿@{
+﻿@model LibraryMangement.Models.ReturnMaterialViewModel
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Return Material";
+    ViewBag.Title = "Return / Renew Material";
 }
 
-<h2>Return Material</h2>
+<h2 class="text-center my-4">Return or Renew Material</h2>
 
-<form method="post" action="@Url.Action("ReturnMaterial")">
-    <div>
-        <label>Material Copy Barcode Number:</label>
-        <input type="text" name="barcodeNumber" required />
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["Success"]
     </div>
-    <button type="submit">Return Material</button>
+}
+
+<!-- Barcode Fetch Form -->
+<form method="post" action="@Url.Action("ReturnMaterial")">
+    @Html.AntiForgeryToken()
+    <label for="barcodeInput" class="form-label me-2">Enter Barcode Number</label>
+    <div class="mb-3 d-flex align-items-center">
+
+        <input type="text" class="form-control me-2" id="barcodeInput" name="barcodeNumber"
+               value="@Model.BarcodeNumber" placeholder="Enter barcode..." required style="width:20%" />
+        <button type="submit" class="btn btn-primary">Fetch Details</button>
+    </div>
 </form>
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary()
+    </div>
+}
+
+<hr />
+
+@if (Model.CirculationDisplay != null)
+{
+    <h3>Material Issue Details</h3>
+    <table class="table table-bordered table-striped">
+        <tr><th>Title</th><td>@Model.CirculationDisplay.Title</td></tr>
+        <tr><th>Requested Date</th><td>@Model.CirculationDisplay.RequestedDate</td></tr>
+        <tr><th>Issue Date</th><td>@Model.CirculationDisplay.IssueDate</td></tr>
+        <tr><th>Due Date</th><td>@Model.CirculationDisplay.DueDate</td></tr>
+        <tr><th>Status</th><td>@Model.CirculationDisplay.Status</td></tr>
+        <tr>
+            <th>Overdue Fine</th>
+            <td>
+                @(Model.CirculationDisplay.FineAmount > 0 ? Model.CirculationDisplay.FineAmount.ToString("C") : "Nill")
+            </td>
+        </tr>
+    </table>
+
+    <!-- Direct Return/Renew Form -->
+    <form method="post" action="@Url.Action("ProcessReturnRenew")">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="CirculationID" value="@Model.CirculationDisplay.CirculationID" />
+        <input type="hidden" name="fineAmount" id="fineAmount" value="@Model.CalculatedFineAmount:0.00" />
+        <input type="hidden" name="FineReason" id="fineReasonValue" />
+        <input type="hidden" name="action" id="actionType" />
+
+        <div class="mb-3">
+            <label class="form-label">Add Extra Fine (Optional)</label>
+            <select class="form-select" id="fineReasonSelect">
+                <option value="">-- Select Reason --</option>
+                @foreach (var reason in Model.FineReason)
+                {
+                    <option value="@reason.Value" data-fine="@reason.FinePerDay">@reason.ReasonText</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Total Fine Amount</label>
+            <input type="text" class="form-control" id="displayFineAmount"
+                   value="@(Model.CalculatedFineAmount > 0 ? Model.CalculatedFineAmount.ToString("0.00") : "Nill")" readonly />
+        </div>
+
+        <div class="d-flex gap-2 mb-4">
+            <button type="submit" class="btn btn-success" onclick="setAction('ReturnPaid')">Return & Paid</button>
+            <button type="submit" class="btn btn-danger" onclick="setAction('ReturnUnpaid')">Return & Unpaid</button>
+            <button type="submit" class="btn btn-warning" onclick="setAction('Renew')">Renew Due Date</button>
+        </div>
+    </form>
+}
+else
+{
+    @*<p class="text-center text-muted mt-4">
+        Please enter a barcode and fetch details to return or renew a material.
+    </p>*@
+}
+
+@section Scripts {
+    <!-- jQuery UI CSS and JS (make sure jQuery is already loaded in layout) -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        // Autocomplete for barcode input
+        $(function () {
+            $("#barcodeInput").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetIssuedBarcodes", "Librarian", new { area = "" })',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { term: request.term },
+                        success: response,
+                        error: function (xhr, status, error) {
+                            console.log("Autocomplete error:", status, error);
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    console.log("Selected barcode:", ui.item.value);
+                }
+            });
+        });
+
+        // Fine calculation logic
+        const fineSelect = document.getElementById('fineReasonSelect');
+        const displayFine = document.getElementById('displayFineAmount');
+        const hiddenFineInput = document.getElementById('fineAmount');
+        const hiddenReasonInput = document.getElementById('fineReasonValue');
+        const baseFine = parseFloat('@Model.CalculatedFineAmount') || 0;
+
+        fineSelect.addEventListener('change', function () {
+            const selectedOption = fineSelect.selectedOptions[0];
+            const extraFine = parseFloat(selectedOption?.dataset.fine) || 0;
+            const totalFine = baseFine + extraFine;
+            displayFine.value = totalFine.toFixed(2);
+            hiddenFineInput.value = totalFine.toFixed(2);
+            hiddenReasonInput.value = selectedOption.value;
+        });
+
+        // Set action type and payment status
+        function setAction(type) {
+            const actionInput = document.querySelector('input[name="action"]');
+            let paymentStatusInput = document.querySelector('input[name="paymentStatus"]');
+
+            if (!paymentStatusInput) {
+                paymentStatusInput = document.createElement('input');
+                paymentStatusInput.type = 'hidden';
+                paymentStatusInput.name = 'paymentStatus';
+                document.querySelector('form[action$="ProcessReturnRenew"]').appendChild(paymentStatusInput);
+            }
+
+            if (type === "ReturnPaid") {
+                actionInput.value = "Return";
+                paymentStatusInput.value = "Paid";
+            } else if (type === "ReturnUnpaid") {
+                actionInput.value = "Return";
+                paymentStatusInput.value = "Unpaid";
+            } else if (type === "Renew") {
+                actionInput.value = "Renew";
+            }
+        }
+    </script>
+}
