@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Assign Role";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px;">
+        <h3 class="text-center mb-4 text-primary">Assign Role to Employee</h3>
+
+        @using (Html.BeginForm("AssignRole", "Librarian", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group mb-3">
+                <label class="fw-bold">Employee</label>
+                @Html.DropDownList("employeeId", (SelectList)ViewBag.Employees, "Select Employee",
+                    new { @class = "form-control" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="fw-bold">Role</label>
+                @Html.DropDownList("roleId", (SelectList)ViewBag.Roles, "Select Role",
+                    new { @class = "form-control" })
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">Assign Role</button>
+            </div>
+        }
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mt-3">@TempData["Success"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mt-3">@TempData["Error"]</div>
+        }
+    </div>
+</div>
+
+<style>
+    .form-control {
+        border-radius: 8px;
+    }
+</style>

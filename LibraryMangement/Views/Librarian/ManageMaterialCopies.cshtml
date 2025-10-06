@@ -5,18 +5,19 @@
     ViewBag.Title = "Manage Material Copies";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+@*<div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-primary">Manage Material Copies</h2>
     <a class="btn btn-success shadow-sm" href="@Url.Action("AddMaterialCopy", "Librarian")">
         <i class="bi bi-plus-lg me-1"></i> Add New Copy
     </a>
-</div>
+</div>*@
 
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <table id="MaterialCopiesTable" class="table table-hover table-striped display nowrap" style="width:100%">
             <thead class="table-primary text-uppercase small">
                 <tr>
+                    <th>Material ID</th>
                     <th>Material Title</th>
                     <th>Account Number</th>
                     <th>Barcode Number</th>
@@ -29,6 +30,7 @@
                 @foreach (var copy in Model)
                 {
                     <tr>
+                        <td>@copy.MaterialID</td>
                         <td class="fw-semibold">@copy.Material.Title</td>
                         <td>@copy.AccountNumber</td>
                         <td>@copy.BarcodeNumber</td>

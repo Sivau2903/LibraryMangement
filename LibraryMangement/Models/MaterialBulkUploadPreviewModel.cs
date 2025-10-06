@@ -25,7 +25,8 @@ namespace LibraryMangement.Models
         public decimal? Price { get;  set; }
         public string Source { get;  set; }
         public string Vol { get;  set; }
-        public int? Pages { get;  set; }
+        public int? Pages { get; set; }
+
         public string AccountNumber { get; internal set; }
         public bool IsDeleted { get; internal set; }
     }

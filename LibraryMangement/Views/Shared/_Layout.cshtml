@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var role = Session["Role"] != null ? Session["Role"].ToString() : "";
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -6,14 +9,10 @@
     <title>@ViewBag.Title - Librarian Dashboard</title>
 
     <!-- Bootstrap CSS -->
-   
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-
 
     <style>
         body {
@@ -26,7 +25,7 @@
         .sidebar {
             min-width: 250px;
             max-width: 250px;
-            background-color: #1f2937; /* Darker shade for modern look */
+            background-color: #1f2937;
             color: white;
             min-height: 86vh;
             box-shadow: 2px 0 5px rgba(0,0,0,0.2);
@@ -50,6 +49,7 @@
 
                 .sidebar a:hover {
                     background-color: white;
+                    color: #1f2937;
                     text-decoration: none;
                     padding-left: 20px;
                 }
@@ -72,11 +72,9 @@
             text-align: center;
             padding: 10px 1px;
             font-size: 0.9rem;
-            position: page;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Navbar Brand */
         .navbar-brand {
             font-weight: bold;
         }
@@ -92,12 +90,24 @@
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #0d6efd, #6610f2);">
         <div class="container-fluid">
+            <!-- Brand -->
             <a class="navbar-brand fw-bold fs-4" href="@Url.Action("LibrarianDashboard", "Librarian")">
                 ICFAI Library Admin
             </a>
-            <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav align-items-center">
-                    <!-- Profile Dropdown -->
+
+            <!-- Breadcrumbs + Profile wrapped in one flex container -->
+            <div class="d-flex align-items-center">
+
+                <!-- Breadcrumbs -->
+                @if (ViewBag.Breadcrumbs != null)
+                {
+                    <div class="me-2">
+                        @Html.Partial("_Breadcrumb", (List<LibraryMangement.Models.BreadcrumbItem>)ViewBag.Breadcrumbs)
+                    </div>
+                }
+
+                <!-- Profile Dropdown -->
+                <ul class="navbar-nav align-items-center ms-3">
                     <li class="nav-item dropdown">
                         <a class="nav-link fw-bold fs-4 dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
@@ -111,73 +121,87 @@
                         </ul>
                     </li>
                 </ul>
+
             </div>
+
         </div>
     </nav>
+
 
     <div class="d-flex">
         <!-- Sidebar Menu -->
         <div class="sidebar" id="sidebar">
             <h5 class="mb-4" style="color:white">Menu</h5>
             <ul class="nav flex-column">
-
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("LibrarianDashboard", "Librarian")"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
 
-                <!-- Circulations Dropdown (Flattened) -->
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#circulationMenu" role="button" aria-expanded="false" aria-controls="circulationMenu">
-                        <span><i class="bi bi-arrow-repeat"></i> Circulations</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </a>
-                    <div class="collapse ps-3" id="circulationMenu">
-                        <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("IssueMaterial", "Librarian")">Issue Material</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial", "Librarian")">Return Material</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial", "Librarian")">Renew Material</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingList", "Librarian")">Holds & Book Lists</a></li>
-                            @*<li class="nav-item"><a class="nav-link" href="@Url.Action("OverdueReports", "Librarian")">Issue Report</a></li>*@
+                @* Show Circulation only if role is NOT Librarian *@
+                @*@if (role != "Librarian")
+                {*@
+                    <li class="nav-item mb-2">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#circulationMenu" role="button" aria-expanded="false" aria-controls="circulationMenu">
+                            <span><i class="bi bi-arrow-repeat"></i> Circulations</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse ps-3" id="circulationMenu">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("IssueMaterial", "Librarian")">Issue Material</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial", "Librarian")">Return Material</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial", "Librarian")">Renew Material</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingList", "Librarian")">Holds & Book Lists</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                
 
-                        </ul>
-                    </div>
-                </li>
+                @* Show Manage Materials only if role is NOT AssistantLibrarian *@
+                @*@if (role != "AssistantLibrarian")
+                {*@
+                    <li class="nav-item mb-2">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageMaterials" role="button" aria-expanded="false" aria-controls="manageMaterials">
+                            <span><i class="bi bi-archive"></i> Manage Materials</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse ps-3" id="manageMaterials">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterials", "Librarian")">Manage Materials</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterialCopies", "Librarian")">Manage Material Copies</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                
 
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageMaterials" role="button" aria-expanded="false" aria-controls="manageMaterials">
-                        <span><i class="bi bi-arrow-repeat"></i> Manage Materials</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </a>
-                    <div class="collapse ps-3" id="manageMaterials">
-                        <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterials", "Librarian")">Manage Materials</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterialCopies", "Librarian")">Manage Material Copies</a></li>
-
-                        </ul>
-                    </div>
-                </li>
                 <li class="nav-item mb-2">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportmenue" role="button" aria-expanded="false" aria-controls="reportmenue">
-                        <span><i class="bi bi-arrow-repeat"></i> Reports</span>
+                        <span><i class="bi bi-file-earmark-bar-graph"></i> Reports</span>
                         <i class="bi bi-chevron-down"></i>
                     </a>
                     <div class="collapse ps-3" id="reportmenue">
                         <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("OverdueReports", "Librarian")">Overdue Report</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AvailabilityReport", "Librarian")">Availability Report</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("RequestReport", "Librarian")">Request Report</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("IssuedReport", "Librarian")">Issued Report</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("OverdueReports", "Librarian")">Overdue Reports</a></li>
                             <li class="nav-item"><a class="nav-link" href="@Url.Action("FineReport", "Librarian")">Fine Report</a></li>
-
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddAuthor", "Librarian")"><i class="bi bi-book"></i> Add Author</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddMaterialType", "Librarian")"><i class="bi bi-files"></i> Add Material Type</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-book"></i> Add Fine Reason</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-bookmark"></i> Add Fine Reason</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("BarcodeGeneration", "Librarian")"><i class="bi bi-upc-scan"></i> Barcode Generation</a></li>
-
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AssignRole", "Librarian")"><i class="bi bi-person-circle"></i> Assign Role</a></li>
             </ul>
         </div>
 
         <!-- Main Content Area -->
         <div class="content container-fluid">
+            <!-- 🔹 Breadcrumb Section -->
+
+
+
+
             @RenderBody()
         </div>
     </div>
@@ -187,9 +211,7 @@
         &copy; 2025 ICFAI Library Management System | Developed by Shiva
     </footer>
 
-
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     @RenderSection("Scripts", required: false)

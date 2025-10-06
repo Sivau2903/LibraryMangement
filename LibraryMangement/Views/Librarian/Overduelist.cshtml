@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+﻿@model IEnumerable<LibraryMangement.Models.OverdueViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -32,19 +32,16 @@ else
         <tbody>
             @foreach (var overdue in Model)
             {
-                var daysOver = (DateTime.Now - (overdue.DueDate ?? DateTime.Now)).Days;
-                var fine = (overdue.FineAmount ?? 0) > 0 ? (overdue.FineAmount ?? 0).ToString("C") : "0";
-
                 <tr>
                     <td>@overdue.CirculationID</td>
-                    <td>@overdue.Material?.Title</td>
-                    <td>@overdue.Patron?.FullName</td>
-                    <td>@overdue.IssueDate?.ToString("dd-MMM-yyyy")</td>
-                    <td>@overdue.DueDate?.ToString("dd-MMM-yyyy")</td>
-                    <td>@daysOver</td>
-                    <td>@fine</td>
+                    <td>@overdue.MaterialTitle</td>
+                    <td>@overdue.PatronName</td>
+                    <td>@overdue.IssueDate</td>
+                    <td>@overdue.DueDate</td>
+                    <td>@overdue.DaysOverdue</td>
+                    <td>@overdue.FineAmount.ToString("C")</td>
                     <td>
-                        <span class="badge bg-danger">Overdue</span>
+                        <span class="badge bg-danger">@overdue.Status</span>
                     </td>
                     <td class="text-center">
                         <a href="@Url.Action("ReturnMaterial", "Librarian", new { id = overdue.CirculationID })"
@@ -58,7 +55,6 @@ else
                     </td>
                 </tr>
             }
-
         </tbody>
     </table>
 }

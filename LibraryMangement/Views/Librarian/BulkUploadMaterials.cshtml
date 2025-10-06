@@ -58,7 +58,7 @@
         "Sl. No", "Acc.No.", "Call. No", "Title of the Book", "Author",
         "Place of Publishers", "Year", "Edition", "pages", "Vol.",
         "Source", "Price"
-        //, "Discription", "Publisher", "LibraryCategoryID"
+        //, "Discription", "Publisher", "SchoolID"
     ];
 
     document.getElementById('previewBtn').addEventListener('click', function () {
@@ -106,7 +106,7 @@
                 Price: parseFloat(row[11]) || null,
                 //Discription: row[12] || null,
                 //Publisher: row[13] || null,
-                //LibraryCategoryID: parseInt(row[14]) || null,
+                //SchoolID: parseInt(row[14]) || null,
                 IsDuplicate: false,
                 IsDeleted: false
             }));
@@ -123,7 +123,7 @@
         const tableHeaders = [
             "RowIndex", "AccountNumber", "CallNumber", "Title", "AuthorName", "PlaceofPublishers",
             "YearPublished", "Edition", "Pages", "Vol", "Source", "Price"
-            //, "Discription", "Publisher", "LibraryCategoryID"
+            //, "Discription", "Publisher", "SchoolID"
         ];
 
         let html = `<table class="table table-bordered mt-3"><thead><tr>`;
@@ -161,7 +161,7 @@
                 const key = this.dataset.key;
                 let value = this.value;
 
-                if (["Pages", "YearPublished", "AvailableQuantity", "TotalQuantity", "CopyCount", "RowIndex", "LibraryCategoryID"].includes(key)) {
+                if (["Pages", "YearPublished", "AvailableQuantity", "TotalQuantity", "CopyCount", "RowIndex", "SchoolID"].includes(key)) {
                     previewData[idx][key] = parseInt(value) || null;
                 } else if (key === "Price") {
                     previewData[idx][key] = parseFloat(value) || null;
@@ -171,10 +171,6 @@
             });
         });
     }
-
-
-
-
 
     document.getElementById('saveBtn').addEventListener('click', function () {
         if (!previewData.length) {

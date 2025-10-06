@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace LibraryMangement.Controllers
 {
-    public class PatronController : Controller
+    public class PatronController : HomeController
     {
         private readonly ICFAISMSEntities db = new ICFAISMSEntities();
         // GET: Patron
@@ -32,10 +32,11 @@ namespace LibraryMangement.Controllers
             string universityID = patron.tblUser.tblUserUniversities.FirstOrDefault()?.UniversityID;
             Session["PatronID"] = patron.PatronID;
             Session["UniversityID"] = patron.UniversityID;
+            Session["schoolID"] = patron.SchoolID;
 
-           
 
-            var model = new PatronDashboardViewModel
+
+			var model = new PatronDashboardViewModel
             {
                 PatronID = patron.PatronID,
                 PatronName = patron.PatronName,
@@ -63,31 +64,31 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("Login", "Login");
 
             //var universityId = db.Patrons
-            //                     .Where(l => l.PatronEmail == loggedInLibrarianId)
+            //                    .Where(l => l.PatronEmail == loggedInLibrarianId)
             //                     .Select(l => l.UniversityID)
             //                     .FirstOrDefault();
-            var universityId = Session["UniversityID"];  // Adjust depending on your logic
-
-
+            int schoolID = (int)Session["schoolID"];
             var model = new List<MaterialViewModel>();
 
             if (!string.IsNullOrEmpty(searchText))
             {
-                searchText = searchText.Trim().ToLower(); // normalize search
+                searchText = searchText.Trim().ToLower(); 
 
                 var materials = db.Materials
                                   .Include(m => m.Author)
-                                  .Include(m => m.Librarycatgeory)
-                                  .Where(m => m.UniversityID == universityId.ToString());
+                                  .Include(m => m.tblSchool)
+                                  .Where(m => m.SchoolID == schoolID);
 
                 switch (searchField)
                 {
                     case "Title":
                         materials = materials.Where(m => m.Title.ToLower().Contains(searchText));
                         break;
+
                     case "ISBN":
                         materials = materials.Where(m => m.ISBN.ToLower().Contains(searchText));
                         break;
+
                     case "Author":
                         materials = materials.Where(m => m.Author != null && m.Author.Name.ToLower().Contains(searchText));
                         break;
@@ -95,9 +96,11 @@ namespace LibraryMangement.Controllers
                     case "PublisherPlace":
                         materials = materials.Where(m => m.PlaceofPublishers.ToLower().Contains(searchText));
                         break;
+
                     case "MaterialType":
                         materials = materials.Where(m => m.MaterialType.ToLower().Contains(searchText));
                         break;
+
                     case "Year":
                         if (int.TryParse(searchText, out int year))
                             materials = materials.Where(m => m.YearPublished == year);
@@ -119,13 +122,13 @@ namespace LibraryMangement.Controllers
                     AvailableQuantity = (int)m.AvailableQuantity,
                     TotalQuantity = (int)m.TotalQuantity,
                     MaterialType = m.MaterialType,
-                    DepID = m.Librarycatgeory != null ? m.Librarycatgeory.LibraryCategoryName : "N/A"
+                    DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A"
                 }).ToList();
             }
 
             // Advanced search dropdowns
             ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
-            ViewBag.Departments = db.Librarycatgeories.Where(d => d.UniversityID == universityId.ToString()).ToList();
+            ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
             ViewBag.ActiveTab = activeTab;
 
             return View(model);
@@ -142,7 +145,7 @@ namespace LibraryMangement.Controllers
             if (string.IsNullOrEmpty(loggedInLibrarianId))
                 return RedirectToAction("Login", "Login");
 
-            var universityId = Session["UniversityID"];  // Adjust depending on your logic
+            int schoolID = (int)Session["schoolID"];  
 
             var model = new List<MaterialViewModel>();
 
@@ -150,15 +153,15 @@ namespace LibraryMangement.Controllers
             if (!string.IsNullOrEmpty(clear) && clear == "true")
             {
                 ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
-                ViewBag.Departments = db.Librarycatgeories.Where(d => d.UniversityID == universityId.ToString()).ToList();
+                ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
                 ViewBag.ActiveTab = "Advanced";
-                return View("ManageMaterials", model); // Empty model
+                return View("ManageMaterials", model); 
             }
 
             var materials = db.Materials
                               .Include(m => m.Author)
-                              .Include(m => m.Librarycatgeory)
-                              .Where(m => m.UniversityID == universityId.ToString())
+                              .Include(m => m.tblSchool)
+                              .Where(m => m.SchoolID == schoolID)
                               .AsQueryable();
 
 
@@ -210,13 +213,13 @@ namespace LibraryMangement.Controllers
                 AvailableQuantity = (int)m.AvailableQuantity,
                 TotalQuantity = (int)m.TotalQuantity,
                 MaterialType = m.MaterialType,
-                DepID = m.Librarycatgeory != null
-                ? m.Librarycatgeory.LibraryCategoryName
+                DepID = m.tblSchool != null
+                ? m.tblSchool.SchoolName
                 : "N/A"
             }).ToList();
 
             ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
-            ViewBag.Departments = db.Librarycatgeories.Where(d => d.UniversityID == universityId.ToString()).ToList();
+            ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
             ViewBag.ActiveTab = "Advanced";
 
             return View("ManageMaterials", model);
@@ -277,7 +280,7 @@ namespace LibraryMangement.Controllers
         public ActionResult ReserveSingle(int materialId)
         {
             var model = db.Materials
-                          .Include(m => m.Librarycatgeory)
+                          .Include(m => m.tblSchool)
                           .Where(m => m.MaterialID == materialId)
                           .Select(m => new MaterialViewModel
                           {
@@ -294,8 +297,8 @@ namespace LibraryMangement.Controllers
                               AvailableQuantity = (int)m.AvailableQuantity,
                               TotalQuantity = (int)m.TotalQuantity,
                               MaterialType = m.MaterialType,
-                              DepID = m.Librarycatgeory != null ? m.Librarycatgeory.LibraryCategoryName : "N/A",
-                              LibraryCategoryName = m.Librarycatgeory != null ? m.Librarycatgeory.LibraryCategoryName : "",
+                              DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A",
+                              tblSchoolName = m.tblSchool != null ? m.tblSchool.SchoolName : "",
                           })
                           .FirstOrDefault();
 
@@ -311,7 +314,7 @@ namespace LibraryMangement.Controllers
                                  .FirstOrDefault();
 
             var models = db.Materials
-                           .Include(m => m.Librarycatgeory)
+                           .Include(m => m.tblSchool)
                            .Where(m => selectedMaterialIds.Contains(m.MaterialID))
                            .Select(m => new MaterialViewModel
                            {
@@ -328,11 +331,10 @@ namespace LibraryMangement.Controllers
                                AvailableQuantity = (int)m.AvailableQuantity,
                                TotalQuantity = (int)m.TotalQuantity,
                                MaterialType = m.MaterialType,
-                               DepID = m.Librarycatgeory != null ? m.Librarycatgeory.LibraryCategoryName : "N/A",
-                               LibraryCategoryID = m.LibraryCategoryID
+                               DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A",
+                               SchoolID = m.SchoolID
                            })
                            .ToList();
-
             return View("ReservationConfirmation", models);
         }
 
@@ -346,8 +348,9 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("Login", "Login");
 
             var universityId = Session["UniversityID"];
+            int schoolID = (int)Session["schoolID"];
 
-            foreach (var materialId in materialIds)
+			foreach (var materialId in materialIds)
             {
                 var material = db.Materials.Find(materialId);
 
@@ -364,13 +367,11 @@ namespace LibraryMangement.Controllers
                     PatronID = patronId,
                     UniversityID = universityId.ToString(),
                     MaterialID = materialId,
-                    //LibraryCategoryID = Librarycatgeory,
+                    SchoolID = schoolID,
                     RequestedDate = DateTime.Now,
-                    ExpiryDate = DateTime.Now.AddDays(3),   // Example expiry period
+                    ExpiryDate = DateTime.Now.AddDays(3),   
                     Status = "Requested",
-
                 };
-
                 db.Circulations.Add(circulation);
             }
 
@@ -412,7 +413,7 @@ namespace LibraryMangement.Controllers
                 TempData["Error"] = "Cannot cancel this reservation.";
             }
 
-            return RedirectToAction("MyReservations");  // Adjust view accordingly
+            return RedirectToAction("MyReservations");  
         }
 
 
@@ -420,7 +421,7 @@ namespace LibraryMangement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddToBookingList(int materialId)
         {
-            // Get PatronID from session (assuming logged-in user)
+            // Get PatronID from session
             int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
 
             if (patronId == 0)
@@ -436,7 +437,7 @@ namespace LibraryMangement.Controllers
             if (existingBooking != null)
             {
                 TempData["Error"] = "Material is already in your booking list.";
-                return RedirectToAction("ManageMaterials");  // Adjust the redirection view
+                return RedirectToAction("ManageMaterials"); 
             }
 
             var material = db.Materials.FirstOrDefault(m => m.MaterialID == materialId);
@@ -451,22 +452,18 @@ namespace LibraryMangement.Controllers
                 PatronID = patronId,
                 MaterialID = material.MaterialID,
                 BookingDate = DateTime.Now,
-                ExpiryDate = DateTime.Now.AddDays(7),  // Example expiry period
+                ExpiryDate = DateTime.Now.AddDays(7),  
                 Status = "Pending",
-                LibraryCategoryID = material.LibraryCategoryID
+                SchoolID = material.SchoolID
             };
 
-            // ✅ Add to DbSet so EF tracks it
             db.Bookinglisteds.Add(booking);
 
-            // ✅ Save to database
             db.SaveChanges();
 
             TempData["Success"] = "Material added to your booking list successfully!";
             return RedirectToAction("MyBookingList");
         }
-
-
 
         public ActionResult MyBookingList()
         {
@@ -478,9 +475,6 @@ namespace LibraryMangement.Controllers
                              .ToList();
             return View(bookings);
         }
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -516,11 +510,14 @@ namespace LibraryMangement.Controllers
         public ActionResult IssuedHistory()
         {
             int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+
             var bookings = db.Circulations
-                             .Where(b => b.PatronID == patronId && b.Status == "Returned" || b.Status == "BookLost")
+                             .Where(b => b.PatronID == patronId && (b.Status == "Returned" || b.Status == "BookLost"))
                              .Include(b => b.Material)
+                             .Include(b => b.FineDetails) 
                              .OrderByDescending(b => b.RequestedDate)
                              .ToList();
+
             return View(bookings);
         }
 
@@ -550,12 +547,9 @@ namespace LibraryMangement.Controllers
             if (patron == null)
                 return RedirectToAction("Login", "Login");
 
-
             return View(patron);
         }
     
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult MyProfile(MyProfileViewModel model)
@@ -573,7 +567,7 @@ namespace LibraryMangement.Controllers
 
                 db.SaveChanges();
 
-                Session["UserName"] = model.Username; // refresh session
+                Session["UserName"] = model.Username; 
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
             else
@@ -583,9 +577,6 @@ namespace LibraryMangement.Controllers
 
             return RedirectToAction("MyProfile");
         }
-
-
-
 
         public ActionResult ChangePassword()
         {
@@ -645,6 +636,4 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("PatronDashboard", "Patron");
         }
     }
-
-
 }

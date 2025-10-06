@@ -17,6 +17,8 @@ namespace LibraryMangement.Models
         public int MaterialTypeID { get; set; }
         public string TypeName { get; set; }
         public string UniversityID { get; set; }
-        public string LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
+    
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

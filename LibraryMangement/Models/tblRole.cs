@@ -19,6 +19,7 @@ namespace LibraryMangement.Models
         {
             this.tblUserRoles = new HashSet<tblUserRole>();
             this.tblUserUniversities = new HashSet<tblUserUniversity>();
+            this.tblEmployees = new HashSet<tblEmployee>();
         }
     
         public int RoleID { get; set; }
@@ -41,5 +42,7 @@ namespace LibraryMangement.Models
         public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
     }
 }

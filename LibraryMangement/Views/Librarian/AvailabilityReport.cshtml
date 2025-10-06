@@ -1,0 +1,92 @@
+﻿@model IEnumerable<LibraryMangement.Models.AvailabilityReportViewModel>
+
+@{
+    ViewBag.Title = "Availability Report";
+    var titles = (List<string>)ViewBag.Titles;
+    var authors = (List<string>)ViewBag.Authors;
+    var materialTypes = (List<SelectListItem>)ViewBag.MaterialTypes;
+}
+
+<h2 class="text-center mb-4">Availability Report</h2>
+
+<!-- Search Form -->
+@using (Html.BeginForm("AvailabilityReport", "Librarian", FormMethod.Get))
+{
+    <div style="margin-bottom:16px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+        <div>
+            <label>Title:</label>
+            @Html.TextBox("title", Request.QueryString["title"], new { @class = "form-control", id = "titleBox", placeholder = "Enter Title" })
+        </div>
+        <div>
+            <label>Author:</label>
+            @Html.TextBox("author", Request.QueryString["author"], new { @class = "form-control", id = "authorBox", placeholder = "Enter Author" })
+        </div>
+        <div>
+            <label>Material Type:</label>
+            @Html.DropDownList("materialType", materialTypes, "Select Material Type", new { @class = "form-control" })
+        </div>
+        <div style="margin-top:25px;">
+            <input type="submit" value="Search" class="btn btn-primary" />
+            <a href="@Url.Action("AvailabilityReport", "Librarian")" class="btn btn-secondary">Clear</a>
+        </div>
+    </div>
+}
+
+<!-- Results Table -->
+<div style="max-height:600px; overflow-y:auto;">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Material Type</th>
+                    <th>Total Quantity</th>
+                    <th>Available Quantity</th>
+                    <th>Issued Quantity</th>
+                    <th>Book Lost Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.AuthorName</td>
+                        <td>@item.MaterialType</td>
+                        <td>@item.TotalQuantity</td>
+                        <td>@item.AvailableQuantity</td>
+                        <td>@item.IssuedQuantity</td>
+                        <td>@item.BookLostQuantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-danger">No records found.</p>
+    }
+</div>
+
+@section Scripts {
+    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        $(function () {
+            var titles = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(titles));
+            var authors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(authors));
+
+            $("#titleBox").autocomplete({
+                source: titles
+            });
+
+            $("#authorBox").autocomplete({
+                source: authors
+            });
+        });
+    </script>
+}

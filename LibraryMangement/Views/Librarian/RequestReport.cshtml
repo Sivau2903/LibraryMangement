@@ -2,20 +2,12 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Overdue Reports";
+    ViewBag.Title = "Requested Materials Report";
 }
-<style>
-    @@media (min-width: 768px) {
-    .col-md-3 {
-        flex: 0 0 auto;
-        width: 13%;
-    }
-}
-</style>
 
-<h2 class="text-center my-4">Overdue Materials Report</h2>
+<h2 class="text-center my-4">Requested Materials Report</h2>
 
-<form method="get" action="@Url.Action("OverdueReports", "Librarian")" class="row g-3 mb-4">
+<form method="get" action="@Url.Action("RequestReport", "Librarian")" class="row g-3 mb-4">
     <div class="col-md-3" style="width:12%">
         <label class="form-label">From Date</label>
         <input type="date" class="form-control" name="fromDate" value="@Request.QueryString["fromDate"]" />
@@ -26,7 +18,7 @@
     </div>
     <div class="col-md-3 align-self-end">
         <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="@Url.Action("OverdueReports", "Librarian")" class="btn btn-secondary">Clear</a>
+        <a href="@Url.Action("RequestReport", "Librarian")" class="btn btn-secondary">Clear</a>
     </div>
 </form>
 
@@ -34,9 +26,9 @@
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark sticky-top">
             <tr>
-                <th>Patron Name</th>
+                <th>Requested Date</th>
+                <th>Requested By</th>
                 <th>Material Title</th>
-                <th>Due Date</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -44,14 +36,12 @@
             @foreach (var record in Model)
             {
                 <tr>
+                    <td>@record.RequestedDate</td>
                     <td>@record.Patron.PatronName</td>
                     <td>@record.MaterialCopy.Material.Title</td>
-                    <td>@record.DueDate</td>
-                    <td style="color:@(record.Status == "Overdue" ? "red" : "red"); font-weight:bold;">
-                        @record.Status
-                    </td>
+                    <td>@record.Status</td>
                 </tr>
             }
         </tbody>
     </table>
-    </div>
+</div>

@@ -20,9 +20,10 @@ namespace LibraryMangement.Models
         public System.DateTime BookingDate { get; set; }
         public System.DateTime ExpiryDate { get; set; }
         public string Status { get; set; }
-        public Nullable<int> LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
     
         public virtual Material Material { get; set; }
         public virtual Patron Patron { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

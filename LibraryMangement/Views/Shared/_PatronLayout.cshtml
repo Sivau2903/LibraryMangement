@@ -89,9 +89,19 @@
             <a class="navbar-brand fw-bold fs-4" href="@Url.Action("PatronDashboard", "Patron")">
                 ICFAI Patron User
             </a>
-            <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav align-items-center">
-                    <!-- Profile Dropdown -->
+            <!-- Breadcrumbs + Profile wrapped in one flex container -->
+            <div class="d-flex align-items-center">
+
+                <!-- Breadcrumbs -->
+                @if (ViewBag.Breadcrumbs != null)
+                {
+                    <div class="me-2">
+                        @Html.Partial("_Breadcrumb", (List<LibraryMangement.Models.BreadcrumbItem>)ViewBag.Breadcrumbs)
+                    </div>
+                }
+
+                <!-- Profile Dropdown -->
+                <ul class="navbar-nav align-items-center ms-3">
                     <li class="nav-item dropdown">
                         <a class="nav-link fw-bold fs-4 dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
@@ -105,6 +115,7 @@
                         </ul>
                     </li>
                 </ul>
+
             </div>
         </div>
     </nav>
@@ -119,7 +130,7 @@
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("MyReservations", "Patron")"><i class="bi bi-files"></i> My Reservations </a></li>
 
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("MyBookingList", "Patron")"><i class="bi bi-files"></i> My Booking List </a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("IssuedHistory", "Patron")"><i class="bi bi-box-arrow-in-right"></i> Issue History</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("IssuedHistory", "Patron")"><i class="bi bi-box-arrow-in-right"></i> Issued History</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("OverdueList", "Patron")"><i class="bi bi-files"></i> OverDue List </a></li>
 
             </ul>

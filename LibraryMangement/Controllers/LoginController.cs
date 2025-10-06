@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace LibraryMangement.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : HomeController
     {
         private readonly ICFAISMSEntities db = new ICFAISMSEntities();
         // GET: Login
@@ -38,10 +38,8 @@ namespace LibraryMangement.Controllers
                     // Encrypt password
                     model.PasswordHash = SecureHelper.Encrypt(model.PasswordHash);
 
-                    // Ensure required fields are not null
                     //model.tblUserRoles. = model.Role ?? "Patron"; // default if empty
 
-                    // Add user
                     db.tblUsers.Add(model);
                     db.SaveChanges();
 
@@ -60,13 +58,8 @@ namespace LibraryMangement.Controllers
                     ViewBag.ErrorMessage = "Error: " + ex.Message;
                 }
             }
-
             return View(model);
         }
-
-
-
-
 
         public ActionResult Login()
         {
@@ -116,11 +109,11 @@ namespace LibraryMangement.Controllers
             string hashOfInput = HashClientPassword(enteredClientHex, salt);
             return hashOfInput == storedHash;
         }
-
+                       
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
-            // 1️⃣ Check captcha
+           
             string captcha = Session["Captcha"]?.ToString();
             if (model.CaptchaCode != captcha)
             {
@@ -128,7 +121,7 @@ namespace LibraryMangement.Controllers
                 return View(model);
             }
 
-            // 2️⃣ Find user by username/email
+     
             var user = db.tblUsers.Where(u => u.Email == model.Username || u.Username == model.Username ).FirstOrDefault();
             if (user == null)
             {
@@ -136,22 +129,22 @@ namespace LibraryMangement.Controllers
                 return View(model);
             }
 
-            // 3️⃣ Decrypt stored password
+      
             //string decryptedPassword = SecureHelper.Decrypt(user.PasswordHash);
 
-            // 4️⃣ Compare decrypted password with input
+          
             if (!VerifyPassword(model.Password,user.PasswordHash,user.PasswordSalt))
             {
                 ViewBag.ErrorMessage = "Invalid password";
                 return View(model);
             }
 
-            // 5️⃣ Store UserID and Role in session
+        
             Session["UserID"] = user.UserID;
             Session["UserName"] = user.Email;
             Session["Role"] =  user.tblUserRoles.FirstOrDefault().tblRole.RoleName;
 
-            // 6️⃣ Redirect based on Role
+     
             if (user.tblUserRoles.FirstOrDefault().tblRole.RoleName == "Librarian")
             {
                 return RedirectToAction("LibrarianDashboard", "Librarian");
@@ -166,8 +159,6 @@ namespace LibraryMangement.Controllers
             }
         }
 
-
-
         public bool ValidateUser(string email, string dobInput)
         {
             var user = db.tblUsers.FirstOrDefault(u => u.PasswordHash == email);
@@ -178,7 +169,7 @@ namespace LibraryMangement.Controllers
             if (!DateTime.TryParse(dobInput, out parsedDob))
                 return false;
 
-            string formattedDob = parsedDob.ToString("yyyyMMdd"); // match storage format
+            string formattedDob = parsedDob.ToString("yyyyMMdd"); 
             string encryptedDob = SecureHelper.Encrypt(formattedDob);
 
             return encryptedDob == user.PasswordHash;
@@ -190,11 +181,6 @@ namespace LibraryMangement.Controllers
             Session.Abandon();
             return RedirectToAction("Login", "Login");
         }
-
-    
-
-
-
 
     }
 }

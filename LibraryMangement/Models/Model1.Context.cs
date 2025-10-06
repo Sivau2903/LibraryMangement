@@ -30,17 +30,18 @@ namespace LibraryMangement.Models
         public virtual DbSet<tblUser> tblUsers { get; set; }
         public virtual DbSet<tblUserUniversity> tblUserUniversities { get; set; }
         public virtual DbSet<tblRole> tblRoles { get; set; }
+        public virtual DbSet<Librarian> Librarians { get; set; }
+        public virtual DbSet<Material> Materials { get; set; }
+        public virtual DbSet<Patron> Patrons { get; set; }
+        public virtual DbSet<tblSchool> tblSchools { get; set; }
+        public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
         public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<BarcodeHistory> BarcodeHistories { get; set; }
+        public virtual DbSet<Bookinglisted> Bookinglisteds { get; set; }
         public virtual DbSet<FineDetail> FineDetails { get; set; }
         public virtual DbSet<FineReason> FineReasons { get; set; }
         public virtual DbSet<MaterialType> MaterialTypes { get; set; }
-        public virtual DbSet<Librarycatgeory> Librarycatgeories { get; set; }
-        public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
-        public virtual DbSet<Material> Materials { get; set; }
+        public virtual DbSet<tblEmployee> tblEmployees { get; set; }
         public virtual DbSet<Circulation> Circulations { get; set; }
-        public virtual DbSet<Bookinglisted> Bookinglisteds { get; set; }
-        public virtual DbSet<Patron> Patrons { get; set; }
-        public virtual DbSet<Librarian> Librarians { get; set; }
     }
 }

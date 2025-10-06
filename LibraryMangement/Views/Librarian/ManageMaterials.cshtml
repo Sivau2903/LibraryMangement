@@ -26,22 +26,22 @@
                 @using (Html.BeginForm("ManageMaterials", "Librarian", FormMethod.Get))
                 {
                     <div class="input-group mb-3">
-                        <select class="form-select" name="searchField" style="max-width: 180px;">
+                        <select id="searchFieldDropdown" class="form-select" name="searchField" style="max-width: 180px;">
                             <option value="Title">Title</option>
                             <option value="ISBN">ISBN</option>
                             <option value="Author">Author</option>
                             <option value="MaterialType">MaterialType</option>
                             <option value="Year">Year</option>
                         </select>
-                        <input type="text" name="searchText" class="form-control" placeholder="Enter keyword..." style="width:20%;"/>
+                        <input type="text" id="simpleSearchInput" name="searchText" class="form-control" placeholder="Enter keyword..." style="width:20%;" autocomplete="off" />
                         <button type="submit" class="btn btn-secondary" name="clear" value="true">Clear</button>
                         <button type="submit" class="btn btn-primary">Search</button>
-
                     </div>
                 }
 
                 @Html.Partial("_MaterialsTable", Model)
             </div>
+
 
             <!-- Advanced Search Tab -->
             <div class="tab-pane fade @(activeTab=="Advanced"?"show active":"")" id="v-pills-advanced" role="tabpanel">
@@ -129,19 +129,90 @@
 </div>
 
 
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+
 @section Scripts {
     <script>
         $(document).ready(function () {
+
+            // Initialize DataTable
             $('#MaterialsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
                 info: true,
                 responsive: true,
-                columnDefs: [{ orderable: false, targets: 9 }] // Status Action
+                columnDefs: [{ orderable: false, targets: 9 }]
             });
 
-        });
+            // ----- Simple Search Autocomplete -----
+            function setupSimpleAutocomplete() {
+                let searchField = $('#searchFieldDropdown').val();
 
+                $('#simpleSearchInput').autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '@Url.Action("GetMaterialAutoComplete", "Librarian")',
+                            type: 'GET',
+                            dataType: 'json',
+                            data: { field: searchField, term: request.term },
+                            success: function (data) { response(data); },
+                            error: function () { response([]); }
+                        });
+                    },
+                    minLength: 1,
+                    delay: 200
+                });
+            }
+
+            setupSimpleAutocomplete();
+
+            $('#searchFieldDropdown').change(function () {
+                $('#simpleSearchInput').autocomplete('destroy');
+                $('#simpleSearchInput').val('');
+                setupSimpleAutocomplete();
+            });
+
+            // ----- Advanced Search Autocomplete -----
+            function setupAdvancedAutocomplete(inputSelector, dropdownSelector) {
+                $(inputSelector).autocomplete({
+                    source: function (request, response) {
+                        let field = $(dropdownSelector).val();
+                        if (!field) {
+                            response([]);
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '@Url.Action("GetMaterialAutoComplete", "Librarian")',
+                            type: 'GET',
+                            dataType: 'json',
+                            data: { field: field, term: request.term },
+                            success: function (data) { response(data); },
+                            error: function () { response([]); }
+                        });
+                    },
+                    minLength: 1,
+                    delay: 200
+                });
+
+                // Reinitialize when dropdown changes
+                $(dropdownSelector).change(function () {
+                    $(inputSelector).autocomplete('destroy');
+                    $(inputSelector).val('');
+                    setupAdvancedAutocomplete(inputSelector, dropdownSelector);
+                });
+            }
+
+            // Setup autocomplete for all 3 Advanced Search keywords
+            setupAdvancedAutocomplete('input[name="keyword1"]', 'select[name="field1"]');
+            setupAdvancedAutocomplete('input[name="keyword2"]', 'select[name="field2"]');
+            setupAdvancedAutocomplete('input[name="keyword3"]', 'select[name="field3"]');
+
+        });
     </script>
 }
+
+

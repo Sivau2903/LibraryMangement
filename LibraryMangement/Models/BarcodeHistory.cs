@@ -19,9 +19,10 @@ namespace LibraryMangement.Models
         public string GeneratedBarcode { get; set; }
         public Nullable<System.DateTime> GeneratedAt { get; set; }
         public Nullable<int> UniversityID { get; set; }
-        public string LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
     
         public virtual MaterialCopy MaterialCopy { get; set; }
         public virtual MaterialCopy MaterialCopy1 { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

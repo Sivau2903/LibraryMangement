@@ -6,13 +6,13 @@
     var activeTab = ViewBag.ActiveTab as string ?? "Simple";
 }
 <style>
-    @@media (min-width: 768px) {
-        .col-md-10 {
+/*       @@media (min-width: 576px) {
+        .col-sm-4 {
             flex: 0 0 auto;
-            width: 40.333333%;
+            width: 20%;
         }
-    }
-</style>
+    }*/
+    </style>
 <h2>Manage Materials</h2>
 @if (TempData["Success"] != null)
 {
@@ -23,6 +23,7 @@
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
+
 <div class="row">
     <!-- Side Tabs -->
     <div class="col-md-2">

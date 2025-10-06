@@ -14,6 +14,8 @@ namespace LibraryMangement.Models
         public string Reason { get; set; }
         public DateTime? AppliedDate { get; set; }
         public string Status { get; set; }
+        public int? SchoolID { get; internal set; }
+        public string UniversityID { get; internal set; }
     }
 
 

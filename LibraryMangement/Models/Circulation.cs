@@ -36,16 +36,16 @@ namespace LibraryMangement.Models
         public Nullable<bool> IsOverdue { get; set; }
         public Nullable<System.DateTime> LastFineUpdateDate { get; set; }
         public Nullable<System.DateTime> ExpiryDate { get; set; }
-        public Nullable<int> LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
     
-        public virtual MaterialCopy MaterialCopy { get; set; }
-        public virtual MaterialCopy MaterialCopy1 { get; set; }
+        public virtual Patron Patron { get; set; }
+        public virtual Patron Patron1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails1 { get; set; }
         public virtual Material Material { get; set; }
-        public virtual Patron Patron { get; set; }
-        public virtual Patron Patron1 { get; set; }
+        public virtual MaterialCopy MaterialCopy { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

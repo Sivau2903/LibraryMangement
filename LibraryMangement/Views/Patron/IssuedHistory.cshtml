@@ -7,8 +7,6 @@
 
 <h2 class="text-center my-4">Issued History List</h2>
 
-
-
 @if (Model != null && Model.Any())
 {
     <table class="table table-bordered table-hover">
@@ -19,18 +17,26 @@
                 <th>Issued Date</th>
                 <th>Return Date</th>
                 <th>Fine Amount</th>
+                <th>Fine Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var booking in Model)
             {
+                var fine = booking.FineDetails.FirstOrDefault();
+                var isPaid = fine != null && fine.Paid == true;
+                var fineStatusText = isPaid ? "Paid" : "Not Paid";
+                var fineStatusColor = isPaid ? "green" : "red";
+
                 <tr>
                     <td>@booking.Material.Title</td>
                     <td>@booking.RequestedDate</td>
                     <td>@booking.IssueDate</td>
                     <td>@booking.ReturnDate</td>
                     <td>@booking.FineAmount</td>
-                   
+                    <td style="color:@fineStatusColor; font-weight:bold;">
+                        @fineStatusText
+                    </td>
                 </tr>
             }
         </tbody>

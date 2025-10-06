@@ -16,6 +16,7 @@
                     <th>Pages</th>
                     <th>Volume</th>
                     <th>Material Type</th>
+                    <th>Available Quantity</th>
                    
                     <th>Status Action</th>
                 </tr>
@@ -34,7 +35,7 @@
                         <td>@material.Pages</td>
                         <td>@material.Vol</td>
                         <td>@material.MaterialType</td>
-                       
+                       <td>@material.AvailableQuantity</td>
                         <td>
                             <a class="btn btn-sm btn-primary shadow-sm" href="@Url.Action("EditMaterial", new { id = material.MaterialID })">
                                 <i class="bi bi-pencil-square"></i> Edit

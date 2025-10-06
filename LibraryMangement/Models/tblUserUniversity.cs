@@ -14,6 +14,12 @@ namespace LibraryMangement.Models
     
     public partial class tblUserUniversity
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tblUserUniversity()
+        {
+            this.tblEmployees = new HashSet<tblEmployee>();
+        }
+    
         public string UserUniversityID { get; set; }
         public string UserID { get; set; }
         public string UniversityID { get; set; }
@@ -34,5 +40,7 @@ namespace LibraryMangement.Models
         public virtual tblUniversity tblUniversity2 { get; set; }
         public virtual tblUser tblUser { get; set; }
         public virtual tblRole tblRole { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
     }
 }

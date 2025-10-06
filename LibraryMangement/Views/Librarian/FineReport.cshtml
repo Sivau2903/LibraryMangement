@@ -1,7 +1,4 @@
-﻿
-
-
-@model IEnumerable<LibraryMangement.Models.FineReportViewModel>
+﻿@model IEnumerable<LibraryMangement.Models.FineReportViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,6 +6,25 @@
 }
 
 <h2 class="text-center my-4">Fine Report</h2>
+
+<!-- Date Filter Form -->
+@using (Html.BeginForm("FineReport", "Librarian", FormMethod.Get))
+{
+    <div style="display:flex; gap:15px; margin-bottom:20px; align-items:flex-end;">
+        <div>
+            <label>From Date</label>
+            <input type="date" name="fromDate" class="form-control" value="@Request.QueryString["fromDate"]" />
+        </div>
+        <div>
+            <label>To Date</label>
+            <input type="date" name="toDate" class="form-control" value="@Request.QueryString["toDate"]" />
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="@Url.Action("FineReport", "Librarian")" class="btn btn-secondary">Clear</a>
+        </div>
+    </div>
+}
 
 @if (!Model.Any())
 {
@@ -18,29 +34,33 @@
 }
 else
 {
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Patron</th>
-            <th>Material</th>
-            <th>Amount</th>
-            <th>Reason</th>
-            <th>Applied Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var fine in Model)
-        {
-            <tr>
-                <td>@fine.PatronName</td>
-                <td>@fine.MaterialTitle</td>
-                <td>@fine.Amount.ToString("C")</td>
-                <td>@fine.Reason</td>
-                <td>@fine.AppliedDate?.ToString("dd-MMM-yyyy")</td>
-                <td>@fine.Status</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div style="max-height:500px; overflow-y:auto;">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Patron</th>
+                    <th>Material</th>
+                    <th>Amount</th>
+                    <th>Reason</th>
+                    <th>Applied Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fine in Model)
+                {
+                    <tr>
+                        <td>@fine.PatronName</td>
+                        <td>@fine.MaterialTitle</td>
+                        <td>@fine.Amount.ToString("C")</td>
+                        <td>@fine.Reason</td>
+                        <td>@fine.AppliedDate</td>
+                        <td style="color:@(fine.Status == "Paid" ? "green" : "red"); font-weight:bold;">
+                            @fine.Status
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

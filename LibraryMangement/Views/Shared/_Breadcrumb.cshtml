@@ -1,0 +1,34 @@
+﻿@model List<LibraryMangement.Models.BreadcrumbItem>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0" style="background: transparent; padding: 0; margin: 0;">
+        @foreach (var item in Model)
+        {
+            if (item.IsActive)
+            {
+                <li class="breadcrumb-item active" aria-current="page" style="color: #ffffff; font-weight: 500;">
+                    @item.Title
+                </li>
+            }
+            else
+            {
+                <li class="breadcrumb-item">
+                    <a href="@item.Url" style="color: #ffffff; text-decoration: underline;">
+                        @item.Title
+                    </a>
+                </li>
+            }
+        }
+    </ol>
+</nav>
+
+<style>
+    /* Make breadcrumb separators white and evenly close to text */
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        color: #ffffff; /* white color */
+        padding-left: 0.2rem; /* small space on left */
+        padding-right: 0.2rem; /* small space on right */
+    }
+</style>
+

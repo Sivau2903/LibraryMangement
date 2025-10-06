@@ -17,6 +17,8 @@ namespace LibraryMangement.Models
         public int FineReasonID { get; set; }
         public string Reason { get; set; }
         public decimal FineAmount { get; set; }
-        public string LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
+    
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

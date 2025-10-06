@@ -19,8 +19,10 @@ namespace LibraryMangement.Models
         {
             this.tblUserRoles = new HashSet<tblUserRole>();
             this.tblUserUniversities = new HashSet<tblUserUniversity>();
-            this.Patrons = new HashSet<Patron>();
             this.Librarians = new HashSet<Librarian>();
+            this.Patrons = new HashSet<Patron>();
+            this.tblSchools = new HashSet<tblSchool>();
+            this.tblEmployees = new HashSet<tblEmployee>();
         }
     
         public string UserID { get; set; }
@@ -54,8 +56,12 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Librarian> Librarians { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Patron> Patrons { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Librarian> Librarians { get; set; }
+        public virtual ICollection<tblSchool> tblSchools { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
     }
 }

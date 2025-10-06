@@ -15,7 +15,7 @@ namespace LibraryMangement.Models
     public partial class Librarian
     {
         public int LibrarianID { get; set; }
-        public Nullable<int> LibraryCategoryID { get; set; }
+        public Nullable<int> SchoolID { get; set; }
         public string UserID { get; set; }
         public string EmailID { get; set; }
         public string UniversityID { get; set; }
@@ -25,6 +25,7 @@ namespace LibraryMangement.Models
         public virtual Librarian Librarians1 { get; set; }
         public virtual Librarian Librarian1 { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
         public virtual tblUser tblUser { get; set; }
     }
 }
