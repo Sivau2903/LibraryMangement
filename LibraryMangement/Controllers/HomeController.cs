@@ -45,6 +45,7 @@ private static readonly Dictionary<string, string[]> BreadcrumbMap = new Diction
     { "Patron-IssuedHistory", new[] { "IssuedHistory" } },
     { "Patron-MyReservations", new[] { "MyReservations" } },
     { "Patron-RequestBook", new[] { "ViewBooks", "RequestBook" } },
+      { "Patron-RaiseMaterialRequest", new[] { "ManageMaterials", "RaiseMaterialRequest" } }
 
 };
 

@@ -6,6 +6,23 @@
 }
 
 <h2 class="text-center my-4">Overdue Materials</h2>
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-end align-items-center">
+        <form method="get" action="@Url.Action("Overduelist", "Librarian")" class="d-flex align-items-center">
+            <label for="selectedDays" class="me-2 fw-semibold">Upcoming Overdue (Days):</label>
+            <select id="selectedDays" name="selectedDays" class="form-select me-2" required style="width:120px;">
+                <option value="">Select</option>
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <option value="@i" @(Request.QueryString["selectedDays"] == i.ToString() ? "selected" : "")>@i</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary">Check</button>
+        </form>
+    </div>
+</div>
+
+
 
 @if (!Model.Any())
 {
@@ -15,6 +32,8 @@
 }
 else
 {
+    <!-- 🔹 Top Filter Section -->
+
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
             <tr>
@@ -45,13 +64,13 @@ else
                     </td>
                     <td class="text-center">
                         <a href="@Url.Action("ReturnMaterial", "Librarian", new { id = overdue.CirculationID })"
-                           class="btn btn-sm btn-danger">
-                            Return
+                           class="btn btn-sm btn-danger mb-1">
+                            Return/Renew
                         </a>
-                        <a href="@Url.Action("RenewMaterial", "Librarian", new { id = overdue.CirculationID })"
+                        @*<a href="@Url.Action("ReturnMaterial", "Librarian", new { id = overdue.CirculationID })"
                            class="btn btn-sm btn-warning">
                             Renew
-                        </a>
+                        </a>*@
                     </td>
                 </tr>
             }

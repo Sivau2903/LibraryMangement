@@ -17,9 +17,9 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblRole()
         {
+            this.tblEmployees = new HashSet<tblEmployee>();
             this.tblUserRoles = new HashSet<tblUserRole>();
             this.tblUserUniversities = new HashSet<tblUserUniversity>();
-            this.tblEmployees = new HashSet<tblEmployee>();
         }
     
         public int RoleID { get; set; }
@@ -34,15 +34,14 @@ namespace LibraryMangement.Models
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedIPAddress { get; set; }
-        public bool IsDeleted { get; set; }
         public byte[] RowVersion { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
     }
 }

@@ -21,11 +21,11 @@ namespace LibraryMangement.Models
         public string UniversityID { get; set; }
         public string Name { get; set; }
         public string ContactNumber { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual Librarian Librarians1 { get; set; }
         public virtual Librarian Librarian1 { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
-        public virtual tblSchool tblSchool { get; set; }
         public virtual tblUser tblUser { get; set; }
     }
 }

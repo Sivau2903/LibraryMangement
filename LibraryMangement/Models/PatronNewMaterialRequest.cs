@@ -12,12 +12,20 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MaterialType
+    public partial class PatronNewMaterialRequest
     {
-        public int MaterialTypeID { get; set; }
-        public string TypeName { get; set; }
-        public string UniversityID { get; set; }
-        public Nullable<int> SchoolID { get; set; }
+        public int RequestID { get; set; }
+        public int PatronID { get; set; }
+        public int SchoolID { get; set; }
+        public int UniversityID { get; set; }
+        public string MaterialTitle { get; set; }
+        public string Author { get; set; }
+        public string Edition { get; set; }
+        public string Notes { get; set; }
+        public System.DateTime RequestedDate { get; set; }
+        public string Status { get; set; }
         public bool IsActive { get; set; }
+    
+        public virtual Patron Patron { get; set; }
     }
 }

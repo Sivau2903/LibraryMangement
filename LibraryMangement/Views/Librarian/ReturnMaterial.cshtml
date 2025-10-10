@@ -1,164 +1,211 @@
 ﻿@model LibraryMangement.Models.ReturnMaterialViewModel
 
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Return / Renew Material";
-}
+<h2 class="text-center my-4">Return / Renew Books</h2>
+<style>
+    /* ✅ Keep popup small and top-centered */
+    .modal-dialog-top {
+        position: fixed;
+        top: 80px; /* adjust distance from top */
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
 
-<h2 class="text-center my-4">Return or Renew Material</h2>
+    }
 
-@if (TempData["Success"] != null)
+    /* Make sure it stays above everything */
+    .modal-backdrop.show {
+        opacity: 0.3;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+</style>
+
+@if (Model.CirculationItems != null && Model.CirculationItems.Any())
 {
-    <div class="alert alert-success text-center">
-        @TempData["Success"]
-    </div>
-}
-
-<!-- Barcode Fetch Form -->
-<form method="post" action="@Url.Action("ReturnMaterial")">
-    @Html.AntiForgeryToken()
-    <label for="barcodeInput" class="form-label me-2">Enter Barcode Number</label>
-    <div class="mb-3 d-flex align-items-center">
-
-        <input type="text" class="form-control me-2" id="barcodeInput" name="barcodeNumber"
-               value="@Model.BarcodeNumber" placeholder="Enter barcode..." required style="width:20%" />
-        <button type="submit" class="btn btn-primary">Fetch Details</button>
-    </div>
-</form>
-
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        @Html.ValidationSummary()
-    </div>
-}
-
-<hr />
-
-@if (Model.CirculationDisplay != null)
-{
-    <h3>Material Issue Details</h3>
-    <table class="table table-bordered table-striped">
-        <tr><th>Title</th><td>@Model.CirculationDisplay.Title</td></tr>
-        <tr><th>Requested Date</th><td>@Model.CirculationDisplay.RequestedDate</td></tr>
-        <tr><th>Issue Date</th><td>@Model.CirculationDisplay.IssueDate</td></tr>
-        <tr><th>Due Date</th><td>@Model.CirculationDisplay.DueDate</td></tr>
-        <tr><th>Status</th><td>@Model.CirculationDisplay.Status</td></tr>
-        <tr>
-            <th>Overdue Fine</th>
-            <td>
-                @(Model.CirculationDisplay.FineAmount > 0 ? Model.CirculationDisplay.FineAmount.ToString("C") : "Nill")
-            </td>
-        </tr>
-    </table>
-
-    <!-- Direct Return/Renew Form -->
-    <form method="post" action="@Url.Action("ProcessReturnRenew")">
-        @Html.AntiForgeryToken()
-
-        <input type="hidden" name="CirculationID" value="@Model.CirculationDisplay.CirculationID" />
-        <input type="hidden" name="fineAmount" id="fineAmount" value="@Model.CalculatedFineAmount:0.00" />
-        <input type="hidden" name="FineReason" id="fineReasonValue" />
-        <input type="hidden" name="action" id="actionType" />
-
-        <div class="mb-3">
-            <label class="form-label">Add Extra Fine (Optional)</label>
-            <select class="form-select" id="fineReasonSelect">
-                <option value="">-- Select Reason --</option>
-                @foreach (var reason in Model.FineReason)
+    <div class="table-responsive" style="max-height:500px; overflow-y:auto;">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark" style="position:sticky; top:0; z-index:1;">
+                <tr>
+                    <th>Barcode</th>
+                    <th>Title</th>
+                    <th>Patron Name</th>
+                    <th>Patron ID</th>
+                    <th>Email</th>
+                    <th>Patron Type</th>
+                    <th>Requested Date</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Total Fine</th>
+                    <th>Extra Fine Reason</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CirculationItems)
                 {
-                    <option value="@reason.Value" data-fine="@reason.FinePerDay">@reason.ReasonText</option>
+                    <tr>
+                        <td>@item.BarcodeNumber</td>
+                        <td>@item.MaterialTitle</td>
+                        <td>@item.PatronName</td>
+                        <td>@item.PatronID</td>
+                        <td>@item.PatronEmail</td>
+                        <td>@item.PatronType</td>
+                        <td>@item.RequestedDate.ToString("dd-MM-yyyy")</td>
+                        <td>@item.IssueDate</td>
+                        <td>@item.DueDate</td>
+                        <td style="color:@(item.Status=="Overdue"?"red":"black"); font-weight:bold;">
+                            @item.Status
+                        </td>
+                        <td>
+                            <input type="text" class="form-control fineAmountDisplay"
+                                   value="@(item.FineAmount > 0 ? item.FineAmount.ToString("0.00") : "0.00")" readonly />
+                        </td>
+                        <td>
+                            <select class="form-select extraFineSelect" data-basefine="@item.FineAmount">
+                                <option value="">-- Select Reason --</option>
+                                @foreach (var reason in Model.FineReason)
+                                {
+                                    <option value="@reason.Value" data-fine="@reason.FinePerDay">@reason.ReasonText</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <form method="post" action="@Url.Action("ProcessReturnRenew")" class="d-flex gap-1 returnForm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="CirculationID" value="@item.CirculationID" />
+                                <input type="hidden" name="action" class="actionType" />
+                                <input type="hidden" name="paymentStatus" class="paymentStatus" />
+                                <input type="hidden" name="fineAmount" class="fineAmountInput" value="@item.FineAmount" />
+                                <input type="hidden" name="FineReason" class="fineReasonInput" />
+                                <button type="button" class="btn btn-success btn-sm" onclick="confirmAction(this,'ReturnPaid')">Return & Paid</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction(this,'ReturnUnpaid')">Return & Unpaid</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="confirmAction(this,'Renew')">Renew</button>
+                            </form>
+                        </td>
+                    </tr>
                 }
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Total Fine Amount</label>
-            <input type="text" class="form-control" id="displayFineAmount"
-                   value="@(Model.CalculatedFineAmount > 0 ? Model.CalculatedFineAmount.ToString("0.00") : "Nill")" readonly />
-        </div>
-
-        <div class="d-flex gap-2 mb-4">
-            <button type="submit" class="btn btn-success" onclick="setAction('ReturnPaid')">Return & Paid</button>
-            <button type="submit" class="btn btn-danger" onclick="setAction('ReturnUnpaid')">Return & Unpaid</button>
-            <button type="submit" class="btn btn-warning" onclick="setAction('Renew')">Renew Due Date</button>
-        </div>
-    </form>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-    @*<p class="text-center text-muted mt-4">
-        Please enter a barcode and fetch details to return or renew a material.
-    </p>*@
+    <p class="text-center text-muted mt-4">No issued or overdue Books found.</p>
 }
 
-@section Scripts {
-    <!-- jQuery UI CSS and JS (make sure jQuery is already loaded in layout) -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<!-- ✅ Small success popup -->
+<div id="successPopup" class="alert alert-success alert-dismissible fade show text-center" role="alert"
+     style="display:none; position:fixed; top:20px; right:20px; z-index:9999; width:300px;">
+    <span id="successMessage"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
+<!-- ✅ Custom confirmation modal -->
+<!-- Confirmation Modal (Same Style as Before) -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-top">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-warning text-dark py-2">
+                <h6 class="modal-title fw-bold" id="confirmModalLabel">Confirm Action</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-3">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="modalConfirmBtn">Yes, Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ✅ Keep popup small and top-centered */
+    .modal-dialog-top {
+        position: fixed;
+        top: 80px; /* adjust distance from top */
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+    }
+
+    /* Make sure it stays above everything */
+    .modal-backdrop.show {
+        opacity: 0.3;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+</style>
+
+
+@section Scripts {
     <script>
-        // Autocomplete for barcode input
-        $(function () {
-            $("#barcodeInput").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '@Url.Action("GetIssuedBarcodes", "Librarian", new { area = "" })',
-                        type: 'GET',
-                        dataType: 'json',
-                        data: { term: request.term },
-                        success: response,
-                        error: function (xhr, status, error) {
-                            console.log("Autocomplete error:", status, error);
-                            response([]);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    console.log("Selected barcode:", ui.item.value);
-                }
+        let selectedForm = null;
+        let selectedType = null;
+
+        function confirmAction(button, type) {
+            selectedForm = button.closest('form');
+            selectedType = type;
+
+            let actionText = type === 'ReturnPaid' ? 'Return & mark as Paid'
+                : type === 'ReturnUnpaid' ? 'Return & mark as Unpaid'
+                    : 'Renew this book';
+
+            document.getElementById('confirmMessage').innerText = `Are you sure you want to ${actionText}?`;
+            var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+
+            document.getElementById('confirmYesBtn').onclick = function () {
+                setRowAction(selectedForm, selectedType);
+                modal.hide();
+                selectedForm.submit();
+                showSuccess(`${actionText} successfully.`);
+            };
+        }
+
+        function setRowAction(form, type) {
+            var actionInput = form.querySelector('.actionType');
+            var paymentInput = form.querySelector('.paymentStatus');
+
+            if (type === 'ReturnPaid') {
+                actionInput.value = 'Return';
+                paymentInput.value = 'Paid';
+            } else if (type === 'ReturnUnpaid') {
+                actionInput.value = 'Return';
+                paymentInput.value = 'Unpaid';
+            } else if (type === 'Renew') {
+                actionInput.value = 'Renew';
+                paymentInput.value = '';
+            }
+        }
+
+        // ✅ Extra fine calculation
+        document.querySelectorAll('.extraFineSelect').forEach(function (select) {
+            select.addEventListener('change', function () {
+                var row = select.closest('tr');
+                var baseFine = parseFloat(select.dataset.basefine) || 0;
+                var selectedOption = select.selectedOptions[0];
+                var extraFine = parseFloat(selectedOption.dataset.fine) || 0;
+                var totalFine = baseFine + extraFine;
+
+                row.querySelector('.fineAmountDisplay').value = totalFine.toFixed(2);
+                row.querySelector('.fineAmountInput').value = totalFine.toFixed(2);
+                row.querySelector('.fineReasonInput').value = selectedOption.value;
             });
         });
 
-        // Fine calculation logic
-        const fineSelect = document.getElementById('fineReasonSelect');
-        const displayFine = document.getElementById('displayFineAmount');
-        const hiddenFineInput = document.getElementById('fineAmount');
-        const hiddenReasonInput = document.getElementById('fineReasonValue');
-        const baseFine = parseFloat('@Model.CalculatedFineAmount') || 0;
-
-        fineSelect.addEventListener('change', function () {
-            const selectedOption = fineSelect.selectedOptions[0];
-            const extraFine = parseFloat(selectedOption?.dataset.fine) || 0;
-            const totalFine = baseFine + extraFine;
-            displayFine.value = totalFine.toFixed(2);
-            hiddenFineInput.value = totalFine.toFixed(2);
-            hiddenReasonInput.value = selectedOption.value;
-        });
-
-        // Set action type and payment status
-        function setAction(type) {
-            const actionInput = document.querySelector('input[name="action"]');
-            let paymentStatusInput = document.querySelector('input[name="paymentStatus"]');
-
-            if (!paymentStatusInput) {
-                paymentStatusInput = document.createElement('input');
-                paymentStatusInput.type = 'hidden';
-                paymentStatusInput.name = 'paymentStatus';
-                document.querySelector('form[action$="ProcessReturnRenew"]').appendChild(paymentStatusInput);
-            }
-
-            if (type === "ReturnPaid") {
-                actionInput.value = "Return";
-                paymentStatusInput.value = "Paid";
-            } else if (type === "ReturnUnpaid") {
-                actionInput.value = "Return";
-                paymentStatusInput.value = "Unpaid";
-            } else if (type === "Renew") {
-                actionInput.value = "Renew";
-            }
+        // ✅ Success popup function
+        function showSuccess(message) {
+            const popup = document.getElementById('successPopup');
+            document.getElementById('successMessage').innerText = message;
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 3000);
         }
     </script>
 }

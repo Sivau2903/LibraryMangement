@@ -2,10 +2,10 @@
 
 @{
     Layout = "~/Views/Shared/_PatronLayout.cshtml";
-    ViewBag.Title = "My Booking List";
+    ViewBag.Title = "My Due List";
 }
 
-<h1 class="text-center my-4">DueList</h1>
+<h1 class="text-center my-4">Due List</h1>
 
 @if (TempData["Success"] != null)
 {
@@ -17,33 +17,50 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
+<!-- Date Filter -->
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-end align-items-center">
+        <form method="get" action="@Url.Action("OverdueList", "Patron")" class="d-flex align-items-center">
+            <label for="fromDate" class="me-2 fw-semibold">From:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm me-3"
+                   value="@(Request.QueryString["fromDate"] ?? "")" />
+
+            <label for="toDate" class="me-2 fw-semibold">To:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm me-3"
+                   value="@(Request.QueryString["toDate"] ?? "")" />
+
+            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        </form>
+    </div>
+</div>
+
 @if (Model != null && Model.Any())
 {
-    <table class="table table-bordered table-hover">
-        <thead class="table-primary text-uppercase small">
-            <tr>
-                <th>Material Title</th>
-                <th>Requested Date</th>
-                <th>Due Date</th>
-                <th>Status</th>
-                <th>FineAmount</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var booking in Model)
-            {
+    <div class="table-responsive" style="max-height:500px; overflow-y:auto;">
+        <table class="table table-bordered table-hover mb-0">
+            <thead class="table-primary text-uppercase small sticky-top">
                 <tr>
-                    <td>@booking.Material.Title</td>
-                    <td>@booking.RequestedDate</td>
-                    <td>@booking.DueDate</td>
-                    <td style="color:red; font-weight:bold;">@booking.Status</td>
-                    <td>
-                        @booking.FineAmount
-                    </td>
+                    <th>Material Title</th>
+                    <th>Requested Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Fine Amount</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>@booking.Material.Title</td>
+                        <td>@booking.RequestedDate</td>
+                        <td>@booking.DueDate</td>
+                        <td style="color:red; font-weight:bold;">@booking.Status</td>
+                        <td>@booking.FineAmount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {

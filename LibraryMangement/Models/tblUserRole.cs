@@ -29,9 +29,9 @@ namespace LibraryMangement.Models
         public string ModifiedIPAddress { get; set; }
         public byte[] RowVersion { get; set; }
     
+        public virtual tblRole tblRole { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
         public virtual tblUniversity tblUniversity1 { get; set; }
         public virtual tblUser tblUser { get; set; }
-        public virtual tblRole tblRole { get; set; }
     }
 }

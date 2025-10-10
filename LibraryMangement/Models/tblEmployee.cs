@@ -19,10 +19,10 @@ namespace LibraryMangement.Models
         public string UserID { get; set; }
         public int UserDepartmentID { get; set; }
         public string EmployeeCode { get; set; }
+        public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get; set; }
-        public string Position { get; set; }
         public int RoleID { get; set; }
         public System.DateTime JoiningDate { get; set; }
         public Nullable<System.DateTime> ExitDate { get; set; }
@@ -39,20 +39,21 @@ namespace LibraryMangement.Models
         public string Qualifications { get; set; }
         public string Experience { get; set; }
         public bool IsActive { get; set; }
-        public string Status { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedIPAddress { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedIPAddress { get; set; }
-        public bool IsDeleted { get; set; }
         public byte[] RowVersion { get; set; }
         public string UniversityID { get; set; }
+        public int SchoolID { get; set; }
+        public string PhotoPath { get; set; }
     
+        public virtual tblRole tblRole { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
+        public virtual tblUniversity tblUniversity { get; set; }
         public virtual tblUser tblUser { get; set; }
         public virtual tblUserUniversity tblUserUniversity { get; set; }
-        public virtual tblRole tblRole { get; set; }
-        public virtual tblUniversity tblUniversity { get; set; }
     }
 }

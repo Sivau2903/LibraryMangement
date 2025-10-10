@@ -68,14 +68,43 @@ namespace LibraryMangement.Controllers
 
         public ActionResult GenerateCaptcha()
         {
-            string captchaText = new Random().Next(1000, 9999).ToString();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var rand = new Random();
+            string captchaText = new string(Enumerable.Repeat(chars, 1)
+                .Select(s => s[rand.Next(s.Length)]).ToArray());
+
             Session["Captcha"] = captchaText;
 
-            using (Bitmap bmp = new Bitmap(100, 40))
+            using (Bitmap bmp = new Bitmap(140, 50))
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.Clear(Color.White);
-                g.DrawString(captchaText, new Font("Arial", 20), Brushes.Black, new PointF(10, 5));
+
+                // Add noise lines
+                using (Pen pen = new Pen(Color.Gray, 1))
+                {
+                    for (int i = 0; i < 8; i++)
+                        g.DrawLine(pen, rand.Next(0, bmp.Width), rand.Next(0, bmp.Height),
+                            rand.Next(0, bmp.Width), rand.Next(0, bmp.Height));
+                }
+
+                // Draw captcha text with random rotation for each character
+                using (Font font = new Font("Arial", 22, FontStyle.Bold))
+                {
+                    for (int i = 0; i < captchaText.Length; i++)
+                    {
+                        float angle = rand.Next(-20, 20);
+                        g.TranslateTransform(20 + i * 20, 20);
+                        g.RotateTransform(angle);
+                        g.DrawString(captchaText[i].ToString(), font, Brushes.Black, 0, 0);
+                        g.ResetTransform();
+                    }
+                }
+
+                // Add random dots for distortion
+                for (int i = 0; i < 50; i++)
+                    bmp.SetPixel(rand.Next(bmp.Width), rand.Next(bmp.Height), Color.Gray);
+
                 using (MemoryStream ms = new MemoryStream())
                 {
                     bmp.Save(ms, ImageFormat.Png);
@@ -83,6 +112,8 @@ namespace LibraryMangement.Controllers
                 }
             }
         }
+
+
 
         private const int SaltSize = 16; // 128-bit
         private const int HashSize = 32; // 256-bit

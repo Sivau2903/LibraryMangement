@@ -20,6 +20,7 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> GeneratedAt { get; set; }
         public Nullable<int> UniversityID { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual MaterialCopy MaterialCopy { get; set; }
         public virtual MaterialCopy MaterialCopy1 { get; set; }

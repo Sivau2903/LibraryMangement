@@ -28,7 +28,7 @@
             <tr>
                 <th>Requested Date</th>
                 <th>Requested By</th>
-                <th>Material Title</th>
+                <th>Book Title</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -38,7 +38,7 @@
                 <tr>
                     <td>@record.RequestedDate</td>
                     <td>@record.Patron.PatronName</td>
-                    <td>@record.MaterialCopy.Material.Title</td>
+                    <td>@record.Material.Title</td>
                     <td>@record.Status</td>
                 </tr>
             }

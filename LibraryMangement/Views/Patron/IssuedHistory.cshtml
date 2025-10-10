@@ -7,40 +7,59 @@
 
 <h2 class="text-center my-4">Issued History List</h2>
 
+<!-- Date Filter -->
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-end align-items-center">
+        <form method="get" action="@Url.Action("IssuedHistory", "Patron")" class="d-flex align-items-center">
+            <label for="fromDate" class="me-2 fw-semibold">From:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control form-control-sm me-3"
+                   value="@(Request.QueryString["fromDate"] ?? "")" />
+
+            <label for="toDate" class="me-2 fw-semibold">To:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control form-control-sm me-3"
+                   value="@(Request.QueryString["toDate"] ?? "")" />
+
+            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        </form>
+    </div>
+</div>
+
 @if (Model != null && Model.Any())
 {
-    <table class="table table-bordered table-hover">
-        <thead class="table-primary text-uppercase small">
-            <tr>
-                <th>Material Title</th>
-                <th>Requested Date</th>
-                <th>Issued Date</th>
-                <th>Return Date</th>
-                <th>Fine Amount</th>
-                <th>Fine Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var booking in Model)
-            {
-                var fine = booking.FineDetails.FirstOrDefault();
-                var isPaid = fine != null && fine.Paid == true;
-                var fineStatusText = isPaid ? "Paid" : "Not Paid";
-                var fineStatusColor = isPaid ? "green" : "red";
-
+    <div style="max-height:500px; overflow-y:auto;">
+        <table class="table table-bordered table-hover mb-0">
+            <thead class="table-primary text-uppercase small position-sticky top-0" style="z-index:10;">
                 <tr>
-                    <td>@booking.Material.Title</td>
-                    <td>@booking.RequestedDate</td>
-                    <td>@booking.IssueDate</td>
-                    <td>@booking.ReturnDate</td>
-                    <td>@booking.FineAmount</td>
-                    <td style="color:@fineStatusColor; font-weight:bold;">
-                        @fineStatusText
-                    </td>
+                    <th>Material Title</th>
+                    <th>Requested Date</th>
+                    <th>Issued Date</th>
+                    <th>Return Date</th>
+                    <th>Fine Amount</th>
+                    <th>Fine Status</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    var fine = booking.FineDetails.FirstOrDefault();
+                    var isPaid = fine != null && fine.Paid == true;
+                    var fineStatusText = isPaid ? "Paid" : "Not Paid";
+                    var fineStatusColor = isPaid ? "green" : "red";
+
+                    <tr>
+                        <td>@booking.Material.Title</td>
+                        <td>@booking.RequestedDate</td>
+                        <td>@booking.IssueDate</td>
+                        <td>@booking.ReturnDate</td>
+                        <td>@booking.FineAmount</td>
+                        <td style="color:@fineStatusColor; font-weight:bold;">
+                            @fineStatusText
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {

@@ -17,9 +17,9 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Material()
         {
-            this.MaterialCopies = new HashSet<MaterialCopy>();
             this.Bookinglisteds = new HashSet<Bookinglisted>();
             this.Circulations = new HashSet<Circulation>();
+            this.MaterialCopies = new HashSet<MaterialCopy>();
         }
     
         public int MaterialID { get; set; }
@@ -41,14 +41,15 @@ namespace LibraryMangement.Models
         public string Source { get; set; }
         public Nullable<decimal> Price { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public bool IsActive { get; set; }
     
-        public virtual tblSchool tblSchool { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MaterialCopy> MaterialCopies { get; set; }
         public virtual Author Author { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bookinglisted> Bookinglisteds { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Circulation> Circulations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MaterialCopy> MaterialCopies { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
     }
 }

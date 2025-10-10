@@ -12,17 +12,17 @@
     <div class="add-materials-container">
         <div class="dropdown d-inline-block">
             <button class="btn btn-primary dropdown-toggle add-materials-btn" type="button" id="addMaterialDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-plus-circle"></i> Add Materials
+                <i class="bi bi-plus-circle"></i> Add Books
             </button>
             <ul class="dropdown-menu custom-dropdown" aria-labelledby="addMaterialDropdown">
                 <li>
                     <a class="dropdown-item" href="@Url.Action("AddMaterial", "Librarian")">
-                        <i class="bi bi-journal-medical"></i> Add Single Material
+                        <i class="bi bi-journal-medical"></i> Add Library Resource
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="@Url.Action("BulkUploadMaterials", "Librarian")">
-                        <i class="bi bi-file-earmark-spreadsheet"></i> Bulk Upload (Excel)
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Add Bulk Library Resource (Excel)
                     </a>
                 </li>
             </ul>
@@ -34,7 +34,7 @@
 <div class="row g-3">
 
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-4 col-md-6 col-sm-12">
         <a href="@Url.Action("ManageMaterials", "Librarian")" class="text-decoration-none">
             <div class="card shadow-sm border-0 p-3">
                 <div class="card-body d-flex">
@@ -44,21 +44,21 @@
                         <div class="mb-2">
                             <i class="bi bi-journal-bookmark fs-1 text-primary"></i>
                         </div>
-                        <h6 class="text-uppercase fw-semibold">Total Materials</h6>
+                        <h6 class="text-uppercase fw-semibold">Total Library Resources</h6>
                         <h3 class="fw-bold">@Model.TotalMaterials</h3>
                         <span class="text-primary small fw-semibold">View Details →</span>
                     </div>
 
                     <!-- Right Side: Materials by Type -->
-                    <div class="flex-fill ps-3">
-                        <h6 class="text-uppercase fw-semibold">Materials by Type</h6>
+                    <!--<div class="flex-fill ps-3">
+                        <h6 class="text-uppercase fw-semibold">Books by Type</h6>
                         <ul class="list-unstyled small mb-0">
                             @foreach (var typeCount in Model.MaterialsByType)
                             {
                                 <li>@typeCount.MaterialType: @typeCount.Count</li>
                             }
                         </ul>
-                    </div>
+                    </div>-->
 
                 </div>
             </div>
@@ -93,14 +93,14 @@
             </div>
         </div>*@
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <a href="@Url.Action("ActiveIssues", "Librarian")" class="text-decoration-none">
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <a href="@Url.Action("ReturnMaterial", "Librarian")" class="text-decoration-none">
             <div class="card shadow-sm border-0 text-center p-3">
                 <div class="card-body">
                     <div class="mb-2">
                         <i class="bi bi-book-half fs-1 text-warning"></i>
                     </div>
-                    <h6 class="text-uppercase fw-semibold">Active Issued Books</h6>
+                    <h6 class="text-uppercase fw-semibold">Active Issued Libarary Resource</h6>
                     <h3 class="fw-bold">@Model.ActiveIssues</h3>
                     <span class="text-primary small fw-semibold">View Details →</span>
                 </div>
@@ -108,29 +108,70 @@
         </a>
     </div>
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <a href="@Url.Action("Overduelist", "Librarian")" class="text-decoration-none">
-            <div class="card shadow-sm border-0 text-center p-3">
-                <div class="card-body">
-                    <div class="mb-2">
-                        <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 p-3 h-100">
+            <!-- h-100 ensures same height -->
+            <div class="card-body d-flex flex-column justify-content-between">
+                <h6 class="text-uppercase fw-semibold text-center mb-3">
+                    <i class="bi bi-exclamation-circle text-danger me-1 fs-4"></i> Overdue Status
+                </h6>
+
+                <div class="row g-2 flex-grow-1">
+                    <!-- Left: Already Overdue -->
+                    <div class="col-6 border-end d-flex flex-column align-items-center justify-content-center">
+                        <h6 class="text-danger fw-semibold mb-2">Overdue Items</h6>
+                        <h3 class="fw-bold text-dark">@Model.OverdueIssues</h3>
+                        <p class="text-muted small mb-0">Already overdue</p>
                     </div>
-                    <h6 class="text-uppercase fw-semibold">Overdue Issues</h6>
-                    <h3 class="fw-bold">@Model.OverdueIssues</h3>
-                    <span class="text-primary small fw-semibold">View Details →</span>
+
+                    <!-- Right: Upcoming Overdue -->
+                    <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                        <h6 class="text-primary fw-semibold mb-2">Upcoming Overdues</h6>
+                        <form method="get" action="@Url.Action("LibrarianDashboard", "Librarian")" class="d-flex flex-column align-items-center w-100">
+                            <div class="input-group input-group-sm mb-2 w-75">
+                                <select name="selectedDays" class="form-select" required>
+                                    <option value="">Days</option>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <option value="@i" @(Model.SelectedDays == i ? "selected" : "")>@i</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">Check</button>
+                            </div>
+                        </form>
+
+                        <!-- Show 0 if no upcoming overdues -->
+                        <h3 class="fw-bold mt-1 text-secondary">
+                            @((Model.UpcomingOverdueIssues > 0) ? Model.UpcomingOverdueIssues : 0)
+                        </h3>
+                        <p class="text-muted small mb-0">
+                            Within <strong>@Model.SelectedDays</strong> day(s)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Overduelist", "Librarian")"
+                       class="text-primary small fw-semibold text-decoration-none">
+                        View Details →
+                    </a>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <a href="@Url.Action("PendingReservations", "Librarian")" class="text-decoration-none">
+
+
+
+
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <a href="@Url.Action("IssueMaterial", "Librarian")" class="text-decoration-none">
             <div class="card shadow-sm border-0 text-center p-3">
                 <div class="card-body">
                     <div class="mb-2">
                         <i class="bi bi-clock-history fs-1 text-secondary"></i>
                     </div>
-                    <h6 class="text-uppercase fw-semibold">Pending Reservations</h6>
+                    <h6 class="text-uppercase fw-semibold">Pending Issues</h6>
                     <h3 class="fw-bold">@Model.PendingReservations</h3>
                     <span class="text-primary small fw-semibold">View Details →</span>
                 </div>
@@ -138,7 +179,7 @@
         </a>
     </div>
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-4 col-md-6 col-sm-12">
         <a href="@Url.Action("BookingList", "Librarian")" class="text-decoration-none">
             <div class="card shadow-sm border-0 text-center p-3">
                 <div class="card-body">
@@ -153,13 +194,13 @@
         </a>
     </div>
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="card shadow-sm border-0 text-center p-3">
             <div class="card-body">
                 <div class="mb-2">
                     <i class="bi bi-box-seam fs-1 text-secondary"></i>
                 </div>
-                <h6 class="text-uppercase fw-semibold">Low Stock Materials</h6>
+                <h6 class="text-uppercase fw-semibold">Low Stock Library Resources</h6>
                 <h3 class="fw-bold">@Model.MaterialsBelowStockLimit</h3>
             </div>
         </div>
@@ -213,6 +254,20 @@
                 margin-right: 1rem;
                 font-size: 1.5rem;
             }
+
+    /* Ensure all cards have same height */
+    .card {
+        min-height: 220px; /* or adjust as per content */
+    }
+
+    /* Optional: make text vertically centered in columns */
+    .card-body .row > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
 </style>
 
 

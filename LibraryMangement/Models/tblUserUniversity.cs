@@ -33,14 +33,14 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> ExitDate { get; set; }
         public string Status { get; set; }
         public string ApprovalStatus { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
+        public virtual tblRole tblRole { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
         public virtual tblUniversity tblUniversity1 { get; set; }
         public virtual tblUniversity tblUniversity2 { get; set; }
         public virtual tblUser tblUser { get; set; }
-        public virtual tblRole tblRole { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
     }
 }

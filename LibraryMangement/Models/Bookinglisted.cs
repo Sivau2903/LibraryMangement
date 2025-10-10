@@ -21,9 +21,11 @@ namespace LibraryMangement.Models
         public System.DateTime ExpiryDate { get; set; }
         public string Status { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public bool IsActive { get; set; }
+        public Nullable<System.DateTime> HoldExpiryDate { get; set; }
+        public Nullable<System.DateTime> AssignedDate { get; set; }
     
         public virtual Material Material { get; set; }
         public virtual Patron Patron { get; set; }
-        public virtual tblSchool tblSchool { get; set; }
     }
 }

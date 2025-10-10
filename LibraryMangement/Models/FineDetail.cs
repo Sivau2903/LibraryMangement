@@ -23,11 +23,11 @@ namespace LibraryMangement.Models
         public Nullable<bool> Paid { get; set; }
         public string UniversityID { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public bool IsActive { get; set; }
     
-        public virtual Patron Patron { get; set; }
-        public virtual Patron Patron1 { get; set; }
-        public virtual tblSchool tblSchool { get; set; }
         public virtual Circulation Circulation { get; set; }
         public virtual Circulation Circulation1 { get; set; }
+        public virtual Patron Patron { get; set; }
+        public virtual Patron Patron1 { get; set; }
     }
 }

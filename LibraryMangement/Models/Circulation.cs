@@ -37,6 +37,7 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> LastFineUpdateDate { get; set; }
         public Nullable<System.DateTime> ExpiryDate { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual Patron Patron { get; set; }
         public virtual Patron Patron1 { get; set; }
@@ -46,6 +47,5 @@ namespace LibraryMangement.Models
         public virtual ICollection<FineDetail> FineDetails1 { get; set; }
         public virtual Material Material { get; set; }
         public virtual MaterialCopy MaterialCopy { get; set; }
-        public virtual tblSchool tblSchool { get; set; }
     }
 }

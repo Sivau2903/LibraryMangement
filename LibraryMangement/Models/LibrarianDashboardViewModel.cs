@@ -16,6 +16,8 @@ namespace LibraryMangement.Models
         public int MaterialsBelowStockLimit { get; set; }
         public List<MaterialTypeCount> MaterialsByType { get; set; }
         public int PendingBookinglist { get; internal set; }
+        public int? SelectedDays { get; set; } // ✅ Removed default value, made nullable
+        public int UpcomingOverdueIssues { get; set; }   // ✅ New property
     }
 
 }

@@ -31,10 +31,21 @@ namespace LibraryMangement.Services
             SendEmail(toEmail, subject, body);
         }
 
+        public static void SendBookingAvailableNotification(string toEmail, Bookinglisted booking)
+        {
+            var subject = "Library Book Available Notification";
+            var body = $@"
+        Dear Patron,<br/>
+        The book '<strong>{booking.Material.Title}</strong>' you booked is now available.<br/>
+        Please collect it within 2 days (until {booking.HoldExpiryDate:dd-MM-yyyy}).<br/><br/>
+        Regards,<br/>Library Team.";
+
+            SendEmail(toEmail, subject, body);
+        }
 
 
 
-        private static void SendEmail(string toEmail, string subject, string body)
+        public static void SendEmail(string toEmail, string subject, string body)
         {
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {

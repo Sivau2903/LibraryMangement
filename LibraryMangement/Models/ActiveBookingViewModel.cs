@@ -11,6 +11,7 @@ namespace LibraryMangement.Models
               public int BookingID { get; set; }
         public string MaterialTitle { get; set; }
         public string PatronName { get; set; }
+        public int PatronID { get; set; }
         public DateTime? BookingDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public string Status { get; set; }

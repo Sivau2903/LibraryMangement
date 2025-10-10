@@ -4,71 +4,65 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="c94e66d30de7408781174b33d80dd879" Name="Diagram1" ZoomLevel="82">
-        <EntityTypeShape EntityType="ICFAISMSModel.tblUniversity" Width="1.5" PointX="8.75" PointY="9.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblUserRole" Width="1.5" PointX="11" PointY="12.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblUser" Width="1.5" PointX="8.75" PointY="20.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblUserUniversity" Width="1.5" PointX="14" PointY="12.25" IsExpanded="true" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblUserRoles_University" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblUserUniversities_tblUniversities" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblUserUniversities_University" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_University" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_University" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_Users" ManuallyRouted="false" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_User" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblRole" Width="1.5" PointX="11" PointY="18.5" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblRoles_University" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_Roles" />
-        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_Role" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Librarian" Width="1.5" PointX="14" PointY="18.625" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Material" Width="1.5" PointX="19.25" PointY="14.625" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Patron" Width="1.5" PointX="19.25" PointY="21.25" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblSchool" Width="1.5" PointX="17" PointY="15.375" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_Librarians" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_Librarians1" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_tblUsers" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Materials_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Patrons_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Patrons_tblUsers" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Department_HOD" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblDepartment_University" />
-        <EntityTypeShape EntityType="ICFAISMSModel.MaterialCopy" Width="1.5" PointX="21.5" PointY="16.375" />
-        <AssociationConnector Association="ICFAISMSModel.FK_MaterialCopies_Materials" />
-        <AssociationConnector Association="ICFAISMSModel.FK_MaterialCopies_tblSchools" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Author" Width="1.5" PointX="19.25" PointY="11.375" />
-        <EntityTypeShape EntityType="ICFAISMSModel.BarcodeHistory" Width="1.5" PointX="23.75" PointY="17.625" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Bookinglisted" Width="1.5" PointX="21.5" PointY="20.5" />
-        <EntityTypeShape EntityType="ICFAISMSModel.FineDetail" Width="1.5" PointX="26.75" PointY="19.125" />
-        <EntityTypeShape EntityType="ICFAISMSModel.FineReason" Width="1.5" PointX="19.25" PointY="29.75" />
-        <EntityTypeShape EntityType="ICFAISMSModel.MaterialType" Width="1.5" PointX="19.25" PointY="27.125" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Authors_tblSchools" />
+      <Diagram DiagramId="c94e66d30de7408781174b33d80dd879" Name="Diagram1" ZoomLevel="124">
+        <EntityTypeShape EntityType="ICFAISMSModel.Author" Width="1.5" PointX="1.5" PointY="2.625" />
+        <EntityTypeShape EntityType="ICFAISMSModel.BarcodeHistory" Width="1.5" PointX="8.25" PointY="14.875" />
+        <EntityTypeShape EntityType="ICFAISMSModel.Bookinglisted" Width="1.5" PointX="11.25" PointY="5.375" />
+        <EntityTypeShape EntityType="ICFAISMSModel.Circulation" Width="1.5" PointX="8.25" PointY="4.375" />
+        <EntityTypeShape EntityType="ICFAISMSModel.FineDetail" Width="1.5" PointX="10.5" PointY="10" />
+        <EntityTypeShape EntityType="ICFAISMSModel.FineReason" Width="1.5" PointX="0.75" PointY="6.125" />
+        <EntityTypeShape EntityType="ICFAISMSModel.Librarian" Width="1.5" PointX="6" PointY="16.75" />
+        <EntityTypeShape EntityType="ICFAISMSModel.MaterialCopy" Width="1.5" PointX="6" PointY="1.625" />
+        <EntityTypeShape EntityType="ICFAISMSModel.Material" Width="1.5" PointX="3.75" PointY="0.75" />
+        <EntityTypeShape EntityType="ICFAISMSModel.MaterialType" Width="1.5" PointX="0.75" PointY="9.125" />
+        <EntityTypeShape EntityType="ICFAISMSModel.Patron" Width="1.5" PointX="6" PointY="9.375" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblEmployee" Width="1.5" PointX="5.25" PointY="22" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblRole" Width="1.5" PointX="3" PointY="35.625" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblSchool" Width="1.5" PointX="3" PointY="15.875" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblUniversity" Width="1.5" PointX="0.75" PointY="13" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblUserRole" Width="1.5" PointX="8.25" PointY="19.125" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblUser" Width="1.5" PointX="3.75" PointY="7.875" />
+        <EntityTypeShape EntityType="ICFAISMSModel.tblUserUniversity" Width="1.5" PointX="8.25" PointY="25" />
         <AssociationConnector Association="ICFAISMSModel.FK_Materials_Authors" />
         <AssociationConnector Association="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39" />
         <AssociationConnector Association="ICFAISMSModel.FK__BarcodeHi__CopyI__4FF1D159" />
         <AssociationConnector Association="ICFAISMSModel.FK_BarcodeHistory_tblSchools" />
         <AssociationConnector Association="ICFAISMSModel.FK_Booking_Material" />
         <AssociationConnector Association="ICFAISMSModel.FK_Booking_Patron" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Bookinglisted_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Patro__381A47C8" />
-        <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Patro__53C2623D" />
-        <AssociationConnector Association="ICFAISMSModel.FK_FineDetails_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK_FineReasons_tblSchools" />
-        <AssociationConnector Association="ICFAISMSModel.FK_MaterialType_tblSchools" />
-        <EntityTypeShape EntityType="ICFAISMSModel.tblEmployee" Width="1.5" PointX="22.25" PointY="7.125" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Employee_Users" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblEmployee" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblRoles" />
-        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblUniversity" />
-        <EntityTypeShape EntityType="ICFAISMSModel.Circulation" Width="1.5" PointX="23.75" PointY="21.25" />
         <AssociationConnector Association="ICFAISMSModel.FK__Circulati__Patro__353DDB1D" />
         <AssociationConnector Association="ICFAISMSModel.FK__Circulati__Patro__51DA19CB" />
         <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Circu__3726238F" />
         <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" />
         <AssociationConnector Association="ICFAISMSModel.FK_Circulation_Material" />
         <AssociationConnector Association="ICFAISMSModel.FK_Circulation_MaterialCopies" />
-        <AssociationConnector Association="ICFAISMSModel.FK_Circulation_tblSchools" />
-        </Diagram>
+        <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Patro__381A47C8" />
+        <AssociationConnector Association="ICFAISMSModel.FK__FineDetai__Patro__53C2623D" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_Librarians" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_Librarians1" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Librarians_tblUsers" />
+        <AssociationConnector Association="ICFAISMSModel.FK_MaterialCopies_Materials" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Patrons_tblUsers" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblRoles" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblSchools" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblUniversity" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblUsers" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblEmployee_tblUserUniversities" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblRoles_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_Roles" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_Role" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Department_HOD" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblDepartment_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblUserRoles_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblUserUniversities_tblUniversities" />
+        <AssociationConnector Association="ICFAISMSModel.FK_tblUserUniversities_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_University" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_Users" />
+        <AssociationConnector Association="ICFAISMSModel.FK_UserUniversities_User" />
+        <AssociationConnector Association="ICFAISMSModel.FK_Materials_tblSchools" />
+        <EntityTypeShape EntityType="ICFAISMSModel.PatronNewMaterialRequest" Width="1.5" PointX="8.25" PointY="0.75" />
+        <AssociationConnector Association="ICFAISMSModel.FK_PatronNewMaterialRequests_Patrons" />
+      </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

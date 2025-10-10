@@ -5,106 +5,158 @@
     ViewBag.Title = "Patron Dashboard";
 }
 
+<style>
+
+
+    .info-popup {
+        position: fixed;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2000;
+        width: 420px;
+        display: none;
+        animation: slideDown 0.4s ease;
+    }
+
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            top: 0;
+        }
+
+        to {
+            opacity: 1;
+            top: 50px;
+        }
+    }
+</style>
+
 <h2>Welcome, @Model.PatronName</h2>
 
 <div class="row mb-4">
-    <div class="row g-3 mb-4">
-        <div class="col-md-3 col-sm-6">
-            <a href="@Url.Action("PatronDashboard", "Patron")" class="text-decoration-none">
-                <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
-                    <div class="card-body">
-                        <div class="mb-1">
-                            <i class="bi bi-book fs-2 text-secondary"></i>
-                        </div>
-                        <h6 class="text-uppercase fw-semibold small mb-1">Total Active Issued</h6>
-                        <h4 class="fw-bold mb-2">@Model.ActiveIssuedCount</h4>
-                        <span class="text-primary small fw-semibold">View Details →</span>
+    <div class="col-md-3 col-sm-6">
+        <a href="javascript:void(0);" class="text-decoration-none" onclick="showInfoPopup()">
+            <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
+                <div class="card-body">
+                    <div class="mb-1">
+                        <i class="bi bi-book fs-2 text-secondary"></i>
                     </div>
+                    <h6 class="text-uppercase fw-semibold small mb-1">Total Active Issued</h6>
+                    <h4 class="fw-bold mb-2">@Model.ActiveIssuedCount</h4>
+                    <span class="text-primary small fw-semibold">View Details →</span>
                 </div>
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
-            <a href="@Url.Action("OverdueList", "Patron")" class="text-decoration-none">
-                <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
-                    <div class="card-body">
-                        <div class="mb-1">
-                            <i class="bi bi-exclamation-triangle fs-2 text-secondary"></i>
-                        </div>
-                        <h6 class="text-uppercase fw-semibold small mb-1">Overdue Items</h6>
-                        <h4 class="fw-bold mb-2">@Model.OverdueCount</h4>
-                        <span class="text-primary small fw-semibold">View Details →</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
-            <a href="@Url.Action("MyReservations", "Patron")" class="text-decoration-none">
-                <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
-                    <div class="card-body">
-                        <div class="mb-1">
-                            <i class="bi bi-calendar-check fs-2 text-secondary"></i>
-                        </div>
-                        <h6 class="text-uppercase fw-semibold small mb-1">Pending Reservations</h6>
-                        <h4 class="fw-bold mb-2">@Model.PendingReservations</h4>
-                        <span class="text-primary small fw-semibold">View Details →</span>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
-            <a href="@Url.Action("MyBookingList", "Patron")" class="text-decoration-none">
-                <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
-                    <div class="card-body">
-                        <div class="mb-1">
-                            <i class="bi bi-clock-history fs-2 text-secondary"></i>
-                        </div>
-                        <h6 class="text-uppercase fw-semibold small mb-1">Pending Bookings</h6>
-                        <h4 class="fw-bold mb-2">@Model.PendingBookings</h4>
-                        <span class="text-primary small fw-semibold">View Details →</span>
-                    </div>
-                </div>
-            </a>
-        </div>
+            </div>
+        </a>
     </div>
 
 
+    <div class="col-md-3 col-sm-6">
+        <a href="@Url.Action("OverdueList", "Patron")" class="text-decoration-none">
+            <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
+                <div class="card-body">
+                    <div class="mb-1">
+                        <i class="bi bi-exclamation-triangle fs-2 text-secondary"></i>
+                    </div>
+                    <h6 class="text-uppercase fw-semibold small mb-1">Overdue Items</h6>
+                    <h4 class="fw-bold mb-2">@Model.OverdueCount</h4>
+                    <span class="text-primary small fw-semibold">View Details →</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <a href="@Url.Action("MyReservations", "Patron")" class="text-decoration-none">
+            <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
+                <div class="card-body">
+                    <div class="mb-1">
+                        <i class="bi bi-calendar-check fs-2 text-secondary"></i>
+                    </div>
+                    <h6 class="text-uppercase fw-semibold small mb-1">Pending Reservations</h6>
+                    <h4 class="fw-bold mb-2">@Model.PendingReservations</h4>
+                    <span class="text-primary small fw-semibold">View Details →</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <a href="@Url.Action("MyBookingList", "Patron")" class="text-decoration-none">
+            <div class="card shadow-sm border-0 text-center p-2 h-100 hover-card">
+                <div class="card-body">
+                    <div class="mb-1">
+                        <i class="bi bi-clock-history fs-2 text-secondary"></i>
+                    </div>
+                    <h6 class="text-uppercase fw-semibold small mb-1">Pending Bookings</h6>
+                    <h4 class="fw-bold mb-2">@Model.PendingBookings</h4>
+                    <span class="text-primary small fw-semibold">View Details →</span>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 
 
-<h3>Active Issued Materials</h3>
+<!-- Info Modal -->
+
+<div id="infoPopup" class="info-popup shadow rounded-3 bg-light text-dark text-center p-3 border border-secondary" style="max-width: 400px; margin: 20px auto; display: none;">
+    <h5 class="mb-2"><i class="bi bi-info-circle-fill me-2"></i>Information</h5>
+    <p class="mb-3" style="font-size: 0.95rem;">Kindly check below in this page for the <strong>Active Issues</strong> table.</p>
+    <button class="btn btn-secondary btn-sm fw-semibold" onclick="closeInfoPopup()">OK</button>
+</div>
+
+
+
+
+<h3 class="mb-3">Active Issued Materials</h3>
+
 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-    <table class="table table-striped mb-0">
-        <thead class="table-light sticky-top">
+    <table class="table table-striped table-hover table-bordered align-middle mb-0">
+        <thead class="table-primary sticky-top">
             <tr>
-                <th>Title</th>
-                <th>Account Number</th>
-                <th>Issue Date</th>
-                <th>Due Date</th>
-                <th>Status</th>
+                <th scope="col">Title</th>
+                <th scope="col">Issue Date</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Fine Amount</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var issue in Model.ActiveIssues)
+            @foreach (var issue in Model.ActiveIssues ?? new List<LibraryMangement.Models.Circulation>())
             {
                 string statusColor = issue.Status == "Issued" ? "green" :
                                      issue.Status == "Overdue" ? "red" : "black";
 
                 <tr>
-                    <td>@issue.MaterialCopy.Material.Title</td>
-                    <td>@issue.MaterialCopy.AccountNumber</td>
-                    <td>@issue.IssueDate</td>
-                    <td>@issue.DueDate</td>
-                    <td style="color: @statusColor; font-weight:bold;">
-                        @issue.Status
+                    <td>@(issue?.MaterialCopy?.Material?.Title ?? "N/A")</td>
+                    <td>@(issue?.IssueDate?.ToString("dd-MM-yyyy") ?? "N/A")</td>
+                    <td>@(issue?.DueDate?.ToString("dd-MM-yyyy") ?? "N/A")</td>
+                    <td style="color:@statusColor;font-weight:bold;">
+                        @(issue?.Status ?? "N/A")
                     </td>
+                    <td>@String.Format("{0:C}", issue?.FineAmount ?? 0)</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        function showInfoPopup() {
+            $("#infoPopup").fadeIn(300);
+            // Auto-hide after 5 seconds (optional)
+            setTimeout(() => $("#infoPopup").fadeOut(300), 5000);
+        }
+
+        function closeInfoPopup() {
+            $("#infoPopup").fadeOut(300);
+        }
+    </script>
+}
+
 
 
 

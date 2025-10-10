@@ -1,0 +1,127 @@
+﻿@model List<LibraryMangement.Models.PatronNewMaterialRequest>
+
+@{
+    ViewBag.Title = "New Book Requests";
+}
+
+<h2 class="text-center my-4 text-primary">New Book Requests</h2>
+<style>
+    /* Top-center modal override */
+    .modal-top {
+        display: flex;
+        align-items: flex-start; /* aligns modal to top */
+        justify-content: center; /* horizontally center */
+        margin-top: 100px; /* distance from top */
+    }
+</style>
+<!-- TempData Success Popup -->
+@if (TempData["Success"] != null)
+{
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-success">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @TempData["Success"]
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#successModal').modal('show');
+        });
+    </script>
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Patron Name</th>
+                    <th>Material Name</th>
+                    <th>Requested Date</th>
+                    <th>Status</th>
+                    <th>Notify If Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@(Model[i].Patron?.PatronName ?? "N/A")</td>
+                        <td>@Model[i].MaterialTitle</td>
+                        <td>@Model[i].RequestedDate.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            <span class="badge @(Model[i].Status == "Pending" ? "bg-warning" : "bg-success")">
+                                @Model[i].Status
+                            </span>
+                        </td>
+                        <td>
+                            @if (Model[i].Status == "Pending")
+                            {
+                                <button type="button" class="btn btn-success btn-sm" onclick="showConfirmModal(@Model[i].RequestID)">
+                                    Notify Availability
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Already Notified</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center">
+        No pending new book requests found.
+    </div>
+}
+
+
+<!-- Warning Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-top">
+        <div class="modal-content border-warning">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="confirmModalLabel">Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to notify the Patron that the book is available?
+            </div>
+            <div class="modal-footer">
+                <form id="confirmForm" method="post" asp-action="NotifyAvailability" asp-controller="Library">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="RequestID" name="RequestID" value="" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Yes, Notify</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function showConfirmModal(requestId) {
+        $('#RequestID').val(requestId);
+        var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        confirmModal.show();
+    }
+</script>

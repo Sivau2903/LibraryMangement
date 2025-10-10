@@ -15,14 +15,14 @@
     <div style="margin-bottom:16px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
         <div>
             <label>Title:</label>
-            @Html.TextBox("title", Request.QueryString["title"], new { @class = "form-control", id = "titleBox", placeholder = "Enter Title" })
+            @Html.TextBox("title", Request.QueryString["title"] ?? "", new { @class = "form-control", id = "titleBox", placeholder = "Enter Title" })
         </div>
         <div>
             <label>Author:</label>
             @Html.TextBox("author", Request.QueryString["author"], new { @class = "form-control", id = "authorBox", placeholder = "Enter Author" })
         </div>
         <div>
-            <label>Material Type:</label>
+            <label>Book Type:</label>
             @Html.DropDownList("materialType", materialTypes, "Select Material Type", new { @class = "form-control" })
         </div>
         <div style="margin-top:25px;">
@@ -41,7 +41,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Author</th>
-                    <th>Material Type</th>
+                    <th>Book Type</th>
                     <th>Total Quantity</th>
                     <th>Available Quantity</th>
                     <th>Issued Quantity</th>
@@ -75,18 +75,108 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-    <script>
-        $(function () {
-            var titles = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(titles));
-            var authors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(authors));
+ 
+ <style>
+    /* Make autocomplete dropdown scrollable */
+    .ui-autocomplete {
+        max-height: 200px;   /* adjust height as needed */
+        overflow-y: auto;    /* vertical scroll */
+        overflow-x: hidden;  /* hide horizontal scroll */
+        z-index: 1000 !important; /* ensure it appears above other elements */
+    }
+    /* Optional: prevent menu width from stretching too wide */
+    .ui-autocomplete li {
+        white-space: nowrap;
+    }
+</style>
 
-            $("#titleBox").autocomplete({
-                source: titles
-            });
+<script>
+$(function () {
+    // --- Initial data from ViewBag ---
+    var allTitles = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Titles));
+    var allAuthors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Authors));
+    var authorDropdownInitialized = false;
 
-            $("#authorBox").autocomplete({
-                source: authors
+    // --- Default setup ---
+    $("#titleBox").autocomplete({ source: allTitles });
+    makeAuthorAutocomplete(allAuthors); // Author editable from start
+
+    // --- When Title or Material Type changes ---
+    $("#titleBox, select[name='materialType']").on("change", function () {
+        var title = $("#titleBox").val();
+        var materialType = $("select[name='materialType']").val();
+
+        // Only convert Author to dropdown once, after first Title/Type selection
+        if ((title || materialType) && !authorDropdownInitialized) {
+            $.ajax({
+                url: '@Url.Action("GetFilteredData", "Librarian")',
+                data: { title: title, materialType: materialType },
+                success: function (data) {
+                    convertAuthorToDropdown(data.Authors);
+
+                    // Update Material Type dropdown if Title is selected
+                    var $matType = $("select[name='materialType']");
+                    if (title) {
+                        $matType.empty().append('<option value="">Select Material Type</option>');
+                        $.each(data.MaterialTypes, function (i, val) {
+                            $matType.append($('<option>', { text: val, value: val }));
+                        });
+                    }
+
+                    authorDropdownInitialized = true; // prevent future resets
+                }
             });
+        }
+    });
+
+    // --- Always allow typing in Author, even if nothing selected ---
+    $(document).on("focus", "#authorBox", function () {
+        if (!authorDropdownInitialized) {
+            makeAuthorAutocomplete(allAuthors); // autocomplete active
+        }
+    });
+
+    // --- Utility: Convert Author to dropdown ---
+    function convertAuthorToDropdown(authors) {
+        var $container = $("#authorBox").parent();
+        var currentValue = $("#authorBox").val(); // preserve typed value
+        $("#authorBox").remove();
+        var $dropdown = $('<select id="authorBox" name="author" class="form-control"></select>');
+        $dropdown.append('<option value="">Select Author</option>');
+        $.each(authors, function (i, val) {
+            $dropdown.append($('<option>', { value: val, text: val }));
         });
+
+        if (currentValue && authors.includes(currentValue)) {
+            $dropdown.val(currentValue);
+        }
+
+        $container.append($dropdown);
+    }
+
+    // --- Utility: Convert Author back to text input ---
+    function convertAuthorToTextbox() {
+        var $container = $("#authorBox").parent();
+        var previousValue = $("#authorBox").val() || "";
+        $("#authorBox").remove();
+        var $textbox = $('<input type="text" id="authorBox" name="author" class="form-control" placeholder="Enter Author">');
+        $textbox.val(previousValue);
+        $container.append($textbox);
+    }
+
+    // --- Utility: Apply autocomplete ---
+    function makeAuthorAutocomplete(sourceList) {
+        $("#authorBox").autocomplete({
+            source: sourceList,
+            delay: 100,
+            minLength: 0 // show all on focus if needed
+        }).focus(function(){
+            $(this).autocomplete("search", $(this).val()); // open dropdown on focus
+        });
+    }
+});
     </script>
+
+
+ 
 }

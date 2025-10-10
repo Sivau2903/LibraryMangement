@@ -1,0 +1,123 @@
+﻿@model LibraryMangement.Models.MaterialRequestViewModel
+
+@{
+    Layout = "~/Views/Shared/_PatronLayout.cshtml";
+    ViewBag.Title = "Raise Material Request";
+}
+
+<h2 class="text-center my-4">Raise a Material Request</h2>
+
+<div class="d-flex justify-content-center">
+    <div class="material-request-container p-4 shadow-sm rounded">
+        @using (Html.BeginForm("RaiseMaterialRequest", "Patron", FormMethod.Post, new { @id = "materialRequestForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.MaterialTitle, htmlAttributes: new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.MaterialTitle, new { @class = "form-control", @placeholder = "Enter book title", required = "required" })
+                @Html.ValidationMessageFor(m => m.MaterialTitle, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Edition, htmlAttributes: new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Edition, new { @class = "form-control", @placeholder = "Enter edition (optional)" })
+                @Html.ValidationMessageFor(m => m.Edition, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Author, htmlAttributes: new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Author, new { @class = "form-control", @placeholder = "Enter author name (optional)" })
+                @Html.ValidationMessageFor(m => m.Author, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Notes, htmlAttributes: new { @class = "form-label" })
+                @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", rows = 3, @placeholder = "Any additional notes" })
+                @Html.ValidationMessageFor(m => m.Notes, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="button" class="btn btn-primary w-100" id="confirmSubmitBtn">Submit Request</button>
+
+        }
+    </div>
+</div>
+<!-- 🔸 Confirmation Popup -->
+<div id="confirmPopup" class="confirm-popup bg-warning text-dark text-center p-4 rounded-3 shadow-lg">
+    <h5 class="mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Submission</h5>
+    <p class="mb-3">Are you sure you want to raise this material request?</p>
+    <div>
+        <button id="cancelConfirm" class="btn btn-secondary btn-sm me-2">Cancel</button>
+        <button id="confirmSubmit" class="btn btn-danger btn-sm">Yes, Submit</button>
+    </div>
+</div>
+
+
+<style>
+
+    .confirm-popup {
+        position: fixed;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2000;
+        width: 400px;
+        display: none;
+        animation: slideDown 0.4s ease;
+    }
+
+    @@keyframes slideDown {
+        from {
+            top: 0;
+            opacity: 0;
+        }
+
+        to {
+            top: 50px;
+            opacity: 1;
+        }
+    }
+
+    .material-request-container {
+        width: 100%;
+        max-width: 500px;
+        background-color: #f8f9fa;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 3rem;
+    }
+
+        .material-request-container label {
+            font-weight: 500;
+        }
+
+        .material-request-container button {
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            // Show confirmation popup when user clicks submit
+            $("#confirmSubmitBtn").click(function (e) {
+                e.preventDefault();
+                $("#confirmPopup").fadeIn(300);
+            });
+
+            // Cancel hides popup
+            $("#cancelConfirm").click(function () {
+                $("#confirmPopup").fadeOut(200);
+            });
+
+            // Confirm submits the form
+            $("#confirmSubmit").click(function () {
+                $("#confirmPopup").fadeOut(200);
+                $("#materialRequestForm").submit();
+            });
+        });
+    </script>
+}

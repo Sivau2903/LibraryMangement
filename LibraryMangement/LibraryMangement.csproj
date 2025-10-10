@@ -190,6 +190,7 @@
     </Compile>
     <Compile Include="Models\FineReasonDTO.cs" />
     <Compile Include="Models\FineReportViewModel.cs" />
+    <Compile Include="Models\IssueReservedMaterialViewModel.cs" />
     <Compile Include="Models\Librarian.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -203,6 +204,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MaterialCopyViewModel.cs" />
+    <Compile Include="Models\MaterialRequestViewModel.cs" />
     <Compile Include="Models\MaterialType.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -230,6 +232,10 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PatronDashboardViewModel.cs" />
+    <Compile Include="Models\PatronNewMaterialRequest.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ReturnMaterialItemDTO.cs" />
     <Compile Include="Models\ReturnMaterialViewModel.cs" />
     <Compile Include="Models\SecureHelper.cs" />
     <Compile Include="Models\tblEmployee.cs">
@@ -267,6 +273,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\Login.jpg" />
     <Content Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model1.edmx</DependentUpon>
@@ -356,6 +363,9 @@
     <Content Include="Views\Librarian\RequestReport.cshtml" />
     <Content Include="Views\Librarian\IssuedReport.cshtml" />
     <Content Include="Views\Librarian\AvailabilityReport.cshtml" />
+    <Content Include="Views\Patron\RaiseMaterialRequest.cshtml" />
+    <Content Include="Views\Librarian\NewBookRequests.cshtml" />
+    <Content Include="Views\Patron\TermsConditions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -17,63 +17,36 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblSchool()
         {
-            this.Librarians = new HashSet<Librarian>();
-            this.Materials = new HashSet<Material>();
-            this.Patrons = new HashSet<Patron>();
-            this.MaterialCopies = new HashSet<MaterialCopy>();
-            this.Authors = new HashSet<Author>();
             this.BarcodeHistories = new HashSet<BarcodeHistory>();
-            this.Bookinglisteds = new HashSet<Bookinglisted>();
-            this.FineDetails = new HashSet<FineDetail>();
-            this.FineReasons = new HashSet<FineReason>();
-            this.MaterialTypes = new HashSet<MaterialType>();
-            this.Circulations = new HashSet<Circulation>();
+            this.tblEmployees = new HashSet<tblEmployee>();
+            this.Materials = new HashSet<Material>();
         }
     
         public int SchoolID { get; set; }
         public string SchoolName { get; set; }
         public string ShortName { get; set; }
-        public string Description { get; set; }
         public string UniversityID { get; set; }
         public string HODUserID { get; set; }
-        public Nullable<System.DateTime> EstablishedDate { get; set; }
         public string DepartmentEmail { get; set; }
         public string DepartmentPhone { get; set; }
         public string OfficeLocation { get; set; }
         public bool IsActive { get; set; }
-        public int DisplayOrder { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedIPAddress { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedIPAddress { get; set; }
-        public bool IsDeleted { get; set; }
         public byte[] RowVersion { get; set; }
+        public short Grading { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Librarian> Librarians { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Material> Materials { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Patron> Patrons { get; set; }
-        public virtual tblUser tblUser { get; set; }
-        public virtual tblUniversity tblUniversity { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MaterialCopy> MaterialCopies { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Author> Authors { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Bookinglisted> Bookinglisteds { get; set; }
+        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
+        public virtual tblUser tblUser { get; set; }
+        public virtual tblUniversity tblUniversity { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FineDetail> FineDetails { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FineReason> FineReasons { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MaterialType> MaterialTypes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Circulation> Circulations { get; set; }
+        public virtual ICollection<Material> Materials { get; set; }
     }
 }
