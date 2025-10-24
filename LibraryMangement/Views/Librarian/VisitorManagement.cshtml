@@ -1,0 +1,106 @@
+﻿@model LibraryMangement.Models.VisitorManagement
+@{
+    ViewBag.Title = "Visitor Management";
+    var visitors = ViewBag.VisitorsByDate as List<LibraryMangement.Models.VisitorManagement>;
+    var selectedDate = ViewBag.SelectedDate != null ? (DateTime)ViewBag.SelectedDate : DateTime.Today;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Side: Visitors Table -->
+        <div class="col-md-7">
+            <div class="card shadow p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-primary">Visitors List (@selectedDate.ToString("dd-MM-yyyy"))</h5>
+                   
+                    <a href="@Url.Action("PrintVisitorQR", "Librarian")" target="_blank" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-printer"></i> Print QR
+                    </a>
+                </div>
+
+                <!-- Date Filter Form -->
+                @using (Html.BeginForm("VisitorManagement", "Librarian", FormMethod.Get))
+                {
+                    <div class="mb-3 d-flex" style="width:30%">
+                        <input type="date" name="visitDate" value="@selectedDate.ToString("yyyy-MM-dd")" class="form-control me-2" />
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                }
+
+                <table class="table table-striped table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Purpose</th>
+                            <th>Contact</th>
+                            <th>Visit Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (visitors != null && visitors.Count > 0)
+                        {
+                            int i = 1;
+                            foreach (var v in visitors)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@v.VisitorName</td>
+                                    <td>@v.Purpose</td>
+                                    <td>@v.ContactNumber</td>
+                                    <td>@v.VisitDate.ToString("hh:mm tt")</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">No visitors on this date</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right Side: Add Visitor Form -->
+        <div class="col-md-5">
+            <div class="card shadow p-4">
+                <h5 class="text-center text-primary mb-3">Add Visitor</h5>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+
+                @using (Html.BeginForm("VisitorManagement", "Librarian", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label>Visitor Name</label>
+                        @Html.TextBoxFor(m => m.VisitorName, new { @class = "form-control", @required = "required", @placeholder = "Enter visitor name" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Purpose</label>
+                        @Html.TextBoxFor(m => m.Purpose, new { @class = "form-control", @placeholder = "Enter purpose of visit" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Contact Number</label>
+                        @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", @placeholder = "Enter contact number" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Visit Date & Time</label>
+                        @Html.TextBoxFor(m => m.VisitDate, new { @type = "datetime-local", @class = "form-control", @Value = DateTime.Now.ToString("yyyy-MM-ddTHH:mm") })
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Save Visitor</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

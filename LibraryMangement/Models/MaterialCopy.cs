@@ -31,13 +31,14 @@ namespace LibraryMangement.Models
         public string UniversityID { get; set; }
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
+        public Nullable<bool> IsPrinted { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories1 { get; set; }
+        public virtual Material Material { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Circulation> Circulations { get; set; }
-        public virtual Material Material { get; set; }
     }
 }

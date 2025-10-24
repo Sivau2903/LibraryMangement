@@ -22,8 +22,8 @@ namespace LibraryMangement.Models
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
     
+        public virtual tblSchool tblSchool { get; set; }
         public virtual MaterialCopy MaterialCopy { get; set; }
         public virtual MaterialCopy MaterialCopy1 { get; set; }
-        public virtual tblSchool tblSchool { get; set; }
     }
 }

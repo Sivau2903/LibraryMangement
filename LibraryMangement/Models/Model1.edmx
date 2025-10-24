@@ -31,7 +31,7 @@
             <PropertyRef Name="BookingID" />
           </Key>
           <Property Name="BookingID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PatronID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
           <Property Name="MaterialID" Type="int" Nullable="false" />
           <Property Name="BookingDate" Type="datetime" Nullable="false" />
           <Property Name="ExpiryDate" Type="datetime" Nullable="false" />
@@ -47,7 +47,7 @@
           </Key>
           <Property Name="CirculationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CopyID" Type="int" />
-          <Property Name="PatronID" Type="int" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" />
           <Property Name="IssueDate" Type="datetime" />
           <Property Name="DueDate" Type="datetime" />
           <Property Name="ReturnDate" Type="datetime" />
@@ -62,6 +62,8 @@
           <Property Name="ExpiryDate" Type="datetime" />
           <Property Name="SchoolID" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IssuedBy" Type="int" />
+          <Property Name="CounterID" Type="int" />
         </EntityType>
         <EntityType Name="FineDetails">
           <Key>
@@ -69,7 +71,7 @@
           </Key>
           <Property Name="FineID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CirculationID" Type="int" />
-          <Property Name="PatronID" Type="int" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" />
           <Property Name="Amount" Type="decimal" Precision="8" Scale="2" />
           <Property Name="Reason" Type="varchar" MaxLength="255" />
           <Property Name="AppliedDate" Type="datetime" />
@@ -87,19 +89,20 @@
           <Property Name="FineAmount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="SchoolID" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Librarians">
-          <Key>
-            <PropertyRef Name="LibrarianID" />
-          </Key>
-          <Property Name="LibrarianID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SchoolID" Type="int" />
           <Property Name="UserID" Type="nvarchar" MaxLength="450" />
-          <Property Name="EmailID" Type="nvarchar" MaxLength="256" />
-          <Property Name="UniversityID" Type="nvarchar" MaxLength="450" />
-          <Property Name="Name" Type="nvarchar" MaxLength="255" />
-          <Property Name="ContactNumber" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LibraryCounters">
+          <Key>
+            <PropertyRef Name="CounterID" />
+          </Key>
+          <Property Name="CounterID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CounterNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CounterName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="EmployeeID" Type="int" />
+          <Property Name="AssignedBy" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="UniversityID" Type="int" Nullable="false" />
+          <Property Name="SchoolID" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="MaterialCopies">
           <Key>
@@ -114,6 +117,7 @@
           <Property Name="UniversityID" Type="varchar" MaxLength="50" />
           <Property Name="SchoolID" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsPrinted" Type="bit" />
         </EntityType>
         <EntityType Name="Materials">
           <Key>
@@ -149,13 +153,14 @@
           <Property Name="UniversityID" Type="varchar" MaxLength="50" />
           <Property Name="SchoolID" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="AddedBy" Type="nchar" MaxLength="450" />
         </EntityType>
         <EntityType Name="PatronNewMaterialRequests">
           <Key>
             <PropertyRef Name="RequestID" />
           </Key>
           <Property Name="RequestID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PatronID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
           <Property Name="SchoolID" Type="int" Nullable="false" />
           <Property Name="UniversityID" Type="int" Nullable="false" />
           <Property Name="MaterialTitle" Type="nvarchar" MaxLength="255" Nullable="false" />
@@ -166,35 +171,27 @@
           <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="Patrons">
+        <EntityType Name="VisitorManagement">
           <Key>
-            <PropertyRef Name="PatronID" />
+            <PropertyRef Name="VisitorID" />
           </Key>
-          <Property Name="PatronID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UniversityID" Type="varchar" MaxLength="50" />
-          <Property Name="PatronName" Type="varchar" MaxLength="255" />
-          <Property Name="PatronEmail" Type="varchar" MaxLength="255" />
-          <Property Name="PatronPhone" Type="varchar" MaxLength="50" />
-          <Property Name="PatronType" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="CreatedAt" Type="datetime" />
-          <Property Name="UserID" Type="nvarchar" MaxLength="450" />
+          <Property Name="VisitorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VisitorName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Purpose" Type="nvarchar" MaxLength="200" />
+          <Property Name="ContactNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="VisitDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="UniversityID" Type="int" />
           <Property Name="SchoolID" Type="int" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="tblEmployee">
           <Key>
             <PropertyRef Name="EmployeeID" />
           </Key>
           <Property Name="EmployeeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserUniversityID" Type="nvarchar" MaxLength="450" Nullable="false" />
           <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
-          <Property Name="UserDepartmentID" Type="int" Nullable="false" />
           <Property Name="EmployeeCode" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="LastName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="FullName" Type="nvarchar" MaxLength="201" StoreGeneratedPattern="Computed" Nullable="false" />
-          <Property Name="RoleID" Type="int" Nullable="false" />
           <Property Name="JoiningDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="ExitDate" Type="datetime2" Precision="7" />
           <Property Name="Salary" Type="decimal" Precision="18" Scale="2" />
@@ -210,16 +207,18 @@
           <Property Name="Qualifications" Type="nvarchar" MaxLength="1000" />
           <Property Name="Experience" Type="nvarchar" MaxLength="1000" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="CreatedIPAddress" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime2" Precision="7" />
           <Property Name="ModifiedIPAddress" Type="varchar" MaxLength="45" />
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" />
-          <Property Name="UniversityID" Type="nvarchar" MaxLength="450" Nullable="false" />
-          <Property Name="SchoolID" Type="int" Nullable="false" />
           <Property Name="PhotoPath" Type="nvarchar" MaxLength="450" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
+          <Property Name="EmployeeName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DesignationID" Type="int" />
         </EntityType>
         <EntityType Name="tblRoles">
           <Key>
@@ -238,6 +237,8 @@
           <Property Name="ModifiedDate" Type="datetime2" Precision="7" />
           <Property Name="ModifiedIPAddress" Type="varchar" MaxLength="45" />
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" />
+          <Property Name="RoleLevel" Type="nvarchar" MaxLength="20" />
+          <Property Name="ParentRoleID" Type="nvarchar" MaxLength="450" />
         </EntityType>
         <EntityType Name="tblSchools">
           <Key>
@@ -260,6 +261,83 @@
           <Property Name="ModifiedIPAddress" Type="varchar" MaxLength="45" />
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" />
           <Property Name="Grading" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblStudent">
+          <Key>
+            <PropertyRef Name="StudentID" />
+          </Key>
+          <Property Name="StudentID" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" />
+          <Property Name="EnrollmentNumber" Type="nvarchar" MaxLength="100" />
+          <Property Name="StudentName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateOfBirth" Type="date" Nullable="false" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="PersonalEmail" Type="nvarchar" MaxLength="255" />
+          <Property Name="ProfilePicture" Type="nvarchar" MaxLength="500" />
+          <Property Name="Course" Type="nvarchar" MaxLength="200" />
+          <Property Name="BatchYear" Type="int" />
+          <Property Name="CurrentSemester" Type="int" />
+          <Property Name="AdmissionDate" Type="datetime" />
+          <Property Name="StudentStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime2" Precision="7" />
+          <Property Name="Age" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="ProgramInstanceID" Type="int" />
+          <Property Name="ProgramMasterID" Type="int" />
+          <Property Name="BatchID" Type="int" />
+          <Property Name="RegistrationSessionID" Type="nvarchar" MaxLength="100" />
+          <Property Name="VerificationStatus" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="VerifiedAt" Type="datetime2" Precision="7" />
+          <Property Name="RegistrationSource" Type="nvarchar" MaxLength="100" />
+          <Property Name="IPAddressAtRegistration" Type="nvarchar" MaxLength="50" />
+          <Property Name="DeviceFingerprintAtRegistration" Type="nvarchar" MaxLength="255" />
+          <Property Name="RegistrationCompletedAt" Type="datetime2" Precision="7" />
+          <Property Name="DataHash" Type="nvarchar" MaxLength="255" />
+          <Property Name="EncryptionKeyVersion" Type="int" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="200" />
+          <Property Name="PlaceOfBirth" Type="nvarchar" MaxLength="200" />
+          <Property Name="MaritalStatus" Type="nvarchar" MaxLength="20" />
+          <Property Name="Religion" Type="nvarchar" MaxLength="50" />
+          <Property Name="Caste" Type="nvarchar" MaxLength="50" />
+          <Property Name="Category" Type="nvarchar" MaxLength="50" />
+          <Property Name="Nationality" Type="nvarchar" MaxLength="50" />
+          <Property Name="StateOfOrigin" Type="nvarchar" MaxLength="100" />
+          <Property Name="MotherTongue" Type="nvarchar" MaxLength="50" />
+          <Property Name="Languages" Type="nvarchar" MaxLength="500" />
+          <Property Name="PhysicallyChallenged" Type="bit" Nullable="false" />
+          <Property Name="DisabilityType" Type="nvarchar" MaxLength="200" />
+          <Property Name="DisabilityPercentage" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="AcademicEmail" Type="nvarchar" MaxLength="255" />
+          <Property Name="AlternateMobile" Type="nvarchar" MaxLength="20" />
+          <Property Name="HomePhone" Type="nvarchar" MaxLength="20" />
+          <Property Name="WhatsAppNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="AadhaarNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="PANNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="PassportNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="DrivingLicense" Type="nvarchar" MaxLength="20" />
+          <Property Name="VoterID" Type="nvarchar" MaxLength="30" />
+          <Property Name="Hobbies" Type="nvarchar" MaxLength="500" />
+          <Property Name="SpecialSkills" Type="nvarchar" MaxLength="500" />
+          <Property Name="PersonalStatement" Type="nvarchar(max)" />
+          <Property Name="SubmissionSessionID" Type="nvarchar" MaxLength="100" />
+          <Property Name="SubmittedAt" Type="datetime2" Precision="7" />
+          <Property Name="CreatedIPAddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="ModifiedIPAddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="ApplicationNumber" Type="nvarchar" MaxLength="200" />
+          <Property Name="AdmissionName" Type="nvarchar" MaxLength="50" />
+          <Property Name="UniversityID" Type="nvarchar" MaxLength="450" />
+          <Property Name="UniversityName" Type="varchar" MaxLength="50" />
+          <Property Name="SchoolID" Type="int" />
+          <Property Name="ApplicationDate" Type="datetime2" Precision="7" />
+          <Property Name="ApprovalStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="ApprovedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ApprovedDate" Type="datetime2" Precision="7" />
+          <Property Name="Gender" Type="varchar" MaxLength="10" />
+          <Property Name="BloodGroup" Type="varchar" MaxLength="5" />
+          <Property Name="domicile" Type="bit" />
         </EntityType>
         <EntityType Name="tblUniversity">
           <Key>
@@ -332,7 +410,7 @@
             <PropertyRef Name="UserID" />
           </Key>
           <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
-          <Property Name="Email" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
           <Property Name="Username" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="PasswordHash" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="PasswordSalt" Type="nvarchar" MaxLength="200" Nullable="false" />
@@ -356,16 +434,31 @@
           <Property Name="MustChangePassword" Type="bit" />
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
           <Property Name="EmployeeorStudentID" Type="nvarchar" MaxLength="50" />
+          <Property Name="MobileNumber" Type="nvarchar" MaxLength="15" />
+        </EntityType>
+        <EntityType Name="tblUserSchools">
+          <Key>
+            <PropertyRef Name="UserSchoolID" />
+          </Key>
+          <Property Name="UserSchoolID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="SchoolID" Type="int" Nullable="false" />
+          <Property Name="UniversityID" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedIPAddress" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModifiedIPAddress" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblUserUniversities">
           <Key>
             <PropertyRef Name="UserUniversityID" />
           </Key>
-          <Property Name="UserUniversityID" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="UserUniversityID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserID" Type="nvarchar" MaxLength="450" Nullable="false" />
           <Property Name="UniversityID" Type="nvarchar" MaxLength="450" Nullable="false" />
-          <Property Name="UniversityRoleID" Type="int" Nullable="false" />
-          <Property Name="UserType" Type="nvarchar" MaxLength="50" />
           <Property Name="RoleHierarchyLevel" Type="int" />
           <Property Name="IsPrimary" Type="bit" Nullable="false" />
           <Property Name="CanManageUsers" Type="bit" Nullable="false" />
@@ -400,30 +493,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Circulati__Patro__353DDB1D">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
-          <End Role="Circulation" Type="Self.Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Circulati__Patro__51DA19CB">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
-          <End Role="Circulation" Type="Self.Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__FineDetai__Circu__3726238F">
           <End Role="Circulation" Type="Self.Circulation" Multiplicity="0..1" />
           <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
@@ -445,30 +514,6 @@
             </Principal>
             <Dependent Role="FineDetails">
               <PropertyRef Name="CirculationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__FineDetai__Patro__381A47C8">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
-          <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="FineDetails">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__FineDetai__Patro__53C2623D">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="0..1" />
-          <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="FineDetails">
-              <PropertyRef Name="PatronID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -496,15 +541,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Booking_Patron">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="1" />
+        <Association Name="FK_Bookinglisted_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
           <End Role="Bookinglisted" Type="Self.Bookinglisted" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="Bookinglisted">
-              <PropertyRef Name="PatronID" />
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -532,6 +577,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Circulation_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
+          <End Role="Circulation" Type="Self.Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Department_HOD">
           <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
           <End Role="tblSchools" Type="Self.tblSchools" Multiplicity="*" />
@@ -544,38 +601,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Librarians_Librarians">
-          <End Role="Librarians" Type="Self.Librarians" Multiplicity="1" />
-          <End Role="Librarians1" Type="Self.Librarians" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Librarians">
-              <PropertyRef Name="LibrarianID" />
-            </Principal>
-            <Dependent Role="Librarians1">
-              <PropertyRef Name="LibrarianID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Librarians_Librarians1">
-          <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="0..1" />
-          <End Role="Librarians" Type="Self.Librarians" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="Librarians">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Librarians_tblUsers">
+        <Association Name="FK_FineDetails_tblUsers">
           <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
-          <End Role="Librarians" Type="Self.Librarians" Multiplicity="*" />
+          <End Role="FineDetails" Type="Self.FineDetails" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tblUsers">
               <PropertyRef Name="UserID" />
             </Principal>
-            <Dependent Role="Librarians">
+            <Dependent Role="FineDetails">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FineReasons_FineReasons">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
+          <End Role="FineReasons" Type="Self.FineReasons" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="FineReasons">
               <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
@@ -616,26 +661,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_PatronNewMaterialRequests_Patrons">
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="1" />
+        <Association Name="FK_PatronNewMaterialRequests_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
           <End Role="PatronNewMaterialRequests" Type="Self.PatronNewMaterialRequests" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patrons">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="PatronNewMaterialRequests">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Patrons_tblUsers">
-          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
-          <End Role="Patrons" Type="Self.Patrons" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tblUsers">
               <PropertyRef Name="UserID" />
             </Principal>
-            <Dependent Role="Patrons">
+            <Dependent Role="PatronNewMaterialRequests">
               <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
@@ -652,42 +685,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblEmployee_tblRoles">
-          <End Role="tblRoles" Type="Self.tblRoles" Multiplicity="1" />
-          <End Role="tblEmployee" Type="Self.tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRoles">
-              <PropertyRef Name="RoleID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="RoleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblSchools">
-          <End Role="tblSchools" Type="Self.tblSchools" Multiplicity="1" />
-          <End Role="tblEmployee" Type="Self.tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblSchools">
-              <PropertyRef Name="SchoolID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="SchoolID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblUniversity">
-          <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
-          <End Role="tblEmployee" Type="Self.tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_tblEmployee_tblUsers">
           <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
           <End Role="tblEmployee" Type="Self.tblEmployee" Multiplicity="*" />
@@ -697,18 +694,6 @@
             </Principal>
             <Dependent Role="tblEmployee">
               <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblUserUniversities">
-          <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="1" />
-          <End Role="tblEmployee" Type="Self.tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUserUniversities">
-              <PropertyRef Name="UserUniversityID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="UserUniversityID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -724,6 +709,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblStudent_tblSchools">
+          <End Role="tblSchools" Type="Self.tblSchools" Multiplicity="0..1" />
+          <End Role="tblStudent" Type="Self.tblStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSchools">
+              <PropertyRef Name="SchoolID" />
+            </Principal>
+            <Dependent Role="tblStudent">
+              <PropertyRef Name="SchoolID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblStudent_tblStudent">
+          <End Role="tblStudent" Type="Self.tblStudent" Multiplicity="1" />
+          <End Role="tblStudent1" Type="Self.tblStudent" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblStudent">
+              <PropertyRef Name="StudentID" />
+            </Principal>
+            <Dependent Role="tblStudent1">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblStudent_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="0..1" />
+          <End Role="tblStudent" Type="Self.tblStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblStudent">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblUserRoles_University">
           <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
           <End Role="tblUserRoles" Type="Self.tblUserRoles" Multiplicity="*" />
@@ -736,7 +757,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblUserUniversities_tblUniversities">
+        <Association Name="FK_tblUserSchools_tblSchools">
+          <End Role="tblSchools" Type="Self.tblSchools" Multiplicity="1" />
+          <End Role="tblUserSchools" Type="Self.tblUserSchools" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSchools">
+              <PropertyRef Name="SchoolID" />
+            </Principal>
+            <Dependent Role="tblUserSchools">
+              <PropertyRef Name="SchoolID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserSchools_tblUniversity">
+          <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
+          <End Role="tblUserSchools" Type="Self.tblUserSchools" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblUserSchools">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserSchools_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
+          <End Role="tblUserSchools" Type="Self.tblUserSchools" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblUserSchools">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserUniversities_tblUniversity">
           <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
           <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="*" />
           <ReferentialConstraint>
@@ -748,15 +805,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblUserUniversities_University">
-          <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
+        <Association Name="FK_tblUserUniversities_tblUsers">
+          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
           <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
+            <Principal Role="tblUsers">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="tblUserUniversities">
-              <PropertyRef Name="UniversityID" />
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -796,42 +853,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserUniversities_Role">
-          <End Role="tblRoles" Type="Self.tblRoles" Multiplicity="1" />
-          <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRoles">
-              <PropertyRef Name="RoleID" />
-            </Principal>
-            <Dependent Role="tblUserUniversities">
-              <PropertyRef Name="UniversityRoleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserUniversities_University">
-          <End Role="tblUniversity" Type="Self.tblUniversity" Multiplicity="1" />
-          <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserUniversities">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserUniversities_User">
-          <End Role="tblUsers" Type="Self.tblUsers" Multiplicity="1" />
-          <End Role="tblUserUniversities" Type="Self.tblUserUniversities" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUsers">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="tblUserUniversities">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="ICFAISMSModelStoreContainer">
           <EntitySet Name="Authors" EntityType="Self.Authors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BarcodeHistory" EntityType="Self.BarcodeHistory" Schema="dbo" store:Type="Tables" />
@@ -839,18 +860,20 @@
           <EntitySet Name="Circulation" EntityType="Self.Circulation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FineDetails" EntityType="Self.FineDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FineReasons" EntityType="Self.FineReasons" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Librarians" EntityType="Self.Librarians" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LibraryCounters" EntityType="Self.LibraryCounters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaterialCopies" EntityType="Self.MaterialCopies" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Materials" EntityType="Self.Materials" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaterialType" EntityType="Self.MaterialType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PatronNewMaterialRequests" EntityType="Self.PatronNewMaterialRequests" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Patrons" EntityType="Self.Patrons" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VisitorManagement" EntityType="Self.VisitorManagement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblEmployee" EntityType="Self.tblEmployee" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblRoles" EntityType="Self.tblRoles" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblSchools" EntityType="Self.tblSchools" Schema="ICFAISMS" store:Type="Tables" />
+          <EntitySet Name="tblStudent" EntityType="Self.tblStudent" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblUniversity" EntityType="Self.tblUniversity" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblUserRoles" EntityType="Self.tblUserRoles" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblUsers" EntityType="Self.tblUsers" Schema="ICFAISMS" store:Type="Tables" />
+          <EntitySet Name="tblUserSchools" EntityType="Self.tblUserSchools" Schema="ICFAISMS" store:Type="Tables" />
           <EntitySet Name="tblUserUniversities" EntityType="Self.tblUserUniversities" Schema="ICFAISMS" store:Type="Tables" />
           <AssociationSet Name="FK__BarcodeHi__CopyI__316D4A39" Association="Self.FK__BarcodeHi__CopyI__316D4A39">
             <End Role="MaterialCopies" EntitySet="MaterialCopies" />
@@ -860,28 +883,12 @@
             <End Role="MaterialCopies" EntitySet="MaterialCopies" />
             <End Role="BarcodeHistory" EntitySet="BarcodeHistory" />
           </AssociationSet>
-          <AssociationSet Name="FK__Circulati__Patro__353DDB1D" Association="Self.FK__Circulati__Patro__353DDB1D">
-            <End Role="Patrons" EntitySet="Patrons" />
-            <End Role="Circulation" EntitySet="Circulation" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Circulati__Patro__51DA19CB" Association="Self.FK__Circulati__Patro__51DA19CB">
-            <End Role="Patrons" EntitySet="Patrons" />
-            <End Role="Circulation" EntitySet="Circulation" />
-          </AssociationSet>
           <AssociationSet Name="FK__FineDetai__Circu__3726238F" Association="Self.FK__FineDetai__Circu__3726238F">
             <End Role="Circulation" EntitySet="Circulation" />
             <End Role="FineDetails" EntitySet="FineDetails" />
           </AssociationSet>
           <AssociationSet Name="FK__FineDetai__Circu__52CE3E04" Association="Self.FK__FineDetai__Circu__52CE3E04">
             <End Role="Circulation" EntitySet="Circulation" />
-            <End Role="FineDetails" EntitySet="FineDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK__FineDetai__Patro__381A47C8" Association="Self.FK__FineDetai__Patro__381A47C8">
-            <End Role="Patrons" EntitySet="Patrons" />
-            <End Role="FineDetails" EntitySet="FineDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK__FineDetai__Patro__53C2623D" Association="Self.FK__FineDetai__Patro__53C2623D">
-            <End Role="Patrons" EntitySet="Patrons" />
             <End Role="FineDetails" EntitySet="FineDetails" />
           </AssociationSet>
           <AssociationSet Name="FK_BarcodeHistory_tblSchools" Association="Self.FK_BarcodeHistory_tblSchools">
@@ -892,8 +899,8 @@
             <End Role="Materials" EntitySet="Materials" />
             <End Role="Bookinglisted" EntitySet="Bookinglisted" />
           </AssociationSet>
-          <AssociationSet Name="FK_Booking_Patron" Association="Self.FK_Booking_Patron">
-            <End Role="Patrons" EntitySet="Patrons" />
+          <AssociationSet Name="FK_Bookinglisted_tblUsers" Association="Self.FK_Bookinglisted_tblUsers">
+            <End Role="tblUsers" EntitySet="tblUsers" />
             <End Role="Bookinglisted" EntitySet="Bookinglisted" />
           </AssociationSet>
           <AssociationSet Name="FK_Circulation_Material" Association="Self.FK_Circulation_Material">
@@ -904,21 +911,21 @@
             <End Role="MaterialCopies" EntitySet="MaterialCopies" />
             <End Role="Circulation" EntitySet="Circulation" />
           </AssociationSet>
+          <AssociationSet Name="FK_Circulation_tblUsers" Association="Self.FK_Circulation_tblUsers">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="Circulation" EntitySet="Circulation" />
+          </AssociationSet>
           <AssociationSet Name="FK_Department_HOD" Association="Self.FK_Department_HOD">
             <End Role="tblUsers" EntitySet="tblUsers" />
             <End Role="tblSchools" EntitySet="tblSchools" />
           </AssociationSet>
-          <AssociationSet Name="FK_Librarians_Librarians" Association="Self.FK_Librarians_Librarians">
-            <End Role="Librarians" EntitySet="Librarians" />
-            <End Role="Librarians1" EntitySet="Librarians" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Librarians_Librarians1" Association="Self.FK_Librarians_Librarians1">
-            <End Role="tblUniversity" EntitySet="tblUniversity" />
-            <End Role="Librarians" EntitySet="Librarians" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Librarians_tblUsers" Association="Self.FK_Librarians_tblUsers">
+          <AssociationSet Name="FK_FineDetails_tblUsers" Association="Self.FK_FineDetails_tblUsers">
             <End Role="tblUsers" EntitySet="tblUsers" />
-            <End Role="Librarians" EntitySet="Librarians" />
+            <End Role="FineDetails" EntitySet="FineDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FineReasons_FineReasons" Association="Self.FK_FineReasons_FineReasons">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="FineReasons" EntitySet="FineReasons" />
           </AssociationSet>
           <AssociationSet Name="FK_MaterialCopies_Materials" Association="Self.FK_MaterialCopies_Materials">
             <End Role="Materials" EntitySet="Materials" />
@@ -932,52 +939,56 @@
             <End Role="tblSchools" EntitySet="tblSchools" />
             <End Role="Materials" EntitySet="Materials" />
           </AssociationSet>
-          <AssociationSet Name="FK_PatronNewMaterialRequests_Patrons" Association="Self.FK_PatronNewMaterialRequests_Patrons">
-            <End Role="Patrons" EntitySet="Patrons" />
-            <End Role="PatronNewMaterialRequests" EntitySet="PatronNewMaterialRequests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Patrons_tblUsers" Association="Self.FK_Patrons_tblUsers">
+          <AssociationSet Name="FK_PatronNewMaterialRequests_tblUsers" Association="Self.FK_PatronNewMaterialRequests_tblUsers">
             <End Role="tblUsers" EntitySet="tblUsers" />
-            <End Role="Patrons" EntitySet="Patrons" />
+            <End Role="PatronNewMaterialRequests" EntitySet="PatronNewMaterialRequests" />
           </AssociationSet>
           <AssociationSet Name="FK_tblDepartment_University" Association="Self.FK_tblDepartment_University">
             <End Role="tblUniversity" EntitySet="tblUniversity" />
             <End Role="tblSchools" EntitySet="tblSchools" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblRoles" Association="Self.FK_tblEmployee_tblRoles">
-            <End Role="tblRoles" EntitySet="tblRoles" />
-            <End Role="tblEmployee" EntitySet="tblEmployee" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblSchools" Association="Self.FK_tblEmployee_tblSchools">
-            <End Role="tblSchools" EntitySet="tblSchools" />
-            <End Role="tblEmployee" EntitySet="tblEmployee" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblUniversity" Association="Self.FK_tblEmployee_tblUniversity">
-            <End Role="tblUniversity" EntitySet="tblUniversity" />
-            <End Role="tblEmployee" EntitySet="tblEmployee" />
-          </AssociationSet>
           <AssociationSet Name="FK_tblEmployee_tblUsers" Association="Self.FK_tblEmployee_tblUsers">
             <End Role="tblUsers" EntitySet="tblUsers" />
-            <End Role="tblEmployee" EntitySet="tblEmployee" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblUserUniversities" Association="Self.FK_tblEmployee_tblUserUniversities">
-            <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
             <End Role="tblEmployee" EntitySet="tblEmployee" />
           </AssociationSet>
           <AssociationSet Name="FK_tblRoles_University" Association="Self.FK_tblRoles_University">
             <End Role="tblUniversity" EntitySet="tblUniversity" />
             <End Role="tblRoles" EntitySet="tblRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_tblStudent_tblSchools" Association="Self.FK_tblStudent_tblSchools">
+            <End Role="tblSchools" EntitySet="tblSchools" />
+            <End Role="tblStudent" EntitySet="tblStudent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblStudent_tblStudent" Association="Self.FK_tblStudent_tblStudent">
+            <End Role="tblStudent" EntitySet="tblStudent" />
+            <End Role="tblStudent1" EntitySet="tblStudent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblStudent_tblUsers" Association="Self.FK_tblStudent_tblUsers">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="tblStudent" EntitySet="tblStudent" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblUserRoles_University" Association="Self.FK_tblUserRoles_University">
             <End Role="tblUniversity" EntitySet="tblUniversity" />
             <End Role="tblUserRoles" EntitySet="tblUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblUserUniversities_tblUniversities" Association="Self.FK_tblUserUniversities_tblUniversities">
+          <AssociationSet Name="FK_tblUserSchools_tblSchools" Association="Self.FK_tblUserSchools_tblSchools">
+            <End Role="tblSchools" EntitySet="tblSchools" />
+            <End Role="tblUserSchools" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserSchools_tblUniversity" Association="Self.FK_tblUserSchools_tblUniversity">
+            <End Role="tblUniversity" EntitySet="tblUniversity" />
+            <End Role="tblUserSchools" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserSchools_tblUsers" Association="Self.FK_tblUserSchools_tblUsers">
+            <End Role="tblUsers" EntitySet="tblUsers" />
+            <End Role="tblUserSchools" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserUniversities_tblUniversity" Association="Self.FK_tblUserUniversities_tblUniversity">
             <End Role="tblUniversity" EntitySet="tblUniversity" />
             <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblUserUniversities_University" Association="Self.FK_tblUserUniversities_University">
-            <End Role="tblUniversity" EntitySet="tblUniversity" />
+          <AssociationSet Name="FK_tblUserUniversities_tblUsers" Association="Self.FK_tblUserUniversities_tblUsers">
+            <End Role="tblUsers" EntitySet="tblUsers" />
             <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
           </AssociationSet>
           <AssociationSet Name="FK_UserRoles_Roles" Association="Self.FK_UserRoles_Roles">
@@ -992,18 +1003,6 @@
             <End Role="tblUsers" EntitySet="tblUsers" />
             <End Role="tblUserRoles" EntitySet="tblUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_Role" Association="Self.FK_UserUniversities_Role">
-            <End Role="tblRoles" EntitySet="tblRoles" />
-            <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_University" Association="Self.FK_UserUniversities_University">
-            <End Role="tblUniversity" EntitySet="tblUniversity" />
-            <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_User" Association="Self.FK_UserUniversities_User">
-            <End Role="tblUsers" EntitySet="tblUsers" />
-            <End Role="tblUserUniversities" EntitySet="tblUserUniversities" />
-          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -1012,26 +1011,44 @@
         <EntityContainer Name="ICFAISMSEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Authors" EntityType="ICFAISMSModel.Author" />
           <EntitySet Name="BarcodeHistories" EntityType="ICFAISMSModel.BarcodeHistory" />
-          <EntitySet Name="Bookinglisteds" EntityType="ICFAISMSModel.Bookinglisted" />
-          <EntitySet Name="Circulations" EntityType="ICFAISMSModel.Circulation" />
-          <EntitySet Name="FineDetails" EntityType="ICFAISMSModel.FineDetail" />
-          <EntitySet Name="FineReasons" EntityType="ICFAISMSModel.FineReason" />
-          <EntitySet Name="Librarians" EntityType="ICFAISMSModel.Librarian" />
-          <EntitySet Name="MaterialCopies" EntityType="ICFAISMSModel.MaterialCopy" />
           <EntitySet Name="Materials" EntityType="ICFAISMSModel.Material" />
-          <EntitySet Name="MaterialTypes" EntityType="ICFAISMSModel.MaterialType" />
-          <EntitySet Name="Patrons" EntityType="ICFAISMSModel.Patron" />
-          <EntitySet Name="tblEmployees" EntityType="ICFAISMSModel.tblEmployee" />
           <EntitySet Name="tblRoles" EntityType="ICFAISMSModel.tblRole" />
           <EntitySet Name="tblSchools" EntityType="ICFAISMSModel.tblSchool" />
           <EntitySet Name="tblUniversities" EntityType="ICFAISMSModel.tblUniversity" />
           <EntitySet Name="tblUserRoles" EntityType="ICFAISMSModel.tblUserRole" />
-          <EntitySet Name="tblUsers" EntityType="ICFAISMSModel.tblUser" />
-          <EntitySet Name="tblUserUniversities" EntityType="ICFAISMSModel.tblUserUniversity" />
           <AssociationSet Name="FK_Materials_Authors" Association="ICFAISMSModel.FK_Materials_Authors">
             <End Role="Author" EntitySet="Authors" />
             <End Role="Material" EntitySet="Materials" />
           </AssociationSet>
+          <AssociationSet Name="FK_BarcodeHistory_tblSchools" Association="ICFAISMSModel.FK_BarcodeHistory_tblSchools">
+            <End Role="tblSchool" EntitySet="tblSchools" />
+            <End Role="BarcodeHistory" EntitySet="BarcodeHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblRoles_University" Association="ICFAISMSModel.FK_tblRoles_University">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblRole" EntitySet="tblRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_Roles" Association="ICFAISMSModel.FK_UserRoles_Roles">
+            <End Role="tblRole" EntitySet="tblRoles" />
+            <End Role="tblUserRole" EntitySet="tblUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblDepartment_University" Association="ICFAISMSModel.FK_tblDepartment_University">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblSchool" EntitySet="tblSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserRoles_University" Association="ICFAISMSModel.FK_tblUserRoles_University">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblUserRole" EntitySet="tblUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_University" Association="ICFAISMSModel.FK_UserRoles_University">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblUserRole" EntitySet="tblUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Materials_tblSchools" Association="ICFAISMSModel.FK_Materials_tblSchools">
+            <End Role="tblSchool" EntitySet="tblSchools" />
+            <End Role="Material" EntitySet="Materials" />
+          </AssociationSet>
+          <EntitySet Name="MaterialCopies" EntityType="ICFAISMSModel.MaterialCopy" />
           <AssociationSet Name="FK__BarcodeHi__CopyI__316D4A39" Association="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39">
             <End Role="MaterialCopy" EntitySet="MaterialCopies" />
             <End Role="BarcodeHistory" EntitySet="BarcodeHistories" />
@@ -1040,25 +1057,74 @@
             <End Role="MaterialCopy" EntitySet="MaterialCopies" />
             <End Role="BarcodeHistory" EntitySet="BarcodeHistories" />
           </AssociationSet>
-          <AssociationSet Name="FK_BarcodeHistory_tblSchools" Association="ICFAISMSModel.FK_BarcodeHistory_tblSchools">
-            <End Role="tblSchool" EntitySet="tblSchools" />
-            <End Role="BarcodeHistory" EntitySet="BarcodeHistories" />
+          <AssociationSet Name="FK_MaterialCopies_Materials" Association="ICFAISMSModel.FK_MaterialCopies_Materials">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="MaterialCopy" EntitySet="MaterialCopies" />
           </AssociationSet>
+          <EntitySet Name="VisitorManagements" EntityType="ICFAISMSModel.VisitorManagement" />
+          <EntitySet Name="tblUsers" EntityType="ICFAISMSModel.tblUser" />
+          <AssociationSet Name="FK_Department_HOD" Association="ICFAISMSModel.FK_Department_HOD">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblSchool" EntitySet="tblSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_Users" Association="ICFAISMSModel.FK_UserRoles_Users">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblUserRole" EntitySet="tblUserRoles" />
+          </AssociationSet>
+          <EntitySet Name="tblEmployees" EntityType="ICFAISMSModel.tblEmployee" />
+          <EntitySet Name="tblUserUniversities" EntityType="ICFAISMSModel.tblUserUniversity" />
+          <AssociationSet Name="FK_tblEmployee_tblUsers" Association="ICFAISMSModel.FK_tblEmployee_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblEmployee" EntitySet="tblEmployees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserUniversities_tblUniversity" Association="ICFAISMSModel.FK_tblUserUniversities_tblUniversity">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserUniversities_tblUsers" Association="ICFAISMSModel.FK_tblUserUniversities_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
+          </AssociationSet>
+          <EntitySet Name="tblUserSchools" EntityType="ICFAISMSModel.tblUserSchool" />
+          <AssociationSet Name="FK_tblUserSchools_tblSchools" Association="ICFAISMSModel.FK_tblUserSchools_tblSchools">
+            <End Role="tblSchool" EntitySet="tblSchools" />
+            <End Role="tblUserSchool" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserSchools_tblUniversity" Association="ICFAISMSModel.FK_tblUserSchools_tblUniversity">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblUserSchool" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUserSchools_tblUsers" Association="ICFAISMSModel.FK_tblUserSchools_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblUserSchool" EntitySet="tblUserSchools" />
+          </AssociationSet>
+          <EntitySet Name="tblStudents" EntityType="ICFAISMSModel.tblStudent" />
+          <AssociationSet Name="FK_tblStudent_tblSchools" Association="ICFAISMSModel.FK_tblStudent_tblSchools">
+            <End Role="tblSchool" EntitySet="tblSchools" />
+            <End Role="tblStudent" EntitySet="tblStudents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblStudent_tblStudent" Association="ICFAISMSModel.FK_tblStudent_tblStudent">
+            <End Role="tblStudent" EntitySet="tblStudents" />
+            <End Role="tblStudent1" EntitySet="tblStudents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblStudent_tblUsers" Association="ICFAISMSModel.FK_tblStudent_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblStudent" EntitySet="tblStudents" />
+          </AssociationSet>
+          <EntitySet Name="Bookinglisteds" EntityType="ICFAISMSModel.Bookinglisted" />
+          <EntitySet Name="Circulations" EntityType="ICFAISMSModel.Circulation" />
+          <EntitySet Name="FineDetails" EntityType="ICFAISMSModel.FineDetail" />
+          <EntitySet Name="FineReasons" EntityType="ICFAISMSModel.FineReason" />
+          <EntitySet Name="LibraryCounters" EntityType="ICFAISMSModel.LibraryCounter" />
+          <EntitySet Name="MaterialTypes" EntityType="ICFAISMSModel.MaterialType" />
+          <EntitySet Name="PatronNewMaterialRequests" EntityType="ICFAISMSModel.PatronNewMaterialRequest" />
           <AssociationSet Name="FK_Booking_Material" Association="ICFAISMSModel.FK_Booking_Material">
             <End Role="Material" EntitySet="Materials" />
             <End Role="Bookinglisted" EntitySet="Bookinglisteds" />
           </AssociationSet>
-          <AssociationSet Name="FK_Booking_Patron" Association="ICFAISMSModel.FK_Booking_Patron">
-            <End Role="Patron" EntitySet="Patrons" />
+          <AssociationSet Name="FK_Bookinglisted_tblUsers" Association="ICFAISMSModel.FK_Bookinglisted_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
             <End Role="Bookinglisted" EntitySet="Bookinglisteds" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Circulati__Patro__353DDB1D" Association="ICFAISMSModel.FK__Circulati__Patro__353DDB1D">
-            <End Role="Patron" EntitySet="Patrons" />
-            <End Role="Circulation" EntitySet="Circulations" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Circulati__Patro__51DA19CB" Association="ICFAISMSModel.FK__Circulati__Patro__51DA19CB">
-            <End Role="Patron" EntitySet="Patrons" />
-            <End Role="Circulation" EntitySet="Circulations" />
           </AssociationSet>
           <AssociationSet Name="FK__FineDetai__Circu__3726238F" Association="ICFAISMSModel.FK__FineDetai__Circu__3726238F">
             <End Role="Circulation" EntitySet="Circulations" />
@@ -1076,112 +1142,23 @@
             <End Role="MaterialCopy" EntitySet="MaterialCopies" />
             <End Role="Circulation" EntitySet="Circulations" />
           </AssociationSet>
-          <AssociationSet Name="FK__FineDetai__Patro__381A47C8" Association="ICFAISMSModel.FK__FineDetai__Patro__381A47C8">
-            <End Role="Patron" EntitySet="Patrons" />
+          <AssociationSet Name="FK_Circulation_tblUsers" Association="ICFAISMSModel.FK_Circulation_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="Circulation" EntitySet="Circulations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FineDetails_tblUsers" Association="ICFAISMSModel.FK_FineDetails_tblUsers">
+            <End Role="tblUser" EntitySet="tblUsers" />
             <End Role="FineDetail" EntitySet="FineDetails" />
           </AssociationSet>
-          <AssociationSet Name="FK__FineDetai__Patro__53C2623D" Association="ICFAISMSModel.FK__FineDetai__Patro__53C2623D">
-            <End Role="Patron" EntitySet="Patrons" />
-            <End Role="FineDetail" EntitySet="FineDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Librarians_Librarians" Association="ICFAISMSModel.FK_Librarians_Librarians">
-            <End Role="Librarian" EntitySet="Librarians" />
-            <End Role="Librarian1" EntitySet="Librarians" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Librarians_Librarians1" Association="ICFAISMSModel.FK_Librarians_Librarians1">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="Librarian" EntitySet="Librarians" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Librarians_tblUsers" Association="ICFAISMSModel.FK_Librarians_tblUsers">
+          <AssociationSet Name="FK_FineReasons_FineReasons" Association="ICFAISMSModel.FK_FineReasons_FineReasons">
             <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="Librarian" EntitySet="Librarians" />
+            <End Role="FineReason" EntitySet="FineReasons" />
           </AssociationSet>
-          <AssociationSet Name="FK_MaterialCopies_Materials" Association="ICFAISMSModel.FK_MaterialCopies_Materials">
-            <End Role="Material" EntitySet="Materials" />
-            <End Role="MaterialCopy" EntitySet="MaterialCopies" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Patrons_tblUsers" Association="ICFAISMSModel.FK_Patrons_tblUsers">
+          <AssociationSet Name="FK_PatronNewMaterialRequests_tblUsers" Association="ICFAISMSModel.FK_PatronNewMaterialRequests_tblUsers">
             <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="Patron" EntitySet="Patrons" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblRoles" Association="ICFAISMSModel.FK_tblEmployee_tblRoles">
-            <End Role="tblRole" EntitySet="tblRoles" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblSchools" Association="ICFAISMSModel.FK_tblEmployee_tblSchools">
-            <End Role="tblSchool" EntitySet="tblSchools" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblUniversity" Association="ICFAISMSModel.FK_tblEmployee_tblUniversity">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblUsers" Association="ICFAISMSModel.FK_tblEmployee_tblUsers">
-            <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblUserUniversities" Association="ICFAISMSModel.FK_tblEmployee_tblUserUniversities">
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblRoles_University" Association="ICFAISMSModel.FK_tblRoles_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblRole" EntitySet="tblRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserRoles_Roles" Association="ICFAISMSModel.FK_UserRoles_Roles">
-            <End Role="tblRole" EntitySet="tblRoles" />
-            <End Role="tblUserRole" EntitySet="tblUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_Role" Association="ICFAISMSModel.FK_UserUniversities_Role">
-            <End Role="tblRole" EntitySet="tblRoles" />
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Department_HOD" Association="ICFAISMSModel.FK_Department_HOD">
-            <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="tblSchool" EntitySet="tblSchools" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblDepartment_University" Association="ICFAISMSModel.FK_tblDepartment_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblSchool" EntitySet="tblSchools" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblUserRoles_University" Association="ICFAISMSModel.FK_tblUserRoles_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblUserRole" EntitySet="tblUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblUserUniversities_tblUniversities" Association="ICFAISMSModel.FK_tblUserUniversities_tblUniversities">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblUserUniversities_University" Association="ICFAISMSModel.FK_tblUserUniversities_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserRoles_University" Association="ICFAISMSModel.FK_UserRoles_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblUserRole" EntitySet="tblUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_University" Association="ICFAISMSModel.FK_UserUniversities_University">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserRoles_Users" Association="ICFAISMSModel.FK_UserRoles_Users">
-            <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="tblUserRole" EntitySet="tblUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserUniversities_User" Association="ICFAISMSModel.FK_UserUniversities_User">
-            <End Role="tblUser" EntitySet="tblUsers" />
-            <End Role="tblUserUniversity" EntitySet="tblUserUniversities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Materials_tblSchools" Association="ICFAISMSModel.FK_Materials_tblSchools">
-            <End Role="tblSchool" EntitySet="tblSchools" />
-            <End Role="Material" EntitySet="Materials" />
-          </AssociationSet>
-          <EntitySet Name="PatronNewMaterialRequests" EntityType="ICFAISMSModel.PatronNewMaterialRequest" />
-          <AssociationSet Name="FK_PatronNewMaterialRequests_Patrons" Association="ICFAISMSModel.FK_PatronNewMaterialRequests_Patrons">
-            <End Role="Patron" EntitySet="Patrons" />
             <End Role="PatronNewMaterialRequest" EntitySet="PatronNewMaterialRequests" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="Author">
           <Key>
             <PropertyRef Name="AuthorID" />
@@ -1203,119 +1180,10 @@
           <Property Name="UniversityID" Type="Int32" />
           <Property Name="SchoolID" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_BarcodeHistory_tblSchools" FromRole="BarcodeHistory" ToRole="tblSchool" />
           <NavigationProperty Name="MaterialCopy" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39" FromRole="BarcodeHistory" ToRole="MaterialCopy" />
           <NavigationProperty Name="MaterialCopy1" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__4FF1D159" FromRole="BarcodeHistory" ToRole="MaterialCopy" />
-          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_BarcodeHistory_tblSchools" FromRole="BarcodeHistory" ToRole="tblSchool" />
-        </EntityType>
-        <EntityType Name="Bookinglisted">
-          <Key>
-            <PropertyRef Name="BookingID" />
-          </Key>
-          <Property Name="BookingID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PatronID" Type="Int32" Nullable="false" />
-          <Property Name="MaterialID" Type="Int32" Nullable="false" />
-          <Property Name="BookingDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ExpiryDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="HoldExpiryDate" Type="DateTime" Precision="3" />
-          <Property Name="AssignedDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Booking_Material" FromRole="Bookinglisted" ToRole="Material" />
-          <NavigationProperty Name="Patron" Relationship="ICFAISMSModel.FK_Booking_Patron" FromRole="Bookinglisted" ToRole="Patron" />
-        </EntityType>
-        <EntityType Name="Circulation">
-          <Key>
-            <PropertyRef Name="CirculationID" />
-          </Key>
-          <Property Name="CirculationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CopyID" Type="Int32" />
-          <Property Name="PatronID" Type="Int32" />
-          <Property Name="IssueDate" Type="DateTime" Precision="3" />
-          <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="ReturnDate" Type="DateTime" Precision="3" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="FineAmount" Type="Decimal" Precision="8" Scale="2" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="MaterialID" Type="Int32" />
-          <Property Name="RequestedDate" Type="DateTime" Precision="3" />
-          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsOverdue" Type="Boolean" />
-          <Property Name="LastFineUpdateDate" Type="DateTime" Precision="3" />
-          <Property Name="ExpiryDate" Type="DateTime" Precision="3" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Patron" Relationship="ICFAISMSModel.FK__Circulati__Patro__353DDB1D" FromRole="Circulation" ToRole="Patron" />
-          <NavigationProperty Name="Patron1" Relationship="ICFAISMSModel.FK__Circulati__Patro__51DA19CB" FromRole="Circulation" ToRole="Patron" />
-          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="Circulation" ToRole="FineDetail" />
-          <NavigationProperty Name="FineDetails1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="Circulation" ToRole="FineDetail" />
-          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Circulation" ToRole="Material" />
-          <NavigationProperty Name="MaterialCopy" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="Circulation" ToRole="MaterialCopy" />
-        </EntityType>
-        <EntityType Name="FineDetail">
-          <Key>
-            <PropertyRef Name="FineID" />
-          </Key>
-          <Property Name="FineID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CirculationID" Type="Int32" />
-          <Property Name="PatronID" Type="Int32" />
-          <Property Name="Amount" Type="Decimal" Precision="8" Scale="2" />
-          <Property Name="Reason" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="AppliedDate" Type="DateTime" Precision="3" />
-          <Property Name="Paid" Type="Boolean" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Circulation" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="FineDetail" ToRole="Circulation" />
-          <NavigationProperty Name="Circulation1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="FineDetail" ToRole="Circulation" />
-          <NavigationProperty Name="Patron" Relationship="ICFAISMSModel.FK__FineDetai__Patro__381A47C8" FromRole="FineDetail" ToRole="Patron" />
-          <NavigationProperty Name="Patron1" Relationship="ICFAISMSModel.FK__FineDetai__Patro__53C2623D" FromRole="FineDetail" ToRole="Patron" />
-        </EntityType>
-        <EntityType Name="FineReason">
-          <Key>
-            <PropertyRef Name="FineReasonID" />
-          </Key>
-          <Property Name="FineReasonID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Reason" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="FineAmount" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Librarian">
-          <Key>
-            <PropertyRef Name="LibrarianID" />
-          </Key>
-          <Property Name="LibrarianID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="EmailID" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="UniversityID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ContactNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Librarians1" Relationship="ICFAISMSModel.FK_Librarians_Librarians" FromRole="Librarian" ToRole="Librarian1" />
-          <NavigationProperty Name="Librarian1" Relationship="ICFAISMSModel.FK_Librarians_Librarians" FromRole="Librarian1" ToRole="Librarian" />
-          <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_Librarians_Librarians1" FromRole="Librarian" ToRole="tblUniversity" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Librarians_tblUsers" FromRole="Librarian" ToRole="tblUser" />
-        </EntityType>
-        <EntityType Name="MaterialCopy">
-          <Key>
-            <PropertyRef Name="CopyID" />
-          </Key>
-          <Property Name="CopyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MaterialID" Type="Int32" />
-          <Property Name="AccountNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CallNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="BarcodeHistories" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39" FromRole="MaterialCopy" ToRole="BarcodeHistory" />
-          <NavigationProperty Name="BarcodeHistories1" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__4FF1D159" FromRole="MaterialCopy" ToRole="BarcodeHistory" />
-          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="MaterialCopy" ToRole="Circulation" />
-          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_MaterialCopies_Materials" FromRole="MaterialCopy" ToRole="Material" />
-        </EntityType>
+          </EntityType>
         <EntityType Name="Material">
           <Key>
             <PropertyRef Name="MaterialID" />
@@ -1341,87 +1209,10 @@
           <Property Name="SchoolID" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Author" Relationship="ICFAISMSModel.FK_Materials_Authors" FromRole="Material" ToRole="Author" />
+          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_Materials_tblSchools" FromRole="Material" ToRole="tblSchool" />
+          <NavigationProperty Name="MaterialCopies" Relationship="ICFAISMSModel.FK_MaterialCopies_Materials" FromRole="Material" ToRole="MaterialCopy" />
           <NavigationProperty Name="Bookinglisteds" Relationship="ICFAISMSModel.FK_Booking_Material" FromRole="Material" ToRole="Bookinglisted" />
           <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Material" ToRole="Circulation" />
-          <NavigationProperty Name="MaterialCopies" Relationship="ICFAISMSModel.FK_MaterialCopies_Materials" FromRole="Material" ToRole="MaterialCopy" />
-          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_Materials_tblSchools" FromRole="Material" ToRole="tblSchool" />
-        </EntityType>
-        <EntityType Name="MaterialType">
-          <Key>
-            <PropertyRef Name="MaterialTypeID" />
-          </Key>
-          <Property Name="MaterialTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Patron">
-          <Key>
-            <PropertyRef Name="PatronID" />
-          </Key>
-          <Property Name="PatronID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PatronName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PatronEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PatronPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PatronType" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
-          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Bookinglisteds" Relationship="ICFAISMSModel.FK_Booking_Patron" FromRole="Patron" ToRole="Bookinglisted" />
-          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK__Circulati__Patro__353DDB1D" FromRole="Patron" ToRole="Circulation" />
-          <NavigationProperty Name="Circulations1" Relationship="ICFAISMSModel.FK__Circulati__Patro__51DA19CB" FromRole="Patron" ToRole="Circulation" />
-          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK__FineDetai__Patro__381A47C8" FromRole="Patron" ToRole="FineDetail" />
-          <NavigationProperty Name="FineDetails1" Relationship="ICFAISMSModel.FK__FineDetai__Patro__53C2623D" FromRole="Patron" ToRole="FineDetail" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Patrons_tblUsers" FromRole="Patron" ToRole="tblUser" />
-          <NavigationProperty Name="PatronNewMaterialRequests" Relationship="ICFAISMSModel.FK_PatronNewMaterialRequests_Patrons" FromRole="Patron" ToRole="PatronNewMaterialRequest" />
-        </EntityType>
-        <EntityType Name="tblEmployee">
-          <Key>
-            <PropertyRef Name="EmployeeID" />
-          </Key>
-          <Property Name="EmployeeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserUniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="UserDepartmentID" Type="Int32" Nullable="false" />
-          <Property Name="EmployeeCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="LastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="RoleID" Type="Int32" Nullable="false" />
-          <Property Name="JoiningDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="ExitDate" Type="DateTime" Precision="7" />
-          <Property Name="Salary" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="DateOfBirth" Type="DateTime" Precision="7" />
-          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="State" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="EmergencyContactName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="EmergencyContactPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Qualifications" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Experience" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="CreatedIPAddress" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
-          <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="UniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="SchoolID" Type="Int32" Nullable="false" />
-          <Property Name="PhotoPath" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="tblRole" Relationship="ICFAISMSModel.FK_tblEmployee_tblRoles" FromRole="tblEmployee" ToRole="tblRole" />
-          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_tblEmployee_tblSchools" FromRole="tblEmployee" ToRole="tblSchool" />
-          <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblEmployee_tblUniversity" FromRole="tblEmployee" ToRole="tblUniversity" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblEmployee_tblUsers" FromRole="tblEmployee" ToRole="tblUser" />
-          <NavigationProperty Name="tblUserUniversity" Relationship="ICFAISMSModel.FK_tblEmployee_tblUserUniversities" FromRole="tblEmployee" ToRole="tblUserUniversity" />
         </EntityType>
         <EntityType Name="tblRole">
           <Key>
@@ -1440,10 +1231,10 @@
           <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
           <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
-          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblRoles" FromRole="tblRole" ToRole="tblEmployee" />
           <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblRoles_University" FromRole="tblRole" ToRole="tblUniversity" />
           <NavigationProperty Name="tblUserRoles" Relationship="ICFAISMSModel.FK_UserRoles_Roles" FromRole="tblRole" ToRole="tblUserRole" />
-          <NavigationProperty Name="tblUserUniversities" Relationship="ICFAISMSModel.FK_UserUniversities_Role" FromRole="tblRole" ToRole="tblUserUniversity" />
+          <Property Name="RoleLevel" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ParentRoleID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblSchool">
           <Key>
@@ -1467,10 +1258,11 @@
           <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="Grading" Type="Int16" Nullable="false" />
           <NavigationProperty Name="BarcodeHistories" Relationship="ICFAISMSModel.FK_BarcodeHistory_tblSchools" FromRole="tblSchool" ToRole="BarcodeHistory" />
-          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblSchools" FromRole="tblSchool" ToRole="tblEmployee" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Department_HOD" FromRole="tblSchool" ToRole="tblUser" />
           <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblDepartment_University" FromRole="tblSchool" ToRole="tblUniversity" />
           <NavigationProperty Name="Materials" Relationship="ICFAISMSModel.FK_Materials_tblSchools" FromRole="tblSchool" ToRole="Material" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Department_HOD" FromRole="tblSchool" ToRole="tblUser" />
+          <NavigationProperty Name="tblUserSchools" Relationship="ICFAISMSModel.FK_tblUserSchools_tblSchools" FromRole="tblSchool" ToRole="tblUserSchool" />
+          <NavigationProperty Name="tblStudents" Relationship="ICFAISMSModel.FK_tblStudent_tblSchools" FromRole="tblSchool" ToRole="tblStudent" />
         </EntityType>
         <EntityType Name="tblUniversity">
           <Key>
@@ -1518,15 +1310,12 @@
           <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
           <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
-          <NavigationProperty Name="Librarians" Relationship="ICFAISMSModel.FK_Librarians_Librarians1" FromRole="tblUniversity" ToRole="Librarian" />
-          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblUniversity" FromRole="tblUniversity" ToRole="tblEmployee" />
           <NavigationProperty Name="tblRoles" Relationship="ICFAISMSModel.FK_tblRoles_University" FromRole="tblUniversity" ToRole="tblRole" />
           <NavigationProperty Name="tblSchools" Relationship="ICFAISMSModel.FK_tblDepartment_University" FromRole="tblUniversity" ToRole="tblSchool" />
           <NavigationProperty Name="tblUserRoles" Relationship="ICFAISMSModel.FK_tblUserRoles_University" FromRole="tblUniversity" ToRole="tblUserRole" />
-          <NavigationProperty Name="tblUserUniversities" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUniversities" FromRole="tblUniversity" ToRole="tblUserUniversity" />
-          <NavigationProperty Name="tblUserUniversities1" Relationship="ICFAISMSModel.FK_tblUserUniversities_University" FromRole="tblUniversity" ToRole="tblUserUniversity" />
           <NavigationProperty Name="tblUserRoles1" Relationship="ICFAISMSModel.FK_UserRoles_University" FromRole="tblUniversity" ToRole="tblUserRole" />
-          <NavigationProperty Name="tblUserUniversities2" Relationship="ICFAISMSModel.FK_UserUniversities_University" FromRole="tblUniversity" ToRole="tblUserUniversity" />
+          <NavigationProperty Name="tblUserUniversities" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUniversity" FromRole="tblUniversity" ToRole="tblUserUniversity" />
+          <NavigationProperty Name="tblUserSchools" Relationship="ICFAISMSModel.FK_tblUserSchools_tblUniversity" FromRole="tblUniversity" ToRole="tblUserSchool" />
         </EntityType>
         <EntityType Name="tblUserRole">
           <Key>
@@ -1551,67 +1340,6 @@
           <NavigationProperty Name="tblUniversity1" Relationship="ICFAISMSModel.FK_UserRoles_University" FromRole="tblUserRole" ToRole="tblUniversity" />
           <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_UserRoles_Users" FromRole="tblUserRole" ToRole="tblUser" />
         </EntityType>
-        <EntityType Name="tblUser">
-          <Key>
-            <PropertyRef Name="UserID" />
-          </Key>
-          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordHash" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordSalt" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="SecurityStamp" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="RequirePasswordReset" Type="Boolean" Nullable="false" />
-          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="LastPasswordChangedDate" Type="DateTime" Precision="7" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
-          <Property Name="LockoutEndDate" Type="DateTime" Precision="7" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="PasswordHistory" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="FailedLoginAttempts" Type="Int32" />
-          <Property Name="LastLoginDate" Type="DateTime" Precision="7" />
-          <Property Name="PasswordExpiryDate" Type="DateTime" Precision="7" />
-          <Property Name="MustChangePassword" Type="Boolean" />
-          <Property Name="RowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="EmployeeorStudentID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Librarians" Relationship="ICFAISMSModel.FK_Librarians_tblUsers" FromRole="tblUser" ToRole="Librarian" />
-          <NavigationProperty Name="Patrons" Relationship="ICFAISMSModel.FK_Patrons_tblUsers" FromRole="tblUser" ToRole="Patron" />
-          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblUsers" FromRole="tblUser" ToRole="tblEmployee" />
-          <NavigationProperty Name="tblSchools" Relationship="ICFAISMSModel.FK_Department_HOD" FromRole="tblUser" ToRole="tblSchool" />
-          <NavigationProperty Name="tblUserRoles" Relationship="ICFAISMSModel.FK_UserRoles_Users" FromRole="tblUser" ToRole="tblUserRole" />
-          <NavigationProperty Name="tblUserUniversities" Relationship="ICFAISMSModel.FK_UserUniversities_User" FromRole="tblUser" ToRole="tblUserUniversity" />
-        </EntityType>
-        <EntityType Name="tblUserUniversity">
-          <Key>
-            <PropertyRef Name="UserUniversityID" />
-          </Key>
-          <Property Name="UserUniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="UniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="UniversityRoleID" Type="Int32" Nullable="false" />
-          <Property Name="UserType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="RoleHierarchyLevel" Type="Int32" />
-          <Property Name="IsPrimary" Type="Boolean" Nullable="false" />
-          <Property Name="CanManageUsers" Type="Boolean" Nullable="false" />
-          <Property Name="SystemWideAccess" Type="Boolean" Nullable="false" />
-          <Property Name="JoiningDate" Type="DateTime" Precision="7" />
-          <Property Name="ExitDate" Type="DateTime" Precision="7" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ApprovalStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblUserUniversities" FromRole="tblUserUniversity" ToRole="tblEmployee" />
-          <NavigationProperty Name="tblRole" Relationship="ICFAISMSModel.FK_UserUniversities_Role" FromRole="tblUserUniversity" ToRole="tblRole" />
-          <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUniversities" FromRole="tblUserUniversity" ToRole="tblUniversity" />
-          <NavigationProperty Name="tblUniversity1" Relationship="ICFAISMSModel.FK_tblUserUniversities_University" FromRole="tblUserUniversity" ToRole="tblUniversity" />
-          <NavigationProperty Name="tblUniversity2" Relationship="ICFAISMSModel.FK_UserUniversities_University" FromRole="tblUserUniversity" ToRole="tblUniversity" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_UserUniversities_User" FromRole="tblUserUniversity" ToRole="tblUser" />
-        </EntityType>
         <Association Name="FK_Materials_Authors">
           <End Type="ICFAISMSModel.Author" Role="Author" Multiplicity="0..1" />
           <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="*" />
@@ -1624,6 +1352,109 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_BarcodeHistory_tblSchools">
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.BarcodeHistory" Role="BarcodeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSchool">
+              <PropertyRef Name="SchoolID" />
+            </Principal>
+            <Dependent Role="BarcodeHistory">
+              <PropertyRef Name="SchoolID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblRoles_University">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblRole">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoles_Roles">
+          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblRole">
+              <PropertyRef Name="RoleID" />
+            </Principal>
+            <Dependent Role="tblUserRole">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblDepartment_University">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblSchool">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserRoles_University">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblUserRole">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoles_University">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblUserRole">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Materials_tblSchools">
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSchool">
+              <PropertyRef Name="SchoolID" />
+            </Principal>
+            <Dependent Role="Material">
+              <PropertyRef Name="SchoolID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MaterialCopy">
+          <Key>
+            <PropertyRef Name="CopyID" />
+          </Key>
+          <Property Name="CopyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaterialID" Type="Int32" />
+          <Property Name="AccountNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CallNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsPrinted" Type="Boolean" />
+          <NavigationProperty Name="BarcodeHistories" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39" FromRole="MaterialCopy" ToRole="BarcodeHistory" />
+          <NavigationProperty Name="BarcodeHistories1" Relationship="ICFAISMSModel.FK__BarcodeHi__CopyI__4FF1D159" FromRole="MaterialCopy" ToRole="BarcodeHistory" />
+          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_MaterialCopies_Materials" FromRole="MaterialCopy" ToRole="Material" />
+          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="MaterialCopy" ToRole="Circulation" />
+        </EntityType>
         <Association Name="FK__BarcodeHi__CopyI__316D4A39">
           <End Type="ICFAISMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="0..1" />
           <End Type="ICFAISMSModel.BarcodeHistory" Role="BarcodeHistory" Multiplicity="*" />
@@ -1648,18 +1479,478 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_BarcodeHistory_tblSchools">
-          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.BarcodeHistory" Role="BarcodeHistory" Multiplicity="*" />
+        <Association Name="FK_MaterialCopies_Materials">
+          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="MaterialCopy">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="VisitorManagement">
+          <Key>
+            <PropertyRef Name="VisitorID" />
+          </Key>
+          <Property Name="VisitorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VisitorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Purpose" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="VisitDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UniversityID" Type="Int32" />
+          <Property Name="SchoolID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordHash" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordSalt" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="RequirePasswordReset" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LastPasswordChangedDate" Type="DateTime" Precision="7" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDate" Type="DateTime" Precision="7" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordHistory" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FailedLoginAttempts" Type="Int32" />
+          <Property Name="LastLoginDate" Type="DateTime" Precision="7" />
+          <Property Name="PasswordExpiryDate" Type="DateTime" Precision="7" />
+          <Property Name="MustChangePassword" Type="Boolean" />
+          <Property Name="RowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="EmployeeorStudentID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblSchools" Relationship="ICFAISMSModel.FK_Department_HOD" FromRole="tblUser" ToRole="tblSchool" />
+          <NavigationProperty Name="tblUserRoles" Relationship="ICFAISMSModel.FK_UserRoles_Users" FromRole="tblUser" ToRole="tblUserRole" />
+          <NavigationProperty Name="tblEmployees" Relationship="ICFAISMSModel.FK_tblEmployee_tblUsers" FromRole="tblUser" ToRole="tblEmployee" />
+          <NavigationProperty Name="tblUserUniversities" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUsers" FromRole="tblUser" ToRole="tblUserUniversity" />
+          <NavigationProperty Name="tblUserSchools" Relationship="ICFAISMSModel.FK_tblUserSchools_tblUsers" FromRole="tblUser" ToRole="tblUserSchool" />
+          <NavigationProperty Name="tblStudents" Relationship="ICFAISMSModel.FK_tblStudent_tblUsers" FromRole="tblUser" ToRole="tblStudent" />
+          <NavigationProperty Name="Bookinglisteds" Relationship="ICFAISMSModel.FK_Bookinglisted_tblUsers" FromRole="tblUser" ToRole="Bookinglisted" />
+          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_tblUsers" FromRole="tblUser" ToRole="Circulation" />
+          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK_FineDetails_tblUsers" FromRole="tblUser" ToRole="FineDetail" />
+          <NavigationProperty Name="FineReasons" Relationship="ICFAISMSModel.FK_FineReasons_FineReasons" FromRole="tblUser" ToRole="FineReason" />
+          <NavigationProperty Name="PatronNewMaterialRequests" Relationship="ICFAISMSModel.FK_PatronNewMaterialRequests_tblUsers" FromRole="tblUser" ToRole="PatronNewMaterialRequest" />
+        </EntityType>
+        <Association Name="FK_Department_HOD">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblSchool">
+              <PropertyRef Name="HODUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoles_Users">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblUserRole">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblEmployee">
+          <Key>
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Name="EmployeeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="EmployeeCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="JoiningDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ExitDate" Type="DateTime" Precision="7" />
+          <Property Name="Salary" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="7" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EmergencyContactName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EmergencyContactPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Qualifications" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Experience" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="CreatedIPAddress" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
+          <Property Name="ModifiedIPAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="PhotoPath" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MobileNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="EmployeeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblEmployee_tblUsers" FromRole="tblEmployee" ToRole="tblUser" />
+          <Property Name="DesignationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="tblUserUniversity">
+          <Key>
+            <PropertyRef Name="UserUniversityID" />
+          </Key>
+          <Property Name="UserUniversityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="RoleHierarchyLevel" Type="Int32" />
+          <Property Name="IsPrimary" Type="Boolean" Nullable="false" />
+          <Property Name="CanManageUsers" Type="Boolean" Nullable="false" />
+          <Property Name="SystemWideAccess" Type="Boolean" Nullable="false" />
+          <Property Name="JoiningDate" Type="DateTime" Precision="7" />
+          <Property Name="ExitDate" Type="DateTime" Precision="7" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovalStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUniversity" FromRole="tblUserUniversity" ToRole="tblUniversity" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblUserUniversities_tblUsers" FromRole="tblUserUniversity" ToRole="tblUser" />
+        </EntityType>
+        <Association Name="FK_tblEmployee_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblEmployee">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserUniversities_tblUniversity">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblUserUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserUniversities_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblUserUniversity">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblUserSchool">
+          <Key>
+            <PropertyRef Name="UserSchoolID" />
+          </Key>
+          <Property Name="UserSchoolID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="SchoolID" Type="Int32" Nullable="false" />
+          <Property Name="UniversityID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedIPAddress" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_tblUserSchools_tblSchools" FromRole="tblUserSchool" ToRole="tblSchool" />
+          <NavigationProperty Name="tblUniversity" Relationship="ICFAISMSModel.FK_tblUserSchools_tblUniversity" FromRole="tblUserSchool" ToRole="tblUniversity" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblUserSchools_tblUsers" FromRole="tblUserSchool" ToRole="tblUser" />
+        </EntityType>
+        <Association Name="FK_tblUserSchools_tblSchools">
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserSchool" Role="tblUserSchool" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tblSchool">
               <PropertyRef Name="SchoolID" />
             </Principal>
-            <Dependent Role="BarcodeHistory">
+            <Dependent Role="tblUserSchool">
               <PropertyRef Name="SchoolID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblUserSchools_tblUniversity">
+          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserSchool" Role="tblUserSchool" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUniversity">
+              <PropertyRef Name="UniversityID" />
+            </Principal>
+            <Dependent Role="tblUserSchool">
+              <PropertyRef Name="UniversityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUserSchools_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblUserSchool" Role="tblUserSchool" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblUserSchool">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblStudent">
+          <Key>
+            <PropertyRef Name="StudentID" />
+          </Key>
+          <Property Name="StudentID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="EnrollmentNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="StudentName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfBirth" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PersonalEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ProfilePicture" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Course" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="BatchYear" Type="Int32" />
+          <Property Name="CurrentSemester" Type="Int32" />
+          <Property Name="AdmissionDate" Type="DateTime" Precision="3" />
+          <Property Name="StudentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="7" />
+          <Property Name="Age" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="ProgramInstanceID" Type="Int32" />
+          <Property Name="ProgramMasterID" Type="Int32" />
+          <Property Name="BatchID" Type="Int32" />
+          <Property Name="RegistrationSessionID" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="VerificationStatus" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VerifiedAt" Type="DateTime" Precision="7" />
+          <Property Name="RegistrationSource" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IPAddressAtRegistration" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceFingerprintAtRegistration" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="RegistrationCompletedAt" Type="DateTime" Precision="7" />
+          <Property Name="DataHash" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="EncryptionKeyVersion" Type="Int32" />
+          <Property Name="DisplayName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="PlaceOfBirth" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MaritalStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Religion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Caste" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Nationality" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StateOfOrigin" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MotherTongue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Languages" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PhysicallyChallenged" Type="Boolean" Nullable="false" />
+          <Property Name="DisabilityType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DisabilityPercentage" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="AcademicEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AlternateMobile" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="HomePhone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="WhatsAppNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="AadhaarNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PANNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PassportNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="DrivingLicense" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="VoterID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Hobbies" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="SpecialSkills" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PersonalStatement" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SubmissionSessionID" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SubmittedAt" Type="DateTime" Precision="7" />
+          <Property Name="CreatedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ApplicationNumber" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="AdmissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="ApplicationDate" Type="DateTime" Precision="7" />
+          <Property Name="ApprovalStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedDate" Type="DateTime" Precision="7" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="BloodGroup" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="domicile" Type="Boolean" />
+          <NavigationProperty Name="tblSchool" Relationship="ICFAISMSModel.FK_tblStudent_tblSchools" FromRole="tblStudent" ToRole="tblSchool" />
+          <NavigationProperty Name="tblStudent1" Relationship="ICFAISMSModel.FK_tblStudent_tblStudent" FromRole="tblStudent" ToRole="tblStudent1" />
+          <NavigationProperty Name="tblStudent2" Relationship="ICFAISMSModel.FK_tblStudent_tblStudent" FromRole="tblStudent1" ToRole="tblStudent" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblStudent_tblUsers" FromRole="tblStudent" ToRole="tblUser" />
+        </EntityType>
+        <Association Name="FK_tblStudent_tblSchools">
+          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.tblStudent" Role="tblStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblSchool">
+              <PropertyRef Name="SchoolID" />
+            </Principal>
+            <Dependent Role="tblStudent">
+              <PropertyRef Name="SchoolID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblStudent_tblStudent">
+          <End Type="ICFAISMSModel.tblStudent" Role="tblStudent" Multiplicity="1" />
+          <End Type="ICFAISMSModel.tblStudent" Role="tblStudent1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblStudent">
+              <PropertyRef Name="StudentID" />
+            </Principal>
+            <Dependent Role="tblStudent1">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblStudent_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.tblStudent" Role="tblStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="tblStudent">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Bookinglisted">
+          <Key>
+            <PropertyRef Name="BookingID" />
+          </Key>
+          <Property Name="BookingID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="MaterialID" Type="Int32" Nullable="false" />
+          <Property Name="BookingDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ExpiryDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="HoldExpiryDate" Type="DateTime" Precision="3" />
+          <Property Name="AssignedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Booking_Material" FromRole="Bookinglisted" ToRole="Material" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Bookinglisted_tblUsers" FromRole="Bookinglisted" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="Circulation">
+          <Key>
+            <PropertyRef Name="CirculationID" />
+          </Key>
+          <Property Name="CirculationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CopyID" Type="Int32" />
+          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="IssueDate" Type="DateTime" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="ReturnDate" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FineAmount" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MaterialID" Type="Int32" />
+          <Property Name="RequestedDate" Type="DateTime" Precision="3" />
+          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsOverdue" Type="Boolean" />
+          <Property Name="LastFineUpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="3" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IssuedBy" Type="Int32" />
+          <Property Name="CounterID" Type="Int32" />
+          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="Circulation" ToRole="FineDetail" />
+          <NavigationProperty Name="FineDetails1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="Circulation" ToRole="FineDetail" />
+          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Circulation" ToRole="Material" />
+          <NavigationProperty Name="MaterialCopy" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="Circulation" ToRole="MaterialCopy" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Circulation_tblUsers" FromRole="Circulation" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="FineDetail">
+          <Key>
+            <PropertyRef Name="FineID" />
+          </Key>
+          <Property Name="FineID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CirculationID" Type="Int32" />
+          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="Reason" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="AppliedDate" Type="DateTime" Precision="3" />
+          <Property Name="Paid" Type="Boolean" />
+          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Circulation" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="FineDetail" ToRole="Circulation" />
+          <NavigationProperty Name="Circulation1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="FineDetail" ToRole="Circulation" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_FineDetails_tblUsers" FromRole="FineDetail" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="FineReason">
+          <Key>
+            <PropertyRef Name="FineReasonID" />
+          </Key>
+          <Property Name="FineReasonID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Reason" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FineAmount" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_FineReasons_FineReasons" FromRole="FineReason" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="LibraryCounter">
+          <Key>
+            <PropertyRef Name="CounterID" />
+          </Key>
+          <Property Name="CounterID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CounterNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CounterName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EmployeeID" Type="Int32" />
+          <Property Name="AssignedBy" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="Int32" Nullable="false" />
+          <Property Name="SchoolID" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="MaterialType">
+          <Key>
+            <PropertyRef Name="MaterialTypeID" />
+          </Key>
+          <Property Name="MaterialTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="AddedBy" Type="String" MaxLength="450" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityType Name="PatronNewMaterialRequest">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="SchoolID" Type="Int32" Nullable="false" />
+          <Property Name="UniversityID" Type="Int32" Nullable="false" />
+          <Property Name="MaterialTitle" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Author" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Edition" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RequestedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_PatronNewMaterialRequests_tblUsers" FromRole="PatronNewMaterialRequest" ToRole="tblUser" />
+        </EntityType>
         <Association Name="FK_Booking_Material">
           <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="1" />
           <End Type="ICFAISMSModel.Bookinglisted" Role="Bookinglisted" Multiplicity="*" />
@@ -1672,39 +1963,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Booking_Patron">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="1" />
+        <Association Name="FK_Bookinglisted_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
           <End Type="ICFAISMSModel.Bookinglisted" Role="Bookinglisted" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="Bookinglisted">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Circulati__Patro__353DDB1D">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Circulati__Patro__51DA19CB">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="PatronID" />
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1756,332 +2023,51 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__FineDetai__Patro__381A47C8">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="0..1" />
+        <Association Name="FK_Circulation_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FineDetails_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
           <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="FineDetail">
-              <PropertyRef Name="PatronID" />
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__FineDetai__Patro__53C2623D">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
-            </Principal>
-            <Dependent Role="FineDetail">
-              <PropertyRef Name="PatronID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Librarians_Librarians">
-          <End Type="ICFAISMSModel.Librarian" Role="Librarian" Multiplicity="1" />
-          <End Type="ICFAISMSModel.Librarian" Role="Librarian1" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Librarian">
-              <PropertyRef Name="LibrarianID" />
-            </Principal>
-            <Dependent Role="Librarian1">
-              <PropertyRef Name="LibrarianID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Librarians_Librarians1">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Librarian" Role="Librarian" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="Librarian">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Librarians_tblUsers">
+        <Association Name="FK_FineReasons_FineReasons">
           <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Librarian" Role="Librarian" Multiplicity="*" />
+          <End Type="ICFAISMSModel.FineReason" Role="FineReason" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tblUser">
               <PropertyRef Name="UserID" />
             </Principal>
-            <Dependent Role="Librarian">
+            <Dependent Role="FineReason">
               <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_MaterialCopies_Materials">
-          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Material">
-              <PropertyRef Name="MaterialID" />
-            </Principal>
-            <Dependent Role="MaterialCopy">
-              <PropertyRef Name="MaterialID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Patrons_tblUsers">
-          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="Patron">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblRoles">
-          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRole">
-              <PropertyRef Name="RoleID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="RoleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblSchools">
-          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblSchool">
-              <PropertyRef Name="SchoolID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="SchoolID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblUniversity">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblUsers">
+        <Association Name="FK_PatronNewMaterialRequests_tblUsers">
           <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblEmployee_tblUserUniversities">
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblEmployee" Role="tblEmployee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUserUniversity">
-              <PropertyRef Name="UserUniversityID" />
-            </Principal>
-            <Dependent Role="tblEmployee">
-              <PropertyRef Name="UserUniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblRoles_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblRole">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserRoles_Roles">
-          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRole">
-              <PropertyRef Name="RoleID" />
-            </Principal>
-            <Dependent Role="tblUserRole">
-              <PropertyRef Name="RoleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserUniversities_Role">
-          <End Type="ICFAISMSModel.tblRole" Role="tblRole" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRole">
-              <PropertyRef Name="RoleID" />
-            </Principal>
-            <Dependent Role="tblUserUniversity">
-              <PropertyRef Name="UniversityRoleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Department_HOD">
-          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="tblSchool">
-              <PropertyRef Name="HODUserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblDepartment_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblSchool">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblUserRoles_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserRole">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblUserUniversities_tblUniversities">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblUserUniversities_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserRoles_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserRole">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserUniversities_University">
-          <End Type="ICFAISMSModel.tblUniversity" Role="tblUniversity" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Principal>
-            <Dependent Role="tblUserUniversity">
-              <PropertyRef Name="UniversityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserRoles_Users">
-          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserRole" Role="tblUserRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="tblUserRole">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserUniversities_User">
-          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="1" />
-          <End Type="ICFAISMSModel.tblUserUniversity" Role="tblUserUniversity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="tblUserUniversity">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Materials_tblSchools">
-          <End Type="ICFAISMSModel.tblSchool" Role="tblSchool" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblSchool">
-              <PropertyRef Name="SchoolID" />
-            </Principal>
-            <Dependent Role="Material">
-              <PropertyRef Name="SchoolID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="PatronNewMaterialRequest">
-          <Key>
-            <PropertyRef Name="RequestID" />
-          </Key>
-          <Property Name="RequestID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PatronID" Type="Int32" Nullable="false" />
-          <Property Name="SchoolID" Type="Int32" Nullable="false" />
-          <Property Name="UniversityID" Type="Int32" Nullable="false" />
-          <Property Name="MaterialTitle" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Author" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Edition" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="RequestedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Patron" Relationship="ICFAISMSModel.FK_PatronNewMaterialRequests_Patrons" FromRole="PatronNewMaterialRequest" ToRole="Patron" />
-        </EntityType>
-        <Association Name="FK_PatronNewMaterialRequests_Patrons">
-          <End Type="ICFAISMSModel.Patron" Role="Patron" Multiplicity="1" />
           <End Type="ICFAISMSModel.PatronNewMaterialRequest" Role="PatronNewMaterialRequest" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Patron">
-              <PropertyRef Name="PatronID" />
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="PatronNewMaterialRequest">
-              <PropertyRef Name="PatronID" />
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2114,101 +2100,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Bookinglisteds">
-            <EntityTypeMapping TypeName="ICFAISMSModel.Bookinglisted">
-              <MappingFragment StoreEntitySet="Bookinglisted">
-                <ScalarProperty Name="AssignedDate" ColumnName="AssignedDate" />
-                <ScalarProperty Name="HoldExpiryDate" ColumnName="HoldExpiryDate" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
-                <ScalarProperty Name="BookingDate" ColumnName="BookingDate" />
-                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
-                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
-                <ScalarProperty Name="BookingID" ColumnName="BookingID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Circulations">
-            <EntityTypeMapping TypeName="ICFAISMSModel.Circulation">
-              <MappingFragment StoreEntitySet="Circulation">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
-                <ScalarProperty Name="LastFineUpdateDate" ColumnName="LastFineUpdateDate" />
-                <ScalarProperty Name="IsOverdue" ColumnName="IsOverdue" />
-                <ScalarProperty Name="BarcodeNumber" ColumnName="BarcodeNumber" />
-                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
-                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="FineAmount" ColumnName="FineAmount" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="IssueDate" ColumnName="IssueDate" />
-                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
-                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
-                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FineDetails">
-            <EntityTypeMapping TypeName="ICFAISMSModel.FineDetail">
-              <MappingFragment StoreEntitySet="FineDetails">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="Paid" ColumnName="Paid" />
-                <ScalarProperty Name="AppliedDate" ColumnName="AppliedDate" />
-                <ScalarProperty Name="Reason" ColumnName="Reason" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
-                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
-                <ScalarProperty Name="FineID" ColumnName="FineID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FineReasons">
-            <EntityTypeMapping TypeName="ICFAISMSModel.FineReason">
-              <MappingFragment StoreEntitySet="FineReasons">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="FineAmount" ColumnName="FineAmount" />
-                <ScalarProperty Name="Reason" ColumnName="Reason" />
-                <ScalarProperty Name="FineReasonID" ColumnName="FineReasonID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Librarians">
-            <EntityTypeMapping TypeName="ICFAISMSModel.Librarian">
-              <MappingFragment StoreEntitySet="Librarians">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="EmailID" ColumnName="EmailID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="LibrarianID" ColumnName="LibrarianID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MaterialCopies">
-            <EntityTypeMapping TypeName="ICFAISMSModel.MaterialCopy">
-              <MappingFragment StoreEntitySet="MaterialCopies">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="CallNumber" ColumnName="CallNumber" />
-                <ScalarProperty Name="BarcodeNumber" ColumnName="BarcodeNumber" />
-                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
-                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
-                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Materials">
             <EntityTypeMapping TypeName="ICFAISMSModel.Material">
               <MappingFragment StoreEntitySet="Materials">
@@ -2235,77 +2126,11 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="MaterialTypes">
-            <EntityTypeMapping TypeName="ICFAISMSModel.MaterialType">
-              <MappingFragment StoreEntitySet="MaterialType">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
-                <ScalarProperty Name="MaterialTypeID" ColumnName="MaterialTypeID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Patrons">
-            <EntityTypeMapping TypeName="ICFAISMSModel.Patron">
-              <MappingFragment StoreEntitySet="Patrons">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
-                <ScalarProperty Name="PatronType" ColumnName="PatronType" />
-                <ScalarProperty Name="PatronPhone" ColumnName="PatronPhone" />
-                <ScalarProperty Name="PatronEmail" ColumnName="PatronEmail" />
-                <ScalarProperty Name="PatronName" ColumnName="PatronName" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tblEmployees">
-            <EntityTypeMapping TypeName="ICFAISMSModel.tblEmployee">
-              <MappingFragment StoreEntitySet="tblEmployee">
-                <ScalarProperty Name="PhotoPath" ColumnName="PhotoPath" />
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
-                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Experience" ColumnName="Experience" />
-                <ScalarProperty Name="Qualifications" ColumnName="Qualifications" />
-                <ScalarProperty Name="EmergencyContactPhone" ColumnName="EmergencyContactPhone" />
-                <ScalarProperty Name="EmergencyContactName" ColumnName="EmergencyContactName" />
-                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-                <ScalarProperty Name="Country" ColumnName="Country" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
-                <ScalarProperty Name="Salary" ColumnName="Salary" />
-                <ScalarProperty Name="ExitDate" ColumnName="ExitDate" />
-                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="EmployeeCode" ColumnName="EmployeeCode" />
-                <ScalarProperty Name="UserDepartmentID" ColumnName="UserDepartmentID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="UserUniversityID" ColumnName="UserUniversityID" />
-                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="tblRoles">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblRole">
               <MappingFragment StoreEntitySet="tblRoles">
+                <ScalarProperty Name="ParentRoleID" ColumnName="ParentRoleID" />
+                <ScalarProperty Name="RoleLevel" ColumnName="RoleLevel" />
                 <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
                 <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -2413,9 +2238,40 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="MaterialCopies">
+            <EntityTypeMapping TypeName="ICFAISMSModel.MaterialCopy">
+              <MappingFragment StoreEntitySet="MaterialCopies">
+                <ScalarProperty Name="IsPrinted" ColumnName="IsPrinted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CallNumber" ColumnName="CallNumber" />
+                <ScalarProperty Name="BarcodeNumber" ColumnName="BarcodeNumber" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VisitorManagements">
+            <EntityTypeMapping TypeName="ICFAISMSModel.VisitorManagement">
+              <MappingFragment StoreEntitySet="VisitorManagement">
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="VisitDate" ColumnName="VisitDate" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
+                <ScalarProperty Name="VisitorName" ColumnName="VisitorName" />
+                <ScalarProperty Name="VisitorID" ColumnName="VisitorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="tblUsers">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblUser">
               <MappingFragment StoreEntitySet="tblUsers">
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
                 <ScalarProperty Name="EmployeeorStudentID" ColumnName="EmployeeorStudentID" />
                 <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
                 <ScalarProperty Name="MustChangePassword" ColumnName="MustChangePassword" />
@@ -2444,6 +2300,43 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tblEmployees">
+            <EntityTypeMapping TypeName="ICFAISMSModel.tblEmployee">
+              <MappingFragment StoreEntitySet="tblEmployee">
+                <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PhotoPath" ColumnName="PhotoPath" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Experience" ColumnName="Experience" />
+                <ScalarProperty Name="Qualifications" ColumnName="Qualifications" />
+                <ScalarProperty Name="EmergencyContactPhone" ColumnName="EmergencyContactPhone" />
+                <ScalarProperty Name="EmergencyContactName" ColumnName="EmergencyContactName" />
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="ExitDate" ColumnName="ExitDate" />
+                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="EmployeeCode" ColumnName="EmployeeCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="tblUserUniversities">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblUserUniversity">
               <MappingFragment StoreEntitySet="tblUserUniversities">
@@ -2456,11 +2349,199 @@
                 <ScalarProperty Name="CanManageUsers" ColumnName="CanManageUsers" />
                 <ScalarProperty Name="IsPrimary" ColumnName="IsPrimary" />
                 <ScalarProperty Name="RoleHierarchyLevel" ColumnName="RoleHierarchyLevel" />
-                <ScalarProperty Name="UserType" ColumnName="UserType" />
-                <ScalarProperty Name="UniversityRoleID" ColumnName="UniversityRoleID" />
                 <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="UserUniversityID" ColumnName="UserUniversityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUserSchools">
+            <EntityTypeMapping TypeName="ICFAISMSModel.tblUserSchool">
+              <MappingFragment StoreEntitySet="tblUserSchools">
+                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserSchoolID" ColumnName="UserSchoolID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblStudents">
+            <EntityTypeMapping TypeName="ICFAISMSModel.tblStudent">
+              <MappingFragment StoreEntitySet="tblStudent">
+                <ScalarProperty Name="domicile" ColumnName="domicile" />
+                <ScalarProperty Name="BloodGroup" ColumnName="BloodGroup" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
+                <ScalarProperty Name="ApplicationDate" ColumnName="ApplicationDate" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityName" ColumnName="UniversityName" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="AdmissionName" ColumnName="AdmissionName" />
+                <ScalarProperty Name="ApplicationNumber" ColumnName="ApplicationNumber" />
+                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
+                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
+                <ScalarProperty Name="SubmittedAt" ColumnName="SubmittedAt" />
+                <ScalarProperty Name="SubmissionSessionID" ColumnName="SubmissionSessionID" />
+                <ScalarProperty Name="PersonalStatement" ColumnName="PersonalStatement" />
+                <ScalarProperty Name="SpecialSkills" ColumnName="SpecialSkills" />
+                <ScalarProperty Name="Hobbies" ColumnName="Hobbies" />
+                <ScalarProperty Name="VoterID" ColumnName="VoterID" />
+                <ScalarProperty Name="DrivingLicense" ColumnName="DrivingLicense" />
+                <ScalarProperty Name="PassportNumber" ColumnName="PassportNumber" />
+                <ScalarProperty Name="PANNumber" ColumnName="PANNumber" />
+                <ScalarProperty Name="AadhaarNumber" ColumnName="AadhaarNumber" />
+                <ScalarProperty Name="WhatsAppNumber" ColumnName="WhatsAppNumber" />
+                <ScalarProperty Name="HomePhone" ColumnName="HomePhone" />
+                <ScalarProperty Name="AlternateMobile" ColumnName="AlternateMobile" />
+                <ScalarProperty Name="AcademicEmail" ColumnName="AcademicEmail" />
+                <ScalarProperty Name="DisabilityPercentage" ColumnName="DisabilityPercentage" />
+                <ScalarProperty Name="DisabilityType" ColumnName="DisabilityType" />
+                <ScalarProperty Name="PhysicallyChallenged" ColumnName="PhysicallyChallenged" />
+                <ScalarProperty Name="Languages" ColumnName="Languages" />
+                <ScalarProperty Name="MotherTongue" ColumnName="MotherTongue" />
+                <ScalarProperty Name="StateOfOrigin" ColumnName="StateOfOrigin" />
+                <ScalarProperty Name="Nationality" ColumnName="Nationality" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Caste" ColumnName="Caste" />
+                <ScalarProperty Name="Religion" ColumnName="Religion" />
+                <ScalarProperty Name="MaritalStatus" ColumnName="MaritalStatus" />
+                <ScalarProperty Name="PlaceOfBirth" ColumnName="PlaceOfBirth" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="EncryptionKeyVersion" ColumnName="EncryptionKeyVersion" />
+                <ScalarProperty Name="DataHash" ColumnName="DataHash" />
+                <ScalarProperty Name="RegistrationCompletedAt" ColumnName="RegistrationCompletedAt" />
+                <ScalarProperty Name="DeviceFingerprintAtRegistration" ColumnName="DeviceFingerprintAtRegistration" />
+                <ScalarProperty Name="IPAddressAtRegistration" ColumnName="IPAddressAtRegistration" />
+                <ScalarProperty Name="RegistrationSource" ColumnName="RegistrationSource" />
+                <ScalarProperty Name="VerifiedAt" ColumnName="VerifiedAt" />
+                <ScalarProperty Name="VerificationStatus" ColumnName="VerificationStatus" />
+                <ScalarProperty Name="RegistrationSessionID" ColumnName="RegistrationSessionID" />
+                <ScalarProperty Name="BatchID" ColumnName="BatchID" />
+                <ScalarProperty Name="ProgramMasterID" ColumnName="ProgramMasterID" />
+                <ScalarProperty Name="ProgramInstanceID" ColumnName="ProgramInstanceID" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="StudentStatus" ColumnName="StudentStatus" />
+                <ScalarProperty Name="AdmissionDate" ColumnName="AdmissionDate" />
+                <ScalarProperty Name="CurrentSemester" ColumnName="CurrentSemester" />
+                <ScalarProperty Name="BatchYear" ColumnName="BatchYear" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
+                <ScalarProperty Name="PersonalEmail" ColumnName="PersonalEmail" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="StudentName" ColumnName="StudentName" />
+                <ScalarProperty Name="EnrollmentNumber" ColumnName="EnrollmentNumber" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bookinglisteds">
+            <EntityTypeMapping TypeName="ICFAISMSModel.Bookinglisted">
+              <MappingFragment StoreEntitySet="Bookinglisted">
+                <ScalarProperty Name="AssignedDate" ColumnName="AssignedDate" />
+                <ScalarProperty Name="HoldExpiryDate" ColumnName="HoldExpiryDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="BookingDate" ColumnName="BookingDate" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="BookingID" ColumnName="BookingID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Circulations">
+            <EntityTypeMapping TypeName="ICFAISMSModel.Circulation">
+              <MappingFragment StoreEntitySet="Circulation">
+                <ScalarProperty Name="CounterID" ColumnName="CounterID" />
+                <ScalarProperty Name="IssuedBy" ColumnName="IssuedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="LastFineUpdateDate" ColumnName="LastFineUpdateDate" />
+                <ScalarProperty Name="IsOverdue" ColumnName="IsOverdue" />
+                <ScalarProperty Name="BarcodeNumber" ColumnName="BarcodeNumber" />
+                <ScalarProperty Name="RequestedDate" ColumnName="RequestedDate" />
+                <ScalarProperty Name="MaterialID" ColumnName="MaterialID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="FineAmount" ColumnName="FineAmount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="IssueDate" ColumnName="IssueDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FineDetails">
+            <EntityTypeMapping TypeName="ICFAISMSModel.FineDetail">
+              <MappingFragment StoreEntitySet="FineDetails">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="Paid" ColumnName="Paid" />
+                <ScalarProperty Name="AppliedDate" ColumnName="AppliedDate" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
+                <ScalarProperty Name="FineID" ColumnName="FineID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FineReasons">
+            <EntityTypeMapping TypeName="ICFAISMSModel.FineReason">
+              <MappingFragment StoreEntitySet="FineReasons">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="FineAmount" ColumnName="FineAmount" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="FineReasonID" ColumnName="FineReasonID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LibraryCounters">
+            <EntityTypeMapping TypeName="ICFAISMSModel.LibraryCounter">
+              <MappingFragment StoreEntitySet="LibraryCounters">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="AssignedBy" ColumnName="AssignedBy" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="CounterName" ColumnName="CounterName" />
+                <ScalarProperty Name="CounterNumber" ColumnName="CounterNumber" />
+                <ScalarProperty Name="CounterID" ColumnName="CounterID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MaterialTypes">
+            <EntityTypeMapping TypeName="ICFAISMSModel.MaterialType">
+              <MappingFragment StoreEntitySet="MaterialType">
+                <ScalarProperty Name="AddedBy" ColumnName="AddedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="MaterialTypeID" ColumnName="MaterialTypeID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2476,7 +2557,7 @@
                 <ScalarProperty Name="MaterialTitle" ColumnName="MaterialTitle" />
                 <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
                 <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="PatronID" ColumnName="PatronID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="RequestID" ColumnName="RequestID" />
               </MappingFragment>
             </EntityTypeMapping>

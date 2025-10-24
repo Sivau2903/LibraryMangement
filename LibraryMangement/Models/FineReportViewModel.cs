@@ -8,7 +8,7 @@ namespace LibraryMangement.Models
     public class FineReportViewModel
     {
         public int FineID { get; set; }
-        public string PatronName { get; set; }
+        public string Name { get; set; }
         public string MaterialTitle { get; set; }
         public decimal Amount { get; set; }
         public string Reason { get; set; }

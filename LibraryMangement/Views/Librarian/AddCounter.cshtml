@@ -1,0 +1,88 @@
+﻿@model LibraryMangement.Models.LibraryCounterViewModel
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left side: Existing counters table -->
+        <div class="col-md-7">
+            <div class="card shadow p-3 mb-3">
+                <h5 class="text-primary mb-3">Existing Counters</h5>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Counter Number</th>
+                            <th>Name</th>
+                            <th>Assigned By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Counters != null && Model.Counters.Any())
+                        {
+                            int count = 1;
+                            foreach (var c in Model.Counters)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@c.CounterNumber</td>
+                                    <td>@c.EmployeeName</td>
+                                    <td>@c.AssignedBy</td>
+                                </tr>
+                                count++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">No counters added yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right side: Add counter form -->
+        <div class="col-md-5">
+            <div class="card shadow p-3">
+                <h5 class="text-primary mb-3">Add New Counter</h5>
+
+                @using (Html.BeginForm("AddCounter", "Librarian", FormMethod.Post, new { @id = "addCounterForm" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label>Counter Number</label>
+                        @Html.TextBoxFor(m => m.CounterNumber, new { @class = "form-control", @placeholder = "Enter Counter Number", required = "required" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Assign To Employee</label>
+                        @Html.TextBoxFor(m => m.EmployeeName, new { @class = "form-control", @id = "EmployeeName", placeholder = "Type to search employee", autocomplete = "off", required = "required" })
+                        @Html.HiddenFor(m => m.EmployeeID, new { id = "EmployeeID" })
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Add Counter</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#EmployeeName").autocomplete({
+                source: '@Url.Action("GetEmployees", "Librarian")',
+                minLength: 1,
+                select: function (event, ui) {
+                    $("#EmployeeName").val(ui.item.label);
+                    $("#EmployeeID").val(ui.item.id);
+                    return false;
+                }
+            });
+        });
+    </script>
+}

@@ -6,144 +6,159 @@
     var currentYear = DateTime.Now.Year;
 }
 
-<h2>Add New Library Resource</h2>
-
-<form id="addMaterialForm" method="post" action="@Url.Action("AddMaterial", "Librarian")">
-    @Html.AntiForgeryToken()
-    @if (TempData["Success"] != null)
-    {
-        <div id="successAlert" class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3 shadow-sm"
-             style="z-index: 2000; width: auto; border-radius: 8px;">
-            <strong>✔ Success!</strong> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div id="errorAlert" class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3 shadow-sm"
-             style="z-index: 2000; width: auto; border-radius: 8px;">
-            <strong>⚠ Error!</strong> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    <div class="row">
-        <div class="col-md-3 mb-3">
-            <label>Title</label>
-            <input type="text" name="Title" class="form-control" required />
+<div class="container mt-4 mb-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="bi bi-journal-plus me-2"></i>Add New Library Resource</h4>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Author</label>
-            <input type="text" id="Author" name="Author" class="form-control" required placeholder="Start typing author name..." />
-        </div>
+        <div class="card-body p-4">
+            <form id="addMaterialForm" method="post" action="@Url.Action("AddMaterial", "Librarian")">
+                @Html.AntiForgeryToken()
 
-        <div class="col-md-3 mb-3">
-            <label>Publisher</label>
-            <input type="text" name="Publisher" class="form-control" required />
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <label>Place of Publishers</label>
-            <input type="text" name="PlaceofPublishers" class="form-control" />
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <label>Year Published</label>
-            <select name="YearPublished" class="form-control" required>
-                <option value="">Select Year</option>
-                @for (int year = currentYear; year >= 1940; year--)
+                <!-- Success Alert -->
+                @if (TempData["Success"] != null)
                 {
-                    <option value="@year">@year</option>
+                    <div id="successAlert" class="alert alert-success alert-dismissible fade show shadow-sm">
+                        <strong><i class="bi bi-check-circle-fill"></i> Success:</strong> @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 }
-            </select>
-        </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Edition</label>
-            <select name="Edition" class="form-control">
-                <option value="">Select Edition</option>
-                @for (int i = 1; i <= 30; i++)
+                <!-- Error Alert -->
+                @if (TempData["Error"] != null)
                 {
-                    <option value="@i">@i</option>
+                    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show shadow-sm">
+                        <strong><i class="bi bi-exclamation-triangle-fill"></i> Error:</strong> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 }
-            </select>
-        </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Book Type</label>
-            <select name="MaterialType" class="form-control" required>
-                <option value="">Select Material Type</option>
-                @foreach (var type in Model.MaterialTypes)
-                {
-                    <option value="@type.TypeName">@type.TypeName</option>
-                }
-            </select>
-        </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Title</label>
+                        <input type="text" name="Title" class="form-control" required placeholder="Enter book title" />
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Description</label>
-            <textarea name="Description" class="form-control"></textarea>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Author</label>
+                        <input type="text" id="Author" name="Author" class="form-control" required placeholder="Start typing author name..." />
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Pages</label>
-            <input type="number" name="Pages" class="form-control" min="1" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Publisher</label>
+                        <input type="text" name="Publisher" class="form-control" required placeholder="Enter publisher name" />
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Vol</label>
-            <input type="text" name="Vol" class="form-control" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Place of Publishers</label>
+                        <input type="text" name="PlaceofPublishers" class="form-control" placeholder="Enter location" />
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Source</label>
-            <input type="text" name="Source" class="form-control" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Year Published</label>
+                        <select name="YearPublished" class="form-select" required>
+                            <option value="">Select Year</option>
+                            @for (int year = currentYear; year >= 1940; year--)
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        </select>
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Price</label>
-            <input type="number" step="0.01" name="Price" class="form-control" min="0" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Edition</label>
+                        <select name="Edition" class="form-select">
+                            <option value="">Select Edition</option>
+                            @for (int i = 1; i <= 30; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>ISBN</label>
-            <input type="text" name="ISBN" class="form-control" required />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Book Type</label>
+                        <select name="MaterialType" class="form-select" required>
+                            <option value="">Select Material Type</option>
+                            @foreach (var type in Model.MaterialTypes)
+                            {
+                                <option value="@type.TypeName">@type.TypeName</option>
+                            }
+                        </select>
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Available Quantity</label>
-            <input type="number" name="AvailableQuantity" class="form-control" required min="1" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="Description" class="form-control" placeholder="Short description..."></textarea>
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Total Quantity</label>
-            <input type="number" name="TotalQuantity" class="form-control" required min="1" />
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Pages</label>
+                        <input type="number" name="Pages" class="form-control" min="1" placeholder="e.g. 250" />
+                    </div>
 
-        <div class="col-md-3 mb-3">
-            <label>Call Number <small class="text-muted">(Optional)</small></label>
-            <input type="text" name="CallNumber" class="form-control" placeholder="Optional" />
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Volume</label>
+                        <input type="text" name="Vol" class="form-control" placeholder="e.g. Vol 2" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Source</label>
+                        <input type="text" name="Source" class="form-control" placeholder="Purchased / Donated" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Price</label>
+                        <input type="number" step="0.01" name="Price" class="form-control" min="0" placeholder="₹ Amount" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">ISBN</label>
+                        <input type="text" name="ISBN" class="form-control" required placeholder="Enter ISBN" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Available Quantity</label>
+                        <input type="number" name="AvailableQuantity" class="form-control" required min="1" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Total Quantity</label>
+                        <input type="number" name="TotalQuantity" class="form-control" required min="1" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Call Number <small class="text-muted">(optional)</small></label>
+                        <input type="text" name="CallNumber" class="form-control" placeholder="e.g. 005.133 THA" />
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-success px-4 py-2" id="confirmAddBtn">
+                        <i class="bi bi-save me-2"></i>Add Material
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <button type="button" class="btn btn-primary" id="confirmAddBtn">Add Material</button>
-</form>
+</div>
 
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title fw-semibold" id="confirmModalLabel">
+                    <i class="bi bi-question-circle-fill me-2"></i>Confirm Action
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to add this new material to the system?
+                Are you sure you want to add this new material to the library catalog?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="modalConfirmBtn">Yes, Add</button>
             </div>
         </div>
@@ -151,6 +166,7 @@
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -181,12 +197,11 @@
             $("#modalConfirmBtn").on("click", function () {
                 $("#addMaterialForm").submit();
             });
-            $(document).ready(function () {
-                // Auto fade success or error alerts
-                setTimeout(function () {
-                    $(".alert").alert('close');
-                }, 4000); // Closes after 4 seconds
-            });
+
+            // --- Auto fade alerts ---
+            setTimeout(function () {
+                $(".alert").alert('close');
+            }, 4000);
         });
     </script>
 }

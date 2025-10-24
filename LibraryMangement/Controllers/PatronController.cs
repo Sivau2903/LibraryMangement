@@ -19,45 +19,75 @@ namespace LibraryMangement.Controllers
         // GET: Patron
         public ActionResult PatronDashboard()
         {
-            var loggedInEmail = Session["UserID"].ToString();
-            if (string.IsNullOrEmpty(loggedInEmail))
+            // 1️⃣ Check if user is logged in
+            if (Session["UserID"] == null)
                 return RedirectToAction("Login", "Login");
 
-            var patron = db.Patrons.Include(x => x.tblUser)
-                .Include(x => x.tblUser.tblUserUniversities)
-                .Include(x => x.tblUser.tblUserUniversities).Where(x => x.UserID == loggedInEmail).FirstOrDefault();
-            if (patron == null)
-                return HttpNotFound("Librarian not found");
+            string userId = Session["UserID"].ToString();
+            string role = Session["Role"]?.ToString();
 
-            if (patron == null)
-                return HttpNotFound();
+            // 2️⃣ Get university & school details from tblUserSchools using UserID
+            var userSchool = db.tblUserSchools
+                               .FirstOrDefault(u => u.UserID == userId.ToString());
 
-            int patronId = patron.PatronID;
-            string universityID = patron.tblUser.tblUserUniversities.FirstOrDefault()?.UniversityID;
-            Session["PatronID"] = patron.PatronID;
-            Session["UniversityID"] = patron.UniversityID;
-            Session["schoolID"] = patron.SchoolID;
+            if (userSchool == null)
+                return HttpNotFound("User's University/School information not found.");
 
+            // Store IDs in Session
+            Session["PatronID"] = userId;
+            Session["UniversityID"] = userSchool.UniversityID;
+            Session["SchoolID"] = userSchool.SchoolID;
 
+            // Get University & School Names
+            var universityName = db.tblUniversities
+                                   .Where(u => u.UniversityID == userSchool.UniversityID)
+                                   .Select(u => u.UniversityName)
+                                   .FirstOrDefault();
 
-			var model = new PatronDashboardViewModel
+            var schoolName = db.tblSchools
+                               .Where(s => s.SchoolID == userSchool.SchoolID)
+                               .Select(s => s.SchoolName)
+                               .FirstOrDefault();
+
+            // 3️⃣ Get Patron Name based on role
+            string patronName = "";
+            if (role == "Faculty")
             {
-                PatronID = patron.PatronID,
-                PatronName = patron.PatronName,
-                ActiveIssuedCount = db.Circulations.Count(c => c.PatronID == patronId && c.Status == "Issued"),
-                OverdueCount = db.Circulations.Count(c => c.PatronID == patronId && c.Status == "Overdue"),
-                PendingReservations = db.Circulations.Count(r => r.PatronID == patronId && r.Status == "Requested"),
-                PendingBookings = db.Bookinglisteds.Count(s => s.PatronID == patronId && s.Status == "Pending"),
-                ActiveIssues = db.Circulations
-            .Where(c => c.PatronID == patronId && (c.Status == "Issued" || c.Status == "Overdue"))
-            .Include(c => c.MaterialCopy)
-            .Include(c => c.MaterialCopy.Material)
-            .ToList()
+                patronName = db.tblEmployees
+                               .Where(e => e.UserID == userId.ToString())
+                               .Select(e => e.EmployeeName)
+                               .FirstOrDefault();
+            }
+            else if (role == "Student")
+            {
+                patronName = db.tblStudents
+                               .Where(s => s.UserID == userId.ToString())
+                               .Select(s => s.StudentName)
+                               .FirstOrDefault();
+            }
 
+            // 4️⃣ Create and populate dashboard ViewModel
+            var model = new PatronDashboardViewModel
+            {
+
+                PatronID = userId,
+                PatronName = patronName,
+                UniversityName = universityName,
+                SchoolName = schoolName,
+                ActiveIssuedCount = db.Circulations.Count(c => c.UserID == userId && c.Status == "Issued"),
+                OverdueCount = db.Circulations.Count(c => c.UserID == userId && c.Status == "Overdue"),
+                PendingReservations = db.Circulations.Count(r => r.UserID == userId && r.Status == "Requested"),
+                PendingBookings = db.Bookinglisteds.Count(s => s.UserID == userId && s.Status == "Pending"),
+                ActiveIssues = db.Circulations
+                                 .Where(c => c.UserID == userId && (c.Status == "Issued" || c.Status == "Overdue"))
+                                 .Include(c => c.MaterialCopy)
+                                 .Include(c => c.MaterialCopy.Material)
+                                 .ToList()
             };
 
             return View(model);
         }
+
 
 
         // GET: Manage Materials - Simple Search
@@ -304,12 +334,13 @@ namespace LibraryMangement.Controllers
         //    }
         //}
 
-
+        //for new request
         [HttpGet]
         public ActionResult RaiseMaterialRequest()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RaiseMaterialRequest(MaterialRequestViewModel model)
@@ -321,10 +352,12 @@ namespace LibraryMangement.Controllers
             }
 
             // Get session values directly
-            int patronId = 0, schoolId = 0, universityId = 0;
-            int.TryParse(Session["PatronID"]?.ToString(), out patronId);
+            int schoolId = 0, universityId = 0;
+            //int.TryParse(Session["PatronID"]?.ToString(), out patronId);
             int.TryParse(Session["SchoolID"]?.ToString(), out schoolId);
             int.TryParse(Session["UniversityID"]?.ToString(), out universityId);
+
+            string patronId = Session["PatronID"]?.ToString();
 
             // Validate required fields in the model
             if (!ModelState.IsValid)
@@ -342,7 +375,7 @@ namespace LibraryMangement.Controllers
                     Edition = model.Edition?.Trim(),
                     Author = model.Author?.Trim(),
                     Notes = model.Notes?.Trim(),
-                    PatronID = patronId,
+                    UserID = patronId,
                     SchoolID = schoolId,
                     UniversityID = universityId,
                     RequestedDate = DateTime.Now,
@@ -356,17 +389,52 @@ namespace LibraryMangement.Controllers
                 // After db.SaveChanges();
                 try
                 {
-                    var patron = db.Patrons.FirstOrDefault(p => p.PatronID == patronId);
-                    if (patron != null)
+                    string userId = Session["UserID"].ToString();
+                    string roleName = (from ur in db.tblUserRoles
+                                       join r in db.tblRoles on ur.RoleID equals r.RoleID
+                                       where ur.UserID == userId
+                                       select r.RoleName).FirstOrDefault();
+
+                    // Step 4️⃣: Fetch user details based on role
+                    string patronName = "";
+                    string patronEmail = "";
+                   
+
+                    if (!string.IsNullOrEmpty(roleName) && roleName.Equals("Student", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Fetch from tblStudents
+                        var student = db.tblStudents.FirstOrDefault(s => s.UserID == userId);
+                        if (student != null)
+                        {
+                            patronName = student.StudentName;
+                            patronEmail = student.AcademicEmail;
+                           
+                        }
+                    }
+                    else
+                    {
+                        // Fetch from tblEmployee
+                        var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
+                        if (employee != null)
+                        {
+                            patronName = employee.EmployeeName;
+                            patronEmail = employee.Email;
+                           
+                        }
+                    }
+
+
+                   
+                    if (patronEmail != null)
                     {
                         string subject = "Your Book Request has been received";
                         string body = $@"
-            Dear {patron.PatronName},<br/>
+            Dear {patronName},<br/>
             Your request for the book '<strong>{model.MaterialTitle}</strong>' has been received by the library.<br/>
             We will check your request and notify you,if it is available.<br/><br/>
             Regards,<br/>Library Team.";
 
-                        EmailService.SendEmail(patron.PatronEmail, subject, body);
+                        EmailService.SendEmail(patronEmail, subject, body);
                     }
                 }
                 catch (Exception ex)
@@ -432,10 +500,7 @@ namespace LibraryMangement.Controllers
         [HttpPost]
         public ActionResult ReserveMultiple(int[] selectedMaterialIds)
         {
-            var universityId = db.Patrons
-                                 .Where(p => p.PatronEmail == Session["UserID"].ToString())
-                                 .Select(p => p.UniversityID)
-                                 .FirstOrDefault();
+            var universityId = Session["UniversityID"];
 
             var models = db.Materials
                            .Include(m => m.tblSchool)
@@ -461,54 +526,72 @@ namespace LibraryMangement.Controllers
                            .ToList();
             return View("ReservationConfirmation", models);
         }
-
         [HttpPost]
+        //[ValidateAntiForgeryToken]
         public ActionResult ConfirmReservation(int[] materialIds)
         {
-            int patronId = (int)(Session["PatronID"] ?? 0);
+            string patronId = Session["PatronID"].ToString();
             string loggedInUserEmail = Session["UserID"]?.ToString();
-
             if (string.IsNullOrEmpty(loggedInUserEmail))
                 return RedirectToAction("Login", "Login");
 
             var universityId = Session["UniversityID"];
             int schoolID = (int)Session["schoolID"];
 
-			foreach (var materialId in materialIds)
+            // Get counters under this school
+            var counters = db.LibraryCounters
+                             .Where(c => c.SchoolID == schoolID)
+                             .OrderBy(c => c.CounterNumber)
+                             .ToList();
+
+            if (!counters.Any())
+            {
+                TempData["Error"] = "No counters available for this library.";
+                return RedirectToAction("MyReservations");
+            }
+
+            int counterIndex = 0; // Round-robin counter
+
+            foreach (var materialId in materialIds)
             {
                 var material = db.Materials.Find(materialId);
+                if (material == null) continue;
 
-                if (material.AvailableQuantity <= 0)
+                if (material.AvailableQuantity > 0)
                 {
-                    TempData["Error"] = $"Material '{material.Title}' is not available for reservation.";
-                    continue;
+                    // Decrease stock
+                    material.AvailableQuantity -= 1;
+
+                    // Assign counter in round-robin
+                    var assignedCounter = counters[counterIndex];
+                    counterIndex = (counterIndex + 1) % counters.Count;
+
+                    var circulation = new Circulation
+                    {
+                        UserID = patronId,
+                        UniversityID = universityId.ToString(),
+                        MaterialID = materialId,
+                        SchoolID = schoolID,
+                        RequestedDate = DateTime.Now,
+                        ExpiryDate = DateTime.Now.AddDays(3),
+                        Status = "Requested",
+                        CounterID = assignedCounter.CounterID
+                    };
+                    db.Circulations.Add(circulation);
                 }
-
-                material.AvailableQuantity -= 1;
-
-                var circulation = new Circulation
-                {
-                    PatronID = patronId,
-                    UniversityID = universityId.ToString(),
-                    MaterialID = materialId,
-                    SchoolID = schoolID,
-                    RequestedDate = DateTime.Now,
-                    ExpiryDate = DateTime.Now.AddDays(3),   
-                    Status = "Requested",
-                };
-                db.Circulations.Add(circulation);
             }
 
             db.SaveChanges();
-            TempData["Success"] = "Material reserved successfully!";
+
+            TempData["Success"] = "Reservation successful! Collect your book(s) from the assigned counter.";
             return RedirectToAction("MyReservations");
         }
 
         public ActionResult MyReservations()
         {
-            int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+            string patronId = Session["PatronID"].ToString();
             var reservations = db.Circulations
-                                 .Where(c => c.PatronID == patronId && (c.Status == "Requested" || c.Status == "Canceled"))
+                                 .Where(c => c.UserID == patronId && (c.Status == "Requested" || c.Status == "Canceled"))
                                  
                                  .Include(c => c.Material)
                                  .OrderByDescending(c => c.RequestedDate)
@@ -546,9 +629,9 @@ namespace LibraryMangement.Controllers
         public ActionResult AddToBookingList(int materialId)
         {
             // Get PatronID from session
-            int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+            string patronId = Session["PatronID"].ToString();
 
-            if (patronId == 0)
+            if (patronId == null)
             {
                 TempData["Error"] = "Session expired. Please log in again.";
                 return RedirectToAction("Login", "Login");
@@ -556,7 +639,7 @@ namespace LibraryMangement.Controllers
 
             // Check if already exists
             var existingBooking = db.Bookinglisteds
-                .FirstOrDefault(b => b.PatronID == patronId && b.MaterialID == materialId && b.Status == "Pending");
+                .FirstOrDefault(b => b.UserID == patronId && b.MaterialID == materialId && b.Status == "Pending");
 
             if (existingBooking != null)
             {
@@ -573,7 +656,7 @@ namespace LibraryMangement.Controllers
 
             var booking = new Bookinglisted
             {
-                PatronID = patronId,
+                UserID = patronId,
                 MaterialID = material.MaterialID,
                 BookingDate = DateTime.Now,
                 ExpiryDate = DateTime.Now.AddDays(7),  
@@ -591,9 +674,9 @@ namespace LibraryMangement.Controllers
 
         public ActionResult MyBookingList()
         {
-            int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+            string patronId = Session["PatronID"].ToString();
             var bookings = db.Bookinglisteds
-                             .Where(b => b.PatronID == patronId ||b.Status=="Pending" || b.Status == "Canceled")
+                             .Where(b => b.UserID == patronId ||b.Status=="Pending" || b.Status == "Canceled")
                              .Include(b => b.Material)
                              .OrderByDescending(b => b.BookingDate)
                              .ToList();
@@ -627,10 +710,10 @@ namespace LibraryMangement.Controllers
 
         public ActionResult OverdueList(string fromDate, string toDate)
         {
-            int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+            string patronId = Session["PatronID"].ToString();
 
             var query = db.Circulations
-                          .Where(b => b.PatronID == patronId && b.Status == "Overdue")
+                          .Where(b => b.UserID == patronId && b.Status == "Overdue")
                           .Include(b => b.Material)
                           .OrderByDescending(b => b.RequestedDate)
                           .AsQueryable();
@@ -654,10 +737,10 @@ namespace LibraryMangement.Controllers
 
         public ActionResult IssuedHistory(string fromDate, string toDate)
         {
-            int patronId = Session["PatronID"] != null ? (int)Session["PatronID"] : 0;
+            string patronId = Session["PatronID"].ToString();
 
             var bookings = db.Circulations
-                             .Where(b => b.PatronID == patronId && (b.Status == "Returned" || b.Status == "BookLost"))
+                             .Where(b => b.UserID == patronId && (b.Status == "Returned" || b.Status == "BookLost"))
                              .Include(b => b.Material)
                              .Include(b => b.FineDetails)
                              .AsQueryable();
@@ -683,60 +766,140 @@ namespace LibraryMangement.Controllers
 
         public ActionResult MyProfile()
         {
+            // 1️⃣ Validate session
             if (Session["UserID"] == null || Session["Role"] == null)
-                return RedirectToAction("Login");
-
-            string email = Session["UserName"].ToString();
-
-            var patron = (from p in db.Patrons
-                          join u in db.tblUsers on p.PatronEmail equals u.Email
-                          join uni in db.tblUniversities on p.UniversityID equals uni.UniversityID
-                         
-                          select new MyProfileViewModel
-                          {
-                              UserID = u.UserID,
-                              Username = u.Username,
-                              Role = u.tblUserRoles.FirstOrDefault().tblRole.RoleName,
-                              Name = p.PatronName,
-                              Email = p.PatronEmail,
-                              Phone = p.PatronPhone,
-                              UniversityName = uni.UniversityName,
-                              IsLibrarian = false
-                          }).FirstOrDefault();
-
-            if (patron == null)
                 return RedirectToAction("Login", "Login");
 
-            return View(patron);
+            string userId = Session["UserID"].ToString();
+            string role = Session["Role"].ToString();
+
+            MyProfileViewModel profile = null;
+
+            // 2️⃣ Common lookup for University & School by UserID
+            var userSchool = (from us in db.tblUserSchools
+                              join uni in db.tblUniversities on us.UniversityID equals uni.UniversityID
+                              join sch in db.tblSchools on us.SchoolID equals sch.SchoolID
+                              where us.UserID == userId
+                              select new
+                              {
+                                  uni.UniversityName,
+                                  sch.SchoolName
+                              }).FirstOrDefault();
+
+            string universityName = userSchool?.UniversityName ?? "N/A";
+            string schoolName = userSchool?.SchoolName ?? "N/A";
+
+            // 3️⃣ Fetch data based on role
+            if (role.Equals("Faculty", StringComparison.OrdinalIgnoreCase))
+            {
+                profile = (from emp in db.tblEmployees
+                           join u in db.tblUsers on emp.UserID equals u.UserID
+                           where emp.UserID == userId
+                           select new MyProfileViewModel
+                           {
+                               UserID = u.UserID,
+                               Username = u.Username,
+                               Role = role,
+                               Name = emp.EmployeeName,
+                               Email = emp.Email,
+                               Phone = emp.MobileNumber,
+                               UniversityName = universityName,
+                               SchoolName = schoolName,
+                               IsLibrarian = false
+                           }).FirstOrDefault();
+            }
+            else if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            {
+                profile = (from stu in db.tblStudents
+                           join u in db.tblUsers on stu.UserID equals u.UserID
+                           where stu.UserID == userId
+                           select new MyProfileViewModel
+                           {
+                               UserID = u.UserID,
+                               Username = u.Username,
+                               Role = role,
+                               Name = stu.StudentName,
+                               Email = stu.AcademicEmail,
+                               Phone = stu.MobileNumber,
+                               UniversityName = universityName,
+                               SchoolName = schoolName,
+                               IsLibrarian = false
+                           }).FirstOrDefault();
+            }
+
+            // 4️⃣ If no record found → back to login
+            if (profile == null)
+                return RedirectToAction("Login", "Login");
+
+            // 5️⃣ Return the populated profile view
+            return View(profile);
         }
-    
+
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult MyProfile(MyProfileViewModel model)
         {
-            var currentEmail = Session["UserName"]?.ToString();
+            // 1️⃣ Check session
+            if (Session["UserID"] == null || Session["Role"] == null)
+                return RedirectToAction("Login", "Login");
 
-            var user = db.tblUsers.FirstOrDefault(u => u.Email == currentEmail);
-            var patron = db.Patrons.FirstOrDefault(p => p.PatronEmail == currentEmail);
+            string userId = Session["UserID"].ToString();
+            string role = Session["Role"].ToString();
 
-            if (user != null && patron != null)
+            // 2️⃣ Get the User record
+            var user = db.tblUsers.FirstOrDefault(u => u.UserID == userId);
+            if (user == null)
             {
-              
-                patron.PatronName = model.Name;
-                patron.PatronPhone = model.Phone;
+                TempData["ErrorMessage"] = "User record not found.";
+                return RedirectToAction("MyProfile");
+            }
 
+            bool updated = false;
+
+            // 3️⃣ Update based on role
+            if (role.Equals("Faculty", StringComparison.OrdinalIgnoreCase))
+            {
+                var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
+                if (employee != null)
+                {
+                    employee.EmployeeName = model.Name;
+                    employee.Email = model.Email;
+                    employee.MobileNumber = model.Phone;
+                    updated = true;
+                }
+            }
+            else if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            {
+                var student = db.tblStudents.FirstOrDefault(s => s.UserID == userId);
+                if (student != null)
+                {
+                    student.StudentName = model.Name;
+                    student.AcademicEmail = model.Email;
+                    student.MobileNumber = model.Phone;
+                    updated = true;
+                }
+            }
+
+           
+
+            // 5️⃣ Save changes if anything was updated
+            if (updated)
+            {
                 db.SaveChanges();
-
-                Session["UserName"] = model.Username; 
+                Session["UserName"] = model.Username; // update session username if changed
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
             else
             {
-                TempData["ErrorMessage"] = "Could not update profile. Record not found.";
+                TempData["ErrorMessage"] = "No records were updated.";
             }
 
             return RedirectToAction("MyProfile");
         }
+
 
         public ActionResult ChangePassword()
         {

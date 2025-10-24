@@ -12,13 +12,15 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MaterialType
+    public partial class VisitorManagement
     {
-        public int MaterialTypeID { get; set; }
-        public string TypeName { get; set; }
-        public string UniversityID { get; set; }
+        public int VisitorID { get; set; }
+        public string VisitorName { get; set; }
+        public string Purpose { get; set; }
+        public string ContactNumber { get; set; }
+        public System.DateTime VisitDate { get; set; }
+        public int CreatedBy { get; set; }
+        public Nullable<int> UniversityID { get; set; }
         public Nullable<int> SchoolID { get; set; }
-        public bool IsActive { get; set; }
-        public string AddedBy { get; set; }
     }
 }

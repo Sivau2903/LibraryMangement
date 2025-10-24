@@ -5,100 +5,176 @@
     ViewBag.Title = "Manage Materials";
 }
 
-<h2 class="mb-4">Manage Library Resources</h2>
+<h2 class="mb-4">Borrow Library Resources</h2>
 
-@if (TempData["Success"] != null)
-{
-    <div class="success-overlay d-flex align-items-center justify-content-center">
-        <div class="text-center">
-            <i class="bi bi-check-circle-fill display-2 text-success animate-pop"></i>
-            <h5 class="mt-2 text-success fw-bold">@TempData["Success"]</h5>
+<button id="reserveSelectedBtn" class="btn btn-success mb-3" disabled>Reserve Selected</button>
+
+<table id="MaterialsTable" class="table table-hover table-striped display" style="width:100%">
+    <thead class="table-primary text-uppercase small">
+        <tr>
+            <th>Select</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Edition</th>
+            <th>Description</th>
+            <th>Publishers</th>
+            <th>Year</th>
+            <th>Pages</th>
+            <th>Volume</th>
+            <th>Material Type</th>
+            <th>Department</th>
+            <th>Status Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var material in Model)
+        {
+            <tr>
+                <td>
+                    @if (material.AvailableQuantity > 0)
+                    {
+                        <input type="checkbox" class="select-book" value="@material.MaterialID" data-title="@material.Title" />
+                    }
+                </td>
+                <td>@material.Title</td>
+                <td>@material.Author</td>
+                <td>@material.Edition</td>
+                <td>@material.Description</td>
+                <td>@material.PlaceofPublishers</td>
+                <td>@material.YearPublished</td>
+                <td>@material.Pages</td>
+                <td>@material.Vol</td>
+                <td>@material.MaterialType</td>
+                <td>@material.tblSchoolName</td>
+                <td>
+                    @if (material.AvailableQuantity > 0)
+                    {
+                        <button class="btn btn-sm btn-success reserve-single-btn"
+                                data-id="@material.MaterialID"
+                                data-title="@material.Title">
+                            Reserve
+                        </button>
+                    }
+                    else
+                    {
+                        <form method="post" action="@Url.Action("AddToBookingList", "Patron")" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="materialId" value="@material.MaterialID" />
+                            <button type="submit" class="btn btn-sm btn-warning">
+                                Add To Booking List
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmReserveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Reservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reserve the following books?</p>
+                <ul id="selectedBooksList"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmReserveBtn" class="btn btn-success">Confirm</button>
+            </div>
         </div>
     </div>
-}
+</div>
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger mb-2">@TempData["Error"]</div>
-}
-
-@if (Model != null && Model.Any())
-{
-    <table id="MaterialsTable" class="table table-hover table-striped display" style="width:100%; max-height:40%">
-        <thead class="table-primary text-uppercase small">
-            <tr>
-                <th>Select</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Edition</th>
-                <th>Description</th>
-                <th>Publishers</th>
-                <th>Year</th>
-                <th>Pages</th>
-                <th>Volume</th>
-                <th>Material Type</th>
-                <th>Department</th>
-                <th>Status Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var material in Model)
-            {
-                <tr>
-                    <td>
-                        @if (material.AvailableQuantity > 0)
-                        {
-                            <input type="checkbox" name="selectedMaterialIds" value="@material.MaterialID" />
-                        }
-                    </td>
-                    <td>@material.Title</td>
-                    <td>@material.Author</td>
-                    <td>@material.Edition</td>
-                    <td>@material.Description</td>
-                    <td>@material.PlaceofPublishers</td>
-                    <td>@material.YearPublished</td>
-                    <td>@material.Pages</td>
-                    <td>@material.Vol</td>
-                    <td>@material.MaterialType</td>
-                    <td>@material.tblSchoolName</td>
-                    <td>
-                        @if (material.AvailableQuantity > 0)
-                        {
-                            <a class="btn btn-sm btn-success" href="@Url.Action("ReserveSingle", "Patron", new { materialId = material.MaterialID })">Reserve</a>
-                        }
-                        else
-                        {
-                            <form method="post" action="@Url.Action("AddToBookingList", "Patron")" style="display:inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="materialId" value="@material.MaterialID" />
-                                <button type="submit" class="btn btn-sm btn-warning">
-                                    Add To Booking List
-                                </button>
-                            </form>
-                        }
-                    </td>
-
-
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p class="text-center text-muted">No materials available.</p>
-}
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <h5 class="text-success">Reservation Successful!</h5>
+                <p id="counterInfo"></p>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
+            // DataTables
             $('#MaterialsTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
                 info: true,
                 responsive: true,
-                columnDefs: [{ orderable: false, targets: 10 }] // Action column
+                columnDefs: [{ orderable: false, targets: 0 }]
+            });
+
+            // Enable Reserve button only when checkboxes are selected
+            $('.select-book').on('change', function () {
+                $('#reserveSelectedBtn').prop('disabled', $('.select-book:checked').length === 0);
+            });
+
+            var selectedIds = [];
+            var selectedTitles = [];
+
+            function openConfirmModal(ids, titles) {
+                selectedIds = ids;
+                selectedTitles = titles;
+
+                $('#selectedBooksList').empty();
+                selectedTitles.forEach(title => {
+                    $('#selectedBooksList').append('<li>' + title + '</li>');
+                });
+
+                var confirmModal = new bootstrap.Modal(document.getElementById('confirmReserveModal'));
+                confirmModal.show();
+            }
+
+            // Multiple books
+            $('#reserveSelectedBtn').on('click', function () {
+                var ids = [];
+                var titles = [];
+                $('.select-book:checked').each(function () {
+                    ids.push($(this).val());
+                    titles.push($(this).data('title'));
+                });
+                openConfirmModal(ids, titles);
+            });
+
+            // Single book
+            $('.reserve-single-btn').on('click', function () {
+                var id = $(this).data('id');
+                var title = $(this).data('title');
+                openConfirmModal([id], [title]);
+            });
+
+            // Confirm reservation
+            $('#confirmReserveBtn').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("ConfirmReservation", "Patron")',
+                    type: 'POST',
+                    data: { materialIds: selectedIds },
+                    success: function (res) {
+                        $('#confirmReserveModal').modal('hide');
+                        $('#counterInfo').text('Collect your book(s) from Counter Number: ' + res.counterNumber);
+                        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        successModal.show();
+
+                        // Reload page to reflect changes
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Error reserving books!');
+                    }
+                });
             });
         });
     </script>

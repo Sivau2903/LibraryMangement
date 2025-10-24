@@ -44,7 +44,7 @@
             @foreach (var record in Model)
             {
                 <tr>
-                    <td>@record.Patron.PatronName</td>
+                    <td>@record.StudentName</td>
                     <td>@record.MaterialCopy.Material.Title</td>
                     <td>@record.DueDate</td>
                     <td style="color:@(record.Status == "Overdue" ? "red" : "red"); font-weight:bold;">

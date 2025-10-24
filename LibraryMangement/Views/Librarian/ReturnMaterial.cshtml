@@ -1,211 +1,156 @@
 ﻿@model LibraryMangement.Models.ReturnMaterialViewModel
 
 <h2 class="text-center my-4">Return / Renew Books</h2>
-<style>
-    /* ✅ Keep popup small and top-centered */
-    .modal-dialog-top {
-        position: fixed;
-        top: 80px; /* adjust distance from top */
-        left: 50%;
-        transform: translateX(-50%);
-        margin: 0;
 
-    }
-
-    /* Make sure it stays above everything */
-    .modal-backdrop.show {
-        opacity: 0.3;
-    }
-
-    .modal-content {
-        border-radius: 10px;
-    }
-</style>
-
-@if (Model.CirculationItems != null && Model.CirculationItems.Any())
-{
-    <div class="table-responsive" style="max-height:500px; overflow-y:auto;">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark" style="position:sticky; top:0; z-index:1;">
-                <tr>
-                    <th>Barcode</th>
-                    <th>Title</th>
-                    <th>Patron Name</th>
-                    <th>Patron ID</th>
-                    <th>Email</th>
-                    <th>Patron Type</th>
-                    <th>Requested Date</th>
-                    <th>Issue Date</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Total Fine</th>
-                    <th>Extra Fine Reason</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.CirculationItems)
-                {
-                    <tr>
-                        <td>@item.BarcodeNumber</td>
-                        <td>@item.MaterialTitle</td>
-                        <td>@item.PatronName</td>
-                        <td>@item.PatronID</td>
-                        <td>@item.PatronEmail</td>
-                        <td>@item.PatronType</td>
-                        <td>@item.RequestedDate.ToString("dd-MM-yyyy")</td>
-                        <td>@item.IssueDate</td>
-                        <td>@item.DueDate</td>
-                        <td style="color:@(item.Status=="Overdue"?"red":"black"); font-weight:bold;">
-                            @item.Status
-                        </td>
-                        <td>
-                            <input type="text" class="form-control fineAmountDisplay"
-                                   value="@(item.FineAmount > 0 ? item.FineAmount.ToString("0.00") : "0.00")" readonly />
-                        </td>
-                        <td>
-                            <select class="form-select extraFineSelect" data-basefine="@item.FineAmount">
-                                <option value="">-- Select Reason --</option>
-                                @foreach (var reason in Model.FineReason)
-                                {
-                                    <option value="@reason.Value" data-fine="@reason.FinePerDay">@reason.ReasonText</option>
-                                }
-                            </select>
-                        </td>
-                        <td>
-                            <form method="post" action="@Url.Action("ProcessReturnRenew")" class="d-flex gap-1 returnForm">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="CirculationID" value="@item.CirculationID" />
-                                <input type="hidden" name="action" class="actionType" />
-                                <input type="hidden" name="paymentStatus" class="paymentStatus" />
-                                <input type="hidden" name="fineAmount" class="fineAmountInput" value="@item.FineAmount" />
-                                <input type="hidden" name="FineReason" class="fineReasonInput" />
-                                <button type="button" class="btn btn-success btn-sm" onclick="confirmAction(this,'ReturnPaid')">Return & Paid</button>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction(this,'ReturnUnpaid')">Return & Unpaid</button>
-                                <button type="button" class="btn btn-warning btn-sm" onclick="confirmAction(this,'Renew')">Renew</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <p class="text-center text-muted mt-4">No issued or overdue Books found.</p>
-}
-
-<!-- ✅ Small success popup -->
-<div id="successPopup" class="alert alert-success alert-dismissible fade show text-center" role="alert"
-     style="display:none; position:fixed; top:20px; right:20px; z-index:9999; width:300px;">
-    <span id="successMessage"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-<!-- ✅ Custom confirmation modal -->
-<!-- Confirmation Modal (Same Style as Before) -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-top">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-warning text-dark py-2">
-                <h6 class="modal-title fw-bold" id="confirmModalLabel">Confirm Action</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center py-3">
-                <p id="confirmMessage">Are you sure you want to proceed?</p>
-                <div class="d-flex justify-content-center gap-2 mt-2">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="modalConfirmBtn">Yes, Proceed</button>
-                </div>
-            </div>
-        </div>
+<div class="text-center mb-4">
+    <div class="input-group justify-content-center" style="max-width:400px; margin:auto;">
+        <input type="text" id="barcodeInput" class="form-control" placeholder="Scan or Enter Barcode Number" autofocus />
+        <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
     </div>
 </div>
 
-<style>
-    /* ✅ Keep popup small and top-centered */
-    .modal-dialog-top {
-        position: fixed;
-        top: 80px; /* adjust distance from top */
-        left: 50%;
-        transform: translateX(-50%);
-        margin: 0;
-    }
+<div class="table-responsive" style="max-height:500px; overflow-y:auto;">
+    <table id="returnTable" class="table table-bordered table-striped" style="display:none;">
+        <thead class="table-dark" style="position:sticky; top:0; z-index:1;">
+            <tr>
+                <th>Barcode</th>
+                <th>Title</th>
+                <th>Patron Name</th>
+                <th>Patron ID</th>
+                <th>Email</th>
+                <th>Patron Type</th>
+                <th>Requested Date</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Extra Fine</th>
+                <th>Total Fine</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
-    /* Make sure it stays above everything */
-    .modal-backdrop.show {
-        opacity: 0.3;
-    }
-
-    .modal-content {
-        border-radius: 10px;
-    }
-</style>
-
-
+<p id="noDataMsg" class="text-center text-muted mt-4">No data found. Please scan a Barcode Number.</p>
 @section Scripts {
     <script>
-        let selectedForm = null;
-        let selectedType = null;
+$(document).ready(function () {
 
-        function confirmAction(button, type) {
-            selectedForm = button.closest('form');
-            selectedType = type;
+    var fineReasons = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FineReason));
 
-            let actionText = type === 'ReturnPaid' ? 'Return & mark as Paid'
-                : type === 'ReturnUnpaid' ? 'Return & mark as Unpaid'
-                    : 'Renew this book';
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        var date = new Date(dateStr);
+        if (isNaN(date)) return "";
+        return date.toLocaleDateString('en-GB');
+    }
 
-            document.getElementById('confirmMessage').innerText = `Are you sure you want to ${actionText}?`;
-            var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            modal.show();
+    function showSuccess(msg) { alert(msg); }
 
-            document.getElementById('confirmYesBtn').onclick = function () {
-                setRowAction(selectedForm, selectedType);
-                modal.hide();
-                selectedForm.submit();
-                showSuccess(`${actionText} successfully.`);
-            };
+    function addRow(record) {
+        if ($("#row_" + record.BarcodeNumber).length) {
+            showSuccess("This barcode is already added.");
+            return;
         }
 
-        function setRowAction(form, type) {
-            var actionInput = form.querySelector('.actionType');
-            var paymentInput = form.querySelector('.paymentStatus');
-
-            if (type === 'ReturnPaid') {
-                actionInput.value = 'Return';
-                paymentInput.value = 'Paid';
-            } else if (type === 'ReturnUnpaid') {
-                actionInput.value = 'Return';
-                paymentInput.value = 'Unpaid';
-            } else if (type === 'Renew') {
-                actionInput.value = 'Renew';
-                paymentInput.value = '';
-            }
-        }
-
-        // ✅ Extra fine calculation
-        document.querySelectorAll('.extraFineSelect').forEach(function (select) {
-            select.addEventListener('change', function () {
-                var row = select.closest('tr');
-                var baseFine = parseFloat(select.dataset.basefine) || 0;
-                var selectedOption = select.selectedOptions[0];
-                var extraFine = parseFloat(selectedOption.dataset.fine) || 0;
-                var totalFine = baseFine + extraFine;
-
-                row.querySelector('.fineAmountDisplay').value = totalFine.toFixed(2);
-                row.querySelector('.fineAmountInput').value = totalFine.toFixed(2);
-                row.querySelector('.fineReasonInput').value = selectedOption.value;
-            });
+        let options = `<option value="">-- Select Reason --</option>`;
+        fineReasons.forEach(r => {
+            options += `<option value="${r.Value}" data-fine="${r.FinePerDay}">${r.ReasonText}</option>`;
         });
 
-        // ✅ Success popup function
-        function showSuccess(message) {
-            const popup = document.getElementById('successPopup');
-            document.getElementById('successMessage').innerText = message;
-            popup.style.display = 'block';
-            setTimeout(() => popup.style.display = 'none', 3000);
+        let row = `
+<tr id="row_${record.BarcodeNumber}">
+    <td>${record.BarcodeNumber}</td>
+    <td>${record.MaterialTitle}</td>
+    <td>${record.PatronName}</td>
+    <td>${record.PatronID}</td>
+    <td>${record.PatronEmail}</td>
+    <td>${record.PatronType}</td>
+    <td>${formatDate(record.RequestedDate)}</td>
+    <td>${formatDate(record.IssueDate)}</td>
+    <td>${formatDate(record.DueDate)}</td>
+    <td style="color:${record.Status==='Overdue'?'red':'black'}; font-weight:bold;">${record.Status}</td>
+    <td>
+        <select class="form-select extraFineSelect" data-basefine="${record.FineAmount}">
+            ${options}
+        </select>
+    </td>
+    <td>
+        <input type="text" class="form-control fineAmountDisplay" value="${record.FineAmount.toFixed(2)}" readonly />
+        <input type="hidden" class="fineAmountInput" value="${record.FineAmount.toFixed(2)}" />
+        <input type="hidden" class="fineReasonInput" />
+    </td>
+    <td>
+        <form method="post" action="/Librarian/ProcessReturnRenew">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="CirculationID" value="${record.CirculationID}" />
+            <input type="hidden" name="action" class="actionType" />
+            <input type="hidden" name="paymentStatus" class="paymentStatus" />
+            <input type="hidden" name="fineAmount" class="fineAmountInputForm" value="${record.FineAmount.toFixed(2)}" />
+            <input type="hidden" name="FineReason" class="fineReasonInputForm" />
+            <button type="button" class="btn btn-success btn-sm" onclick="confirmAndSubmit(this,'ReturnPaid')">Return & Paid</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmAndSubmit(this,'ReturnUnpaid')">Return & Unpaid</button>
+            <button type="button" class="btn btn-warning btn-sm" onclick="confirmAndSubmit(this,'Renew')">Renew</button>
+        </form>
+    </td>
+</tr>
+        `;
+        $("#returnTable tbody").append(row);
+        $("#returnTable").show();
+        $("#noDataMsg").hide();
+    }
+
+    function searchBarcode() {
+        var barcode = $("#barcodeInput").val().trim();
+        if (!barcode) { alert("Please scan or enter barcode."); return; }
+
+        $.getJSON("/Librarian/GetReturnDetailsByBarcode", { barcode: barcode }, function(res){
+            if(res.success) addRow(res.record);
+            else alert(res.message);
+            $("#barcodeInput").val('').focus();
+        }).fail(function(){ alert("Error fetching data."); $("#barcodeInput").val('').focus(); });
+    }
+
+    $("#searchBtn").click(searchBarcode);
+    $("#barcodeInput").keypress(function(e){
+        if(e.which===13){ searchBarcode(); e.preventDefault(); }
+    });
+
+    // Extra fine change
+    $(document).on('change', '.extraFineSelect', function () {
+        var row = $(this).closest('tr');
+        var baseFine = parseFloat($(this).data('basefine')) || 0;
+        var extraFine = parseFloat($(this).find(':selected').data('fine')) || 0;
+        var totalFine = baseFine + extraFine;
+
+        row.find('.fineAmountDisplay').val(totalFine.toFixed(2));
+        row.find('.fineAmountInput').val(totalFine.toFixed(2));
+        row.find('.fineReasonInput').val($(this).val());
+        row.find('.fineAmountInputForm').val(totalFine.toFixed(2));
+        row.find('.fineReasonInputForm').val($(this).val());
+    });
+
+    // Confirmation popup before submitting each row
+    window.confirmAndSubmit = function(button, type) {
+        var confirmMsg = "";
+        if (type === 'ReturnPaid') confirmMsg = "Are you sure you want to Return this book and mark as Paid?";
+        else if (type === 'ReturnUnpaid') confirmMsg = "Are you sure you want to Return this book and mark as Unpaid?";
+        else confirmMsg = "Are you sure you want to Renew this book?";
+
+        // ✅ Show a custom styled confirmation popup
+        if (confirm(confirmMsg)) {
+            var form = $(button).closest('form');
+
+            if(type==='ReturnPaid'){ form.find('.actionType').val('Return'); form.find('.paymentStatus').val('Paid'); }
+            else if(type==='ReturnUnpaid'){ form.find('.actionType').val('Return'); form.find('.paymentStatus').val('Unpaid'); }
+            else { form.find('.actionType').val('Renew'); form.find('.paymentStatus').val(''); }
+
+            form.submit();
         }
+    };
+
+});
     </script>
 }
+

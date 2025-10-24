@@ -16,7 +16,7 @@ namespace LibraryMangement.Models
     {
         public int FineID { get; set; }
         public Nullable<int> CirculationID { get; set; }
-        public Nullable<int> PatronID { get; set; }
+        public string UserID { get; set; }
         public Nullable<decimal> Amount { get; set; }
         public string Reason { get; set; }
         public Nullable<System.DateTime> AppliedDate { get; set; }
@@ -27,7 +27,6 @@ namespace LibraryMangement.Models
     
         public virtual Circulation Circulation { get; set; }
         public virtual Circulation Circulation1 { get; set; }
-        public virtual Patron Patron { get; set; }
-        public virtual Patron Patron1 { get; set; }
+        public virtual tblUser tblUser { get; set; }
     }
 }

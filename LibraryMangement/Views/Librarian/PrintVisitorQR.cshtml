@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null; // No master layout, just the QR
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Print Visitor QR</title>
+    <script>
+        window.onload = function() {
+            window.print(); // Trigger print automatically
+        }
+    </script>
+</head>
+<body style="text-align:center; margin-top:50px;">
+    <h3>Visitor QR Code</h3>
+    <img src="@ViewBag.QRImage" alt="Visitor QR Code" />
+</body>
+</html>

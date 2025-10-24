@@ -19,5 +19,8 @@ namespace LibraryMangement.Models
         public decimal FineAmount { get; set; }
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
+        public string UserID { get; set; }
+    
+        public virtual tblUser tblUser { get; set; }
     }
 }

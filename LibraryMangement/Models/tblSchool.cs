@@ -18,8 +18,9 @@ namespace LibraryMangement.Models
         public tblSchool()
         {
             this.BarcodeHistories = new HashSet<BarcodeHistory>();
-            this.tblEmployees = new HashSet<tblEmployee>();
             this.Materials = new HashSet<Material>();
+            this.tblUserSchools = new HashSet<tblUserSchool>();
+            this.tblStudents = new HashSet<tblStudent>();
         }
     
         public int SchoolID { get; set; }
@@ -42,11 +43,13 @@ namespace LibraryMangement.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblEmployee> tblEmployees { get; set; }
-        public virtual tblUser tblUser { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Material> Materials { get; set; }
+        public virtual tblUser tblUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblUserSchool> tblUserSchools { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblStudent> tblStudents { get; set; }
     }
 }

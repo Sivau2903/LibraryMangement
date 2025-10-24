@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryMangement.Models.Reservation>
+﻿@model IEnumerable<LibraryMangement.Models.IssueReservedMaterialViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -22,11 +22,11 @@
             <tr>
                 <td>@res.Patron.PatronName</td>
                 <td>@res.Material.Title</td>
-                <td>@res.ReservationDate</td>
+                @*<td>@res.ReservationDate</td>
                 <td>
                     <a href="@Url.Action("ApproveReservation", new { id = res.ReservationID })">Approve</a> |
                     <a href="@Url.Action("RejectReservation", new { id = res.ReservationID })">Reject</a>
-                </td>
+                </td>*@
             </tr>
         }
     </tbody>

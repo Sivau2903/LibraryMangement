@@ -3,14 +3,23 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Overdue List";
+    string selectedRole = ViewBag.SelectedRole as string ?? "Student";
 }
 
 <h2 class="text-center my-4">Overdue Materials</h2>
+
+<!-- 🔹 Role Selection Dropdown -->
 <div class="row mb-4">
     <div class="col-12 d-flex justify-content-end align-items-center">
         <form method="get" action="@Url.Action("Overduelist", "Librarian")" class="d-flex align-items-center">
+            <label for="roleSelect" class="me-2 fw-semibold">Select Role:</label>
+            <select id="roleSelect" name="selectedRole" class="form-select me-3" style="width:150px;" onchange="this.form.submit()">
+                <option value="Student" @(selectedRole == "Student" ? "selected" : "")>Student</option>
+                <option value="Faculty" @(selectedRole == "Faculty" ? "selected" : "")>Faculty</option>
+            </select>
+
             <label for="selectedDays" class="me-2 fw-semibold">Upcoming Overdue (Days):</label>
-            <select id="selectedDays" name="selectedDays" class="form-select me-2" required style="width:120px;">
+            <select id="selectedDays" name="selectedDays" class="form-select me-2" style="width:120px;">
                 <option value="">Select</option>
                 @for (int i = 1; i <= 5; i++)
                 {
@@ -22,8 +31,6 @@
     </div>
 </div>
 
-
-
 @if (!Model.Any())
 {
     <div class="alert alert-success text-center">
@@ -32,14 +39,13 @@
 }
 else
 {
-    <!-- 🔹 Top Filter Section -->
-
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
             <tr>
                 <th>Issue ID</th>
                 <th>Material Title</th>
-                <th>Patron</th>
+               
+                <th>Name</th>
                 <th>Issue Date</th>
                 <th>Due Date</th>
                 <th>Days Overdue</th>
@@ -54,9 +60,10 @@ else
                 <tr>
                     <td>@overdue.CirculationID</td>
                     <td>@overdue.MaterialTitle</td>
-                    <td>@overdue.PatronName</td>
-                    <td>@overdue.IssueDate</td>
-                    <td>@overdue.DueDate</td>
+                    
+                    <td>@overdue.Name</td>
+                    <td>@overdue.IssueDate?.ToString("dd-MM-yyyy")</td>
+                    <td>@overdue.DueDate?.ToString("dd-MM-yyyy")</td>
                     <td>@overdue.DaysOverdue</td>
                     <td>@overdue.FineAmount.ToString("C")</td>
                     <td>
@@ -67,10 +74,6 @@ else
                            class="btn btn-sm btn-danger mb-1">
                             Return/Renew
                         </a>
-                        @*<a href="@Url.Action("ReturnMaterial", "Librarian", new { id = overdue.CirculationID })"
-                           class="btn btn-sm btn-warning">
-                            Renew
-                        </a>*@
                     </td>
                 </tr>
             }

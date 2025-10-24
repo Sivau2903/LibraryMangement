@@ -12,19 +12,21 @@ namespace LibraryMangement.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Librarian
+    public partial class tblUserSchool
     {
-        public int LibrarianID { get; set; }
-        public Nullable<int> SchoolID { get; set; }
+        public int UserSchoolID { get; set; }
         public string UserID { get; set; }
-        public string EmailID { get; set; }
+        public int SchoolID { get; set; }
         public string UniversityID { get; set; }
-        public string Name { get; set; }
-        public string ContactNumber { get; set; }
         public bool IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public string CreatedIPAddress { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<System.DateTime> ModifiedDate { get; set; }
+        public string ModifiedIPAddress { get; set; }
     
-        public virtual Librarian Librarians1 { get; set; }
-        public virtual Librarian Librarian1 { get; set; }
+        public virtual tblSchool tblSchool { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
         public virtual tblUser tblUser { get; set; }
     }

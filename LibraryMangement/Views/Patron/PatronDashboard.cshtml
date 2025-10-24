@@ -32,8 +32,18 @@
         }
     }
 </style>
+<!-- 👇 Added section showing Name, University, and School -->
+<div class="mb-4">
+    <h2>Welcome, <strong>@Model.PatronName</strong></h2>
+    <p class="text-muted mb-1">
+        <i class="bi bi-building me-2"></i><strong>University:</strong> @Model.UniversityName
+    </p>
+    <p class="text-muted">
+        <i class="bi bi-bank me-2"></i><strong>School:</strong> @Model.SchoolName
+    </p>
+</div>
 
-<h2>Welcome, @Model.PatronName</h2>
+
 
 <div class="row mb-4">
     <div class="col-md-3 col-sm-6">

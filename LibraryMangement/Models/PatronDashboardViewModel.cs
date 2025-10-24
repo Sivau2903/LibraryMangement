@@ -7,7 +7,7 @@ namespace LibraryMangement.Models
 {
     public class PatronDashboardViewModel
     {
-        public int PatronID { get; set; }
+        public string PatronID { get; set; }
         public string PatronName { get; set; }
         public int ActiveIssuedCount { get; set; }
         public int OverdueCount { get; set; }
@@ -15,6 +15,8 @@ namespace LibraryMangement.Models
         public int PendingBookings { get; set; }
         public IEnumerable<Circulation> ActiveIssues { get; set; }
         public IEnumerable<Bookinglisted> PendingBookingList { get; set; }
+        public string UniversityName { get; internal set; }
+        public string SchoolName { get; internal set; }
     }
 
 }

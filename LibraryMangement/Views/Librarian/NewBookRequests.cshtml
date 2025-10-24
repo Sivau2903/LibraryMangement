@@ -41,6 +41,19 @@
     </script>
 }
 
+<div class="row mb-4">
+    <div class="col-md-3 ms-auto">
+        <form method="get" action="@Url.Action("NewBookRequests", "Library")" class="d-flex">
+            <label class="me-2 fw-semibold">Role:</label>
+            <select name="selectedRole" class="form-select me-2">
+                <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
+                <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+</div>
+
 @if (Model != null && Model.Any())
 {
     <div class="table-responsive">
@@ -52,33 +65,20 @@
                     <th>Material Name</th>
                     <th>Requested Date</th>
                     <th>Status</th>
-                    <th>Notify If Available</th>
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Count; i++)
+                @for (int i = 0; i < Model.Count(); i++)
                 {
                     <tr>
                         <td>@(i + 1)</td>
-                        <td>@(Model[i].Patron?.PatronName ?? "N/A")</td>
-                        <td>@Model[i].MaterialTitle</td>
-                        <td>@Model[i].RequestedDate.ToString("dd-MMM-yyyy")</td>
+                        <td>@Model.ElementAt(i).PatronName</td>
+                        <td>@Model.ElementAt(i).MaterialTitle</td>
+                        <td>@Model.ElementAt(i).RequestedDate.ToString("dd-MMM-yyyy")</td>
                         <td>
-                            <span class="badge @(Model[i].Status == "Pending" ? "bg-warning" : "bg-success")">
-                                @Model[i].Status
+                            <span class="badge @(Model.ElementAt(i).Status == "Pending" ? "bg-warning" : "bg-success")">
+                                @Model.ElementAt(i).Status
                             </span>
-                        </td>
-                        <td>
-                            @if (Model[i].Status == "Pending")
-                            {
-                                <button type="button" class="btn btn-success btn-sm" onclick="showConfirmModal(@Model[i].RequestID)">
-                                    Notify Availability
-                                </button>
-                            }
-                            else
-                            {
-                                <span class="text-muted">Already Notified</span>
-                            }
                         </td>
                     </tr>
                 }
@@ -89,7 +89,7 @@
 else
 {
     <div class="alert alert-info text-center">
-        No pending new book requests found.
+        No pending new book requests found for the selected role.
     </div>
 }
 

@@ -1,0 +1,232 @@
+﻿@model LibraryMangement.Models.CirculationViewModel
+
+@{
+    ViewBag.Title = "Manual Circulation Entry";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h4 class="text-center text-primary mb-4">Manual Circulation Entry</h4>
+
+        <!-- Success Message Overlay -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="position-fixed top-0 start-50 translate-middle-x w-auto p-3" style="z-index: 1050;">
+                <div class="alert alert-success d-flex align-items-center justify-content-center shadow-lg rounded" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 display-6"></i>
+                    <div>
+                        @TempData["Success"]
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Error Message -->
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-3 shadow-sm">@TempData["Error"]</div>
+        }
+
+        @using (Html.BeginForm("AddCirculationManual", "Librarian", FormMethod.Post, new { @id = "manualCirculationForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Patron ID</label>
+                    @Html.TextBoxFor(m => m.PatronID, new { @class = "form-control", @required = "required", @placeholder = "Enter Patron ID" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Requested Date</label>
+                    @Html.TextBoxFor(m => m.RequestedDate, new
+                    {
+                        @type = "date",
+                        @class = "form-control",
+                        @Value = Model.RequestedDate != DateTime.MinValue ? Model.RequestedDate.ToString("yyyy-MM-dd") : ""
+                    })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Issued Date</label>
+                    @Html.TextBoxFor(m => m.IssuedDate, new
+                    {
+                        @type = "date",
+                        @class = "form-control",
+                        @Value = Model.IssuedDate != DateTime.MinValue ? Model.IssuedDate.ToString("yyyy-MM-dd") : ""
+                    })
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Title</label>
+                    <input type="text" id="Title" name="Title" class="form-control" placeholder="Enter Book Title" autocomplete="off" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Author</label>
+                    @Html.DropDownListFor(m => m.AuthorName,
+                        new List<SelectListItem> { new SelectListItem { Text = "-- Select Author --", Value = "" } },
+                        new { @id = "AuthorName", @class = "form-select", @required = "required" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Edition</label>
+                    @Html.DropDownListFor(m => m.Edition,
+                        new List<SelectListItem> { new SelectListItem { Text = "-- Select Edition --", Value = "" } },
+                        new { @id = "Edition", @class = "form-select", @required = "required" })
+                </div>
+                @Html.HiddenFor(m => m.MaterialID, new { id = "MaterialID" })
+            </div>
+
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    @Html.TextBoxFor(m => m.Status, new { @class = "form-control", @readonly = "readonly", @value = "Issued" })
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label">Barcode (Auto Assigned)</label>
+                    @Html.TextBoxFor(m => m.Barcode, new { @class = "form-control", @id = "Barcode", @readonly = "readonly" })
+
+                    <div class="text-center mt-3" id="barcodeSection" style="display:none;">
+                        <div id="barcodeToPrint">
+                            <svg id="barcodeSVG"></svg>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary mt-2" onclick="printBarcode()">Print Barcode</button>
+                    </div>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <button type="submit" class="btn btn-success btn-lg mt-3 w-75">Save</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Success overlay animation */
+    .alert-success {
+        animation: pop 0.5s ease-out;
+    }
+
+    @@keyframes pop {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); }
+    }
+</style>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Autocomplete for Title
+            $('#Title').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetMaterialTitles", "Librarian")',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.Title, value: item.Title };
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $('#Title').val(ui.item.value);
+                    fetchAuthorsForTitle(ui.item.value);
+                }
+            });
+
+            // Fetch authors based on Title
+            function fetchAuthorsForTitle(title) {
+                $.ajax({
+                    url: '@Url.Action("GetAuthorsByTitle", "Librarian")',
+                    data: { title: title },
+                    success: function (data) {
+                        $('#AuthorName').empty().append('<option value="">-- Select Author --</option>');
+                        $.each(data, function (i, author) {
+                            $('#AuthorName').append('<option value="' + author + '">' + author + '</option>');
+                        });
+                        $('#Edition').empty().append('<option value="">-- Select Edition --</option>');
+                        $('#Barcode').val('');
+                        $('#barcodeSection').hide();
+                    }
+                });
+            }
+
+            // Fetch editions based on Title + Author
+            $('#AuthorName').change(function () {
+                var title = $('#Title').val();
+                var author = $(this).val();
+                if (title && author) {
+                    $.ajax({
+                        url: '@Url.Action("GetEditionsByTitleAuthor", "Librarian")',
+                        data: { title: title, author: author },
+                        success: function (data) {
+                            $('#Edition').empty().append('<option value="">-- Select Edition --</option>');
+                            $.each(data, function (i, edition) {
+                                $('#Edition').append('<option value="' + edition + '">' + edition + '</option>');
+                            });
+                            $('#Barcode').val('');
+                            $('#barcodeSection').hide();
+                        }
+                    });
+                }
+            });
+
+            // Fetch barcode on Edition select
+            $('#Edition').change(function () {
+                var title = $('#Title').val();
+                var author = $('#AuthorName').val();
+                var edition = $(this).val();
+
+                if (title && author && edition) {
+                    $.ajax({
+                        url: '@Url.Action("GetAvailableBarcodeExact", "Librarian")',
+                        data: { title: title, authorName: author, edition: edition },
+                        success: function (data) {
+                            if (data && data.BarcodeNumber) {
+                                $('#MaterialID').val(data.MaterialID);
+                                $('#Barcode').val(data.BarcodeNumber);
+                                $('#barcodeSection').show();
+                                JsBarcode("#barcodeSVG", data.BarcodeNumber, { format: "CODE128", width: 2, height: 70, displayValue: true });
+                            } else {
+                                alert("No unprinted copy available for this exact book!");
+                                $('#Barcode').val('');
+                                $('#barcodeSection').hide();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        function printBarcode() {
+            var printWindow = window.open('', '_blank');
+            var barcodeHTML = document.getElementById('barcodeToPrint').innerHTML;
+
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Barcode</title>
+                    <style>
+                        body { text-align:center; margin-top:50px; }
+                        svg { width:250px; height:100px; }
+                    </style>
+                </head>
+                <body>${barcodeHTML}</body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+    </script>
+}

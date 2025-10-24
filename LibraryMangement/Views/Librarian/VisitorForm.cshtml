@@ -1,0 +1,37 @@
+﻿@model LibraryMangement.Models.VisitorManagement
+@{
+    ViewBag.Title = "Visitor Registration";
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4 mx-auto" style="max-width: 500px;">
+        <h4 class="text-center text-primary mb-3">Library Visitor Registration</h4>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success text-center">@TempData["Success"]</div>
+        }
+
+        @using (Html.BeginForm("VisitorForm", "Librarian", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label>Visitor Name</label>
+                @Html.TextBoxFor(m => m.VisitorName, new { @class = "form-control", @placeholder = "Enter your name", required = "required" })
+            </div>
+
+            <div class="mb-3">
+                <label>Purpose of Visit</label>
+                @Html.TextBoxFor(m => m.Purpose, new { @class = "form-control", @placeholder = "Enter purpose" })
+            </div>
+
+            <div class="mb-3">
+                <label>Contact Number</label>
+                @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", @placeholder = "Enter contact number" })
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Submit</button>
+        }
+    </div>
+</div>

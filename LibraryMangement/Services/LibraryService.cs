@@ -28,12 +28,46 @@ namespace LibraryMangement.Services
                     circulation.IsOverdue = true;
                     circulation.FineAmount = overdueDays * finePerDay;
                     circulation.LastFineUpdateDate = DateTime.Today;
+                    
+                    string userId = circulation.UserID;
+                    string roleName = (from ur in db.tblUserRoles
+                                       join r in db.tblRoles on ur.RoleID equals r.RoleID
+                                       where ur.UserID == userId
+                                       select r.RoleName).FirstOrDefault();
+
+                    // Step 4️⃣: Fetch user details based on role
+                    string patronName = "";
+                    string patronEmail = "";
+                    string patronId = "";
+
+                    if (!string.IsNullOrEmpty(roleName) && roleName.Equals("Student", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Fetch from tblStudents
+                        var student = db.tblStudents.FirstOrDefault(s => s.UserID == userId);
+                        if (student != null)
+                        {
+                            patronName = student.StudentName;
+                            patronEmail = student.AcademicEmail;
+                            patronId = student.StudentID.ToString();
+                        }
+                    }
+
+                    else
+                    {
+                        // Fetch from tblEmployee
+                        var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
+                        if (employee != null)
+                        {
+                            patronName = employee.EmployeeName;
+                            patronEmail = employee.Email;
+                            patronId = employee.EmployeeID.ToString();
+                        }
+                    }
 
                     // Fetch Patron Email
-                    var patron = db.Patrons.FirstOrDefault(p => p.PatronID == circulation.PatronID);
-                    if (patron != null && !string.IsNullOrWhiteSpace(patron.PatronEmail))
+                    if (patronEmail != null && !string.IsNullOrWhiteSpace(patronEmail))
                     {
-                        EmailService.SendOverdueNotification(patron.PatronEmail, circulation);
+                        EmailService.SendOverdueNotification(patronEmail, circulation);
                     }
                 }
 
@@ -98,10 +132,44 @@ namespace LibraryMangement.Services
 
                             // Assign the exact MaterialCopy to the next patron
                             materialCopy.Status = "OnHold";
-                            var patron = db.Patrons.Find(nextBooking.PatronID);
 
-                            if (!string.IsNullOrWhiteSpace(patron.PatronEmail))
-                                EmailService.SendBookingAvailableNotification(patron.PatronEmail, nextBooking);
+                            string userId = nextBooking.UserID;
+                            string roleName = (from ur in db.tblUserRoles
+                                               join r in db.tblRoles on ur.RoleID equals r.RoleID
+                                               where ur.UserID == userId
+                                               select r.RoleName).FirstOrDefault();
+
+                            // Step 4️⃣: Fetch user details based on role
+                            string patronName = "";
+                            string patronEmail = "";
+                            string patronId = "";
+
+                            if (!string.IsNullOrEmpty(roleName) && roleName.Equals("Student", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Fetch from tblStudents
+                                var student = db.tblStudents.FirstOrDefault(s => s.UserID == userId);
+                                if (student != null)
+                                {
+                                    patronName = student.StudentName;
+                                    patronEmail = student.AcademicEmail;
+                                    patronId = student.StudentID.ToString();
+                                }
+                            }
+                            else
+                            {
+                                // Fetch from tblEmployee
+                                var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
+                                if (employee != null)
+                                {
+                                    patronName = employee.EmployeeName;
+                                    patronEmail = employee.Email;
+                                    patronId = employee.EmployeeID.ToString();
+                                }
+                            }
+                          
+
+                            if (!string.IsNullOrWhiteSpace(patronEmail))
+                                EmailService.SendBookingAvailableNotification(patronEmail, nextBooking);
                         }
                         else
                         {

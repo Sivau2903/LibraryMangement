@@ -11,11 +11,12 @@ namespace LibraryMangement.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class PatronNewMaterialRequest
     {
         public int RequestID { get; set; }
-        public int PatronID { get; set; }
+        public string UserID { get; set; }
         public int SchoolID { get; set; }
         public int UniversityID { get; set; }
         public string MaterialTitle { get; set; }
@@ -25,7 +26,9 @@ namespace LibraryMangement.Models
         public System.DateTime RequestedDate { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
-    
-        public virtual Patron Patron { get; set; }
+        [NotMapped]
+        public string PatronName { get; set; }
+
+        public virtual tblUser tblUser { get; set; }
     }
 }

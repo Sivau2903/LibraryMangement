@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+﻿@model IEnumerable<dynamic>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,41 +7,61 @@
 
 <h2 class="text-center my-4">Requested Materials Report</h2>
 
-<form method="get" action="@Url.Action("RequestReport", "Librarian")" class="row g-3 mb-4">
-    <div class="col-md-3" style="width:12%">
+<form method="get" action="@Url.Action("RequestReport", "Librarian")" class="row g-3 mb-4 align-items-end">
+    <div class="col-md-2">
         <label class="form-label">From Date</label>
         <input type="date" class="form-control" name="fromDate" value="@Request.QueryString["fromDate"]" />
     </div>
-    <div class="col-md-3" style="width:12%">
+    <div class="col-md-2">
         <label class="form-label">To Date</label>
         <input type="date" class="form-control" name="toDate" value="@Request.QueryString["toDate"]" />
     </div>
-    <div class="col-md-3 align-self-end">
+    <div class="col-md-2">
+        <label class="form-label">Role</label>
+        <select name="selectedRole" class="form-select">
+            <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
+            <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
+        </select>
+    </div>
+    <div class="col-md-3">
         <button type="submit" class="btn btn-primary">Filter</button>
         <a href="@Url.Action("RequestReport", "Librarian")" class="btn btn-secondary">Clear</a>
     </div>
 </form>
 
-<div style="height:calc(100vh - 200px); overflow-y:auto;">
-    <table class="table table-bordered table-striped table-hover">
-        <thead class="table-dark sticky-top">
-            <tr>
-                <th>Requested Date</th>
-                <th>Requested By</th>
-                <th>Book Title</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var record in Model)
-            {
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No requested materials found for the selected role and date range.
+    </div>
+}
+else
+{
+    <div style="height:calc(100vh - 200px); overflow-y:auto;">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark sticky-top">
                 <tr>
-                    <td>@record.RequestedDate</td>
-                    <td>@record.Patron.PatronName</td>
-                    <td>@record.Material.Title</td>
-                    <td>@record.Status</td>
+                    <th>Requested Date</th>
+                    <th>Requested By</th>
+                    <th>Book Title</th>
+                    <th>Status</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var record in Model)
+                {
+                    <tr>
+                        <td>@record.RequestedDate.ToString("dd-MMM-yyyy")</td>
+                        <td>@record.UserName</td>
+                        <td>@record.MaterialTitle</td>
+                        <td>
+                            <span class="badge @(record.Status == "Requested" ? "bg-warning text-dark" : "bg-success")">
+                                @record.Status
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

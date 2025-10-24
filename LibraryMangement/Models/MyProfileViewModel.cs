@@ -32,6 +32,7 @@ namespace LibraryMangement.Models
         public string UniversityName { get; set; } // Both
 
         public bool IsLibrarian { get; set; }
+        public object SchoolName { get; internal set; }
 
 
         //public tblUserRole role { get; set; }

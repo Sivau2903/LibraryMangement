@@ -1,6 +1,8 @@
 ﻿using LibraryMangement.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -113,16 +115,28 @@ namespace LibraryMangement.Controllers
             }
         }
 
-
-
         private const int SaltSize = 16; // 128-bit
         private const int HashSize = 32; // 256-bit
         private const int Iterations = 100_000; // PBKDF2 iterations
+
+
+        // ✅ HashClientPassword: handles Base64 and GUID salts
         public static string HashClientPassword(string clientHashedPasswordHex, string saltBase64)
         {
-            byte[] saltBytes = Convert.FromBase64String(saltBase64);
+            byte[] saltBytes;
 
-            // Convert hex string to bytes
+            try
+            {
+                // Try normal Base64 decode first
+                saltBytes = Convert.FromBase64String(saltBase64);
+            }
+            catch (FormatException)
+            {
+                // If not Base64, treat as GUID
+                saltBytes = Guid.Parse(saltBase64).ToByteArray();
+            }
+
+            // Convert client SHA256 hex string → bytes
             byte[] passwordBytes = new byte[clientHashedPasswordHex.Length / 2];
             for (int i = 0; i < passwordBytes.Length; i++)
             {
@@ -135,16 +149,32 @@ namespace LibraryMangement.Controllers
                 return Convert.ToBase64String(hash);
             }
         }
+
+
+        // ✅ VerifyPassword: simple & static — doesn’t require userId
         public static bool VerifyPassword(string enteredClientHex, string storedHash, string salt)
         {
             string hashOfInput = HashClientPassword(enteredClientHex, salt);
             return hashOfInput == storedHash;
         }
-                       
+
+
+        // ✅ UpdateSaltInDatabase: instance method (optional, only if you need to replace GUID salts permanently)
+        private void UpdateSaltInDatabase(string userId, string base64Salt)
+        {
+            var user = db.tblUsers.FirstOrDefault(u => u.UserID == userId);
+            if (user != null)
+            {
+                user.PasswordSalt = base64Salt;
+                db.SaveChanges();
+            }
+        }
+
+
+        // ✅ Login Action
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
-           
             string captcha = Session["Captcha"]?.ToString();
             if (model.CaptchaCode != captcha)
             {
@@ -152,43 +182,33 @@ namespace LibraryMangement.Controllers
                 return View(model);
             }
 
-     
-            var user = db.tblUsers.Where(u => u.Email == model.Username || u.Username == model.Username ).FirstOrDefault();
+            var user = db.tblUsers.FirstOrDefault(u => u.Email == model.Username || u.Username == model.Username);
             if (user == null)
             {
                 ViewBag.ErrorMessage = "Email ID not found";
                 return View(model);
             }
 
-      
-            //string decryptedPassword = SecureHelper.Decrypt(user.PasswordHash);
-
-          
-            if (!VerifyPassword(model.Password,user.PasswordHash,user.PasswordSalt))
+            // ✅ Fixed VerifyPassword call
+            if (!VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
             {
                 ViewBag.ErrorMessage = "Invalid password";
                 return View(model);
             }
 
-        
+            // ✅ Session assignments
             Session["UserID"] = user.UserID;
             Session["UserName"] = user.Email;
-            Session["Role"] =  user.tblUserRoles.FirstOrDefault().tblRole.RoleName;
+            Session["Role"] = user.tblUserRoles.FirstOrDefault()?.tblRole.RoleName;
 
-     
-            if (user.tblUserRoles.FirstOrDefault().tblRole.RoleName == "Librarian")
-            {
+            // ✅ Redirects
+            string role = Session["Role"].ToString();
+            if (role == "Librarian")
                 return RedirectToAction("LibrarianDashboard", "Librarian");
-            }
-            else if (user.tblUserRoles.FirstOrDefault().tblRole.RoleName == "Faculty")
-            {
-                return RedirectToAction("PatronDashboard", "Patron");
-            }
             else
-            {
-              return RedirectToAction("PatronDashboard", "Patron");
-            }
+                return RedirectToAction("PatronDashboard", "Patron");
         }
+
 
         public bool ValidateUser(string email, string dobInput)
         {

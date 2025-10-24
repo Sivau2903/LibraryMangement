@@ -11,7 +11,8 @@ namespace LibraryMangement.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Circulation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -23,7 +24,7 @@ namespace LibraryMangement.Models
     
         public int CirculationID { get; set; }
         public Nullable<int> CopyID { get; set; }
-        public Nullable<int> PatronID { get; set; }
+        public string UserID { get; set; }
         public Nullable<System.DateTime> IssueDate { get; set; }
         public Nullable<System.DateTime> DueDate { get; set; }
         public Nullable<System.DateTime> ReturnDate { get; set; }
@@ -38,14 +39,17 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> ExpiryDate { get; set; }
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
+        [NotMapped]
+        public string StudentName { get; set; }
+        public Nullable<int> IssuedBy { get; set; }
+        public Nullable<int> CounterID { get; set; }
     
-        public virtual Patron Patron { get; set; }
-        public virtual Patron Patron1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails1 { get; set; }
         public virtual Material Material { get; set; }
         public virtual MaterialCopy MaterialCopy { get; set; }
+        public virtual tblUser tblUser { get; set; }
     }
 }
