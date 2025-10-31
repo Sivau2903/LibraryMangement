@@ -33,7 +33,6 @@ namespace LibraryMangement.Models
         public virtual DbSet<tblUniversity> tblUniversities { get; set; }
         public virtual DbSet<tblUserRole> tblUserRoles { get; set; }
         public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
-        public virtual DbSet<VisitorManagement> VisitorManagements { get; set; }
         public virtual DbSet<tblUser> tblUsers { get; set; }
         public virtual DbSet<tblEmployee> tblEmployees { get; set; }
         public virtual DbSet<tblUserUniversity> tblUserUniversities { get; set; }
@@ -46,5 +45,6 @@ namespace LibraryMangement.Models
         public virtual DbSet<LibraryCounter> LibraryCounters { get; set; }
         public virtual DbSet<MaterialType> MaterialTypes { get; set; }
         public virtual DbSet<PatronNewMaterialRequest> PatronNewMaterialRequests { get; set; }
+        public virtual DbSet<VisitorManagement> VisitorManagements { get; set; }
     }
 }

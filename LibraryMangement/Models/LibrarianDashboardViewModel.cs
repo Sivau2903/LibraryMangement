@@ -18,6 +18,10 @@ namespace LibraryMangement.Models
         public int PendingBookinglist { get; internal set; }
         public int? SelectedDays { get; set; } // ✅ Removed default value, made nullable
         public int UpcomingOverdueIssues { get; set; }   // ✅ New property
+        public string UserID { get; internal set; }
+        public string Name { get; internal set; }
+        public string UniversityName { get; internal set; }
+        public string SchoolName { get; internal set; }
     }
 
 }

@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "QR Generator";
+}
+
+<h2>QR Generator</h2>
+
+<form id="qrForm" method="post" action="@Url.Action("Generate", "Librarian")" target="qrFrame">
+    <input type="text" name="text" id="text" style="width:60%;" placeholder="Enter text to encode" />
+    <button type="submit">Generate QR</button>
+</form>
+
+<p>Result (opens in new inline frame):</p>
+<iframe name="qrFrame" style="width:270px; height:300px; border:none;"></iframe>
+
+<!-- Optional: show via AJAX and display inline -->
+<script>
+document.getElementById('qrForm').addEventListener('submit', function(e){
+    // optional client-side validation
+    var txt = document.getElementById('text').value.trim();
+    if (!txt) { e.preventDefault(); alert('Enter text'); return false; }
+    // If you want to display inline without iframe, use fetch to get blob and createObjectURL.
+});
+</script>

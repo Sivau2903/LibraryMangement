@@ -19,8 +19,10 @@ namespace LibraryMangement.Models
         public string Purpose { get; set; }
         public string ContactNumber { get; set; }
         public System.DateTime VisitDate { get; set; }
-        public int CreatedBy { get; set; }
-        public Nullable<int> UniversityID { get; set; }
+        public string CreatedBy { get; set; }
+        public string UniversityID { get; set; }
         public Nullable<int> SchoolID { get; set; }
+        public Nullable<System.DateTime> InTime { get; set; }
+        public Nullable<System.DateTime> OutTime { get; set; }
     }
 }

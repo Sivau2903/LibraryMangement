@@ -41,6 +41,7 @@
                             @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
                             <small class="text-muted">Changing this will also update your email in the system.</small>
                         </div>
+
                         <div class="mb-2">
                             <label class="form-label fw-bold mb-1">
                                 <i class="bi bi-person me-1"></i> Email
@@ -59,13 +60,21 @@
 
                         <div class="mb-2">
                             <label class="form-label fw-bold mb-1">
+                                <i class="bi bi-role me-1"></i> Role
+                            </label>
+                            @Html.TextBoxFor(m => m.Role, new { @class = "form-control rounded-3 shadow-sm" })
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold mb-1">
                                 <i class="bi bi-telephone me-1"></i> Phone
                             </label>
                             @Html.TextBoxFor(m => m.Phone, new { @class = "form-control rounded-3 shadow-sm" })
                             @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
                         </div>
 
-                        if (Model.IsLibrarian)
+                        @*if (Model.IsLibrarian)
                         {
                             <div class="mb-2">
                                 <label class="form-label fw-bold mb-1">
@@ -73,7 +82,7 @@
                                 </label>
                                 @Html.TextBoxFor(m => m.DepartmentName, new { @class = "form-control rounded-3 shadow-sm", @readonly = "readonly" })
                             </div>
-                        }
+                        }*@
 
                         <div class="mb-2">
                             <label class="form-label fw-bold mb-1">

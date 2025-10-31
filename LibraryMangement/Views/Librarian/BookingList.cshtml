@@ -9,7 +9,7 @@
 <h2 class="text-center my-4">Pending Bookings</h2>
 
 <!-- ✅ Role Selection Dropdown -->
-<form method="get" class="mb-4 text-center">
+<form method="get" class="mb-4 text-left">
     <label for="roleSelect" class="me-2 fw-semibold">Select Role:</label>
     <select id="roleSelect" name="selectedRole" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
         <option value="Student" @(selectedRole == "Student" ? "selected" : "")>Student</option>
@@ -39,7 +39,7 @@ else
             <tr>
                 <th>Booking ID</th>
                 <th>Material Title</th>
-                <th>Patron ID</th>
+              
                 <th>Patron Name</th>
                 <th>Booking Date</th>
                 <th>Expiry Date</th>
@@ -53,10 +53,10 @@ else
                 <tr>
                     <td>@booking.BookingID</td>
                     <td>@booking.MaterialTitle</td>
-                    <td>@booking.PatronID</td>
-                    <td>@booking.PatronName</td>
-                    <td>@booking.BookingDate.ToString("dd-MM-yyyy")</td>
-                    <td>@booking.ExpiryDate.ToString("dd-MM-yyyy")</td>
+                    
+                    <td>@booking.Name</td>
+                    <td>@booking.BookingDate</td>
+                    <td>@booking.ExpiryDate</td>
                     <td>
                         <span class="badge bg-warning text-dark">@booking.Status</span>
                     </td>

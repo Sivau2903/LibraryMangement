@@ -98,6 +98,10 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("Login", "Login");
 
             int SchoolID = (int)Session["SchoolID"];
+            var schoolName = db.tblSchools
+                              .Where(s => s.SchoolID == SchoolID)
+                              .Select(s => s.SchoolName)
+                              .FirstOrDefault();
 
             var materials = db.Materials
                               .Include(m => m.Author)
@@ -119,7 +123,7 @@ namespace LibraryMangement.Controllers
                 AvailableQuantity = m.AvailableQuantity ?? 0,
                 TotalQuantity = m.TotalQuantity ?? 0,
                 MaterialType = m.MaterialType,
-                DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A"
+                DepID = schoolName
             }).ToList();
 
 
@@ -526,66 +530,70 @@ namespace LibraryMangement.Controllers
                            .ToList();
             return View("ReservationConfirmation", models);
         }
+
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public ActionResult ConfirmReservation(int[] materialIds)
         {
-            string patronId = Session["PatronID"].ToString();
+            string patronId = Session["PatronID"]?.ToString();
             string loggedInUserEmail = Session["UserID"]?.ToString();
+
             if (string.IsNullOrEmpty(loggedInUserEmail))
-                return RedirectToAction("Login", "Login");
+                return Json(new { success = false, message = "Session expired. Please log in again." });
 
             var universityId = Session["UniversityID"];
-            int schoolID = (int)Session["schoolID"];
+            int schoolID = (int)Session["SchoolID"];
 
-            // Get counters under this school
             var counters = db.LibraryCounters
                              .Where(c => c.SchoolID == schoolID)
                              .OrderBy(c => c.CounterNumber)
                              .ToList();
 
-            if (!counters.Any())
-            {
-                TempData["Error"] = "No counters available for this library.";
-                return RedirectToAction("MyReservations");
-            }
-
-            int counterIndex = 0; // Round-robin counter
+            bool countersAvailable = counters.Any();
+            int counterIndex = 0;
+            string lastAssignedCounter = "N/A";
 
             foreach (var materialId in materialIds)
             {
                 var material = db.Materials.Find(materialId);
-                if (material == null) continue;
+                if (material == null)
+                    continue;
 
                 if (material.AvailableQuantity > 0)
                 {
-                    // Decrease stock
                     material.AvailableQuantity -= 1;
-
-                    // Assign counter in round-robin
-                    var assignedCounter = counters[counterIndex];
-                    counterIndex = (counterIndex + 1) % counters.Count;
 
                     var circulation = new Circulation
                     {
                         UserID = patronId,
-                        UniversityID = universityId.ToString(),
+                        UniversityID = universityId?.ToString(),
                         MaterialID = materialId,
                         SchoolID = schoolID,
                         RequestedDate = DateTime.Now,
                         ExpiryDate = DateTime.Now.AddDays(3),
-                        Status = "Requested",
-                        CounterID = assignedCounter.CounterID
+                        Status = "Requested"
                     };
+
+                    if (countersAvailable)
+                    {
+                        var assignedCounter = counters[counterIndex];
+                        circulation.CounterID = assignedCounter.CounterID;
+                        lastAssignedCounter = assignedCounter.CounterNumber;
+                        counterIndex = (counterIndex + 1) % counters.Count;
+                    }
+
                     db.Circulations.Add(circulation);
                 }
             }
 
             db.SaveChanges();
 
-            TempData["Success"] = "Reservation successful! Collect your book(s) from the assigned counter.";
-            return RedirectToAction("MyReservations");
+            if (countersAvailable)
+                return Json(new { success = true, message = "Reservation successful!", counterNumber = lastAssignedCounter });
+            else
+                return Json(new { success = true, message = "Reservation successful! Circulation added directly (no counters available).", counterNumber = "N/A" });
         }
+
+
 
         public ActionResult MyReservations()
         {

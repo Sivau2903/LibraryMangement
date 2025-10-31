@@ -12,7 +12,7 @@
             <div class="card shadow p-3 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="text-primary">Visitors List (@selectedDate.ToString("dd-MM-yyyy"))</h5>
-                   
+
                     <a href="@Url.Action("PrintVisitorQR", "Librarian")" target="_blank" class="btn btn-outline-success btn-sm">
                         <i class="bi bi-printer"></i> Print QR
                     </a>
@@ -64,43 +64,92 @@
             </div>
         </div>
 
-        <!-- Right Side: Add Visitor Form -->
+
+        <!-- Right Side: Add Visitor / Add Student Tabs -->
         <div class="col-md-5">
             <div class="card shadow p-4">
-                <h5 class="text-center text-primary mb-3">Add Visitor</h5>
+                <ul class="nav nav-tabs" id="visitorTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="add-visitor-tab" data-bs-toggle="tab" data-bs-target="#add-visitor" type="button" role="tab">
+                            Add Visitor
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="add-student-tab" data-bs-toggle="tab" data-bs-target="#add-student" type="button" role="tab">
+                            Add Student
+                        </button>
+                    </li>
+                </ul>
 
-                @if (TempData["Success"] != null)
-                {
-                    <div class="alert alert-success">@TempData["Success"]</div>
-                }
+                <div class="tab-content mt-3" id="visitorTabsContent">
+                    <!-- 🧾 Tab 1: Manual Visitor -->
+                    <div class="tab-pane fade" id="add-visitor" role="tabpanel">
+                        <h5 class="text-center text-primary mb-3">Add Visitor</h5>
 
-                @using (Html.BeginForm("VisitorManagement", "Librarian", FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["Success"]</div>
+                        }
 
-                    <div class="mb-3">
-                        <label>Visitor Name</label>
-                        @Html.TextBoxFor(m => m.VisitorName, new { @class = "form-control", @required = "required", @placeholder = "Enter visitor name" })
+                        @using (Html.BeginForm("VisitorManagement", "Librarian", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label>Visitor Name</label>
+                                @Html.TextBoxFor(m => m.VisitorName, new { @class = "form-control", @required = "required" })
+                            </div>
+                            <div class="mb-3">
+                                <label>Purpose</label>
+                                @Html.TextBoxFor(m => m.Purpose, new { @class = "form-control" })
+                            </div>
+                            <div class="mb-3">
+                                <label>Contact Number</label>
+                                @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control" })
+                            </div>
+                            <div class="mb-3">
+                                <label>Visit Date & Time</label>
+                                @Html.TextBoxFor(m => m.VisitDate, new { @type = "datetime-local", @class = "form-control", @Value = DateTime.Now.ToString("yyyy-MM-ddTHH:mm") })
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Save Visitor</button>
+                        }
                     </div>
 
-                    <div class="mb-3">
-                        <label>Purpose</label>
-                        @Html.TextBoxFor(m => m.Purpose, new { @class = "form-control", @placeholder = "Enter purpose of visit" })
-                    </div>
+                    <!-- 🧑‍🎓 Tab 2: Student QR Scan -->
+                    <div class="tab-pane fade show active" id="add-student" role="tabpanel">
+                        <h5 class="text-center text-primary mb-3">Add Student (QR Scan)</h5>
 
-                    <div class="mb-3">
-                        <label>Contact Number</label>
-                        @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", @placeholder = "Enter contact number" })
-                    </div>
+                        @if (TempData["StudentSuccess"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["StudentSuccess"]</div>
+                        }
+                        @if (TempData["StudentError"] != null)
+                        {
+                            <div class="alert alert-danger">@TempData["StudentError"]</div>
+                        }
 
-                    <div class="mb-3">
-                        <label>Visit Date & Time</label>
-                        @Html.TextBoxFor(m => m.VisitDate, new { @type = "datetime-local", @class = "form-control", @Value = DateTime.Now.ToString("yyyy-MM-ddTHH:mm") })
+                        @using (Html.BeginForm("AddStudentVisit", "Librarian", FormMethod.Post, new { id = "studentForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label>Scan Student QR / Enter Enrollment No</label>
+                                <input type="text" id="EnrollmentNumber" name="EnrollmentNumber" class="form-control" placeholder="Scan QR here..." autofocus />
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Submit</button>
+                        }
                     </div>
-
-                    <button type="submit" class="btn btn-success w-100">Save Visitor</button>
-                }
+                </div>
             </div>
         </div>
+
+
+        <script>
+            // Optional: Auto-submit when QR is scanned
+            document.getElementById("EnrollmentNumber").addEventListener("input", function () {
+                if (this.value.trim().length >= 15) { // adjust to enrollment number length
+                    document.getElementById("studentForm").submit();
+                }
+            });
+        </script>
+
     </div>
 </div>

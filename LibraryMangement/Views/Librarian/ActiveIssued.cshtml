@@ -5,35 +5,38 @@
     ViewBag.Title = "Issued Materials Report";
 }
 
-<h2 class="text-center my-4">Issued Materials Report</h2>
+<h2 class="text-center my-4">Active Issued List</h2>
 
-<form method="get" action="@Url.Action("IssuedReport", "Librarian")" class="row align-items-end mb-4">
+<form method="get" action="@Url.Action("ActiveIssued", "Librarian")" class="row g-3 mb-4 align-items-end justify-content-between">
     <!-- Left: Role Filter -->
-    <div class="col-md-3 d-flex align-items-end" style="width:10%">
-        <div class="w-100">
-            <label class="form-label">Role</label>
-            <select id="roleSelect" name="selectedRole" class="form-select">
-                <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
-                <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
-            </select>
+    <div class="col-md-2" style="width:10%">
+        <label class="form-label">Role</label>
+        <select name="selectedRole" class="form-select" id="roleSelect">
+            <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
+            <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
+        </select>
+    </div>
+
+   
+    <!-- Center: Date Filters + Buttons -->
+    <div class="col-md-7 d-flex justify-content-center">
+        <div class="d-flex align-items-end gap-3">
+            <div>
+                <label class="form-label mb-1">From</label>
+                <input type="date" class="form-control form-control-sm" style="width:170px;" name="fromDate" value="@ViewBag.FromDate" />
+            </div>
+            <div>
+                <label class="form-label mb-1">To</label>
+                <input type="date" class="form-control form-control-sm" style="width:170px;" name="toDate" value="@ViewBag.ToDate" />
+            </div>
+            <div class="d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                <a href="@Url.Action("IssuedReport", "Librarian")" class="btn btn-secondary btn-sm">Clear</a>
+            </div>
         </div>
     </div>
 
-    <!-- Right: Date Filters + Buttons -->
-    <div class="col-md-9 d-flex justify-content-end align-items-end flex-wrap gap-2">
-        <div>
-            <label class="form-label">From Date</label>
-            <input type="date" class="form-control" name="fromDate" value="@Request.QueryString["fromDate"]" style="width: 160px;" />
-        </div>
-        <div>
-            <label class="form-label">To Date</label>
-            <input type="date" class="form-control" name="toDate" value="@Request.QueryString["toDate"]" style="width: 160px;" />
-        </div>
-        <div class="d-flex align-items-end">
-            <button type="submit" class="btn btn-primary me-2">Filter</button>
-            <a href="@Url.Action("IssuedReport", "Librarian")" class="btn btn-secondary">Clear</a>
-        </div>
-    </div>
+
 </form>
 
 @if (!Model.Any())
@@ -72,6 +75,7 @@ else
         </table>
     </div>
 }
+
 @section Scripts {
     <script>
         // Auto-submit when role changes

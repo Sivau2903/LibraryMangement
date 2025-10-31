@@ -236,11 +236,14 @@
       <DependentUpon>Model1.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\MyProfileViewModel.cs" />
+    <Compile Include="Models\NewBookRequestViewModel.cs" />
+    <Compile Include="Models\OverdueReportViewModel.cs" />
     <Compile Include="Models\OverdueViewModel.cs" />
     <Compile Include="Models\PatronDashboardViewModel.cs" />
     <Compile Include="Models\PatronNewMaterialRequest.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RequestReportViewModel.cs" />
     <Compile Include="Models\ReturnMaterialItemDTO.cs" />
     <Compile Include="Models\ReturnMaterialViewModel.cs" />
     <Compile Include="Models\SecureHelper.cs" />
@@ -387,10 +390,11 @@
     <Content Include="Views\Librarian\VisitorForm.cshtml" />
     <Content Include="Views\Librarian\GenerateVisitorQR.cshtml" />
     <Content Include="Views\Librarian\PrintVisitorQR.cshtml" />
+    <Content Include="Views\Librarian\ActiveIssued.cshtml" />
+    <Content Include="Views\Librarian\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Templates\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>

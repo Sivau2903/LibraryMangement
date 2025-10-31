@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryMangement.Models.Circulation>
+﻿@model IEnumerable<LibraryMangement.Models.OverdueReportViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -45,7 +45,7 @@
             {
                 <tr>
                     <td>@record.StudentName</td>
-                    <td>@record.MaterialCopy.Material.Title</td>
+                    <td>@record.MaterialTitle</td>
                     <td>@record.DueDate</td>
                     <td style="color:@(record.Status == "Overdue" ? "red" : "red"); font-weight:bold;">
                         @record.Status

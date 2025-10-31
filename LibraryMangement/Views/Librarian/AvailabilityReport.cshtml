@@ -21,10 +21,10 @@
             <label>Author:</label>
             @Html.TextBox("author", Request.QueryString["author"], new { @class = "form-control", id = "authorBox", placeholder = "Enter Author" })
         </div>
-        <div>
+        @*<div>
             <label>Book Type:</label>
             @Html.DropDownList("materialType", materialTypes, "Select Material Type", new { @class = "form-control" })
-        </div>
+        </div>*@
         <div style="margin-top:25px;">
             <input type="submit" value="Search" class="btn btn-primary" />
             <a href="@Url.Action("AvailabilityReport", "Librarian")" class="btn btn-secondary">Clear</a>

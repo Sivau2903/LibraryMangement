@@ -35,6 +35,8 @@ namespace LibraryMangement.Models
         public byte[] RowVersion { get; set; }
         public string RoleLevel { get; set; }
         public string ParentRoleID { get; set; }
+        public Nullable<int> TemplateID { get; set; }
+        public bool IsSystemRole { get; set; }
     
         public virtual tblUniversity tblUniversity { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

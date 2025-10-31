@@ -180,9 +180,11 @@
           <Property Name="Purpose" Type="nvarchar" MaxLength="200" />
           <Property Name="ContactNumber" Type="nvarchar" MaxLength="20" />
           <Property Name="VisitDate" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="UniversityID" Type="int" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="UniversityID" Type="varchar" MaxLength="50" />
           <Property Name="SchoolID" Type="int" />
+          <Property Name="InTime" Type="datetime" />
+          <Property Name="OutTime" Type="datetime" />
         </EntityType>
         <EntityType Name="tblEmployee">
           <Key>
@@ -219,6 +221,9 @@
           <Property Name="MobileNumber" Type="varchar" MaxLength="15" />
           <Property Name="EmployeeName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="DesignationID" Type="int" />
+          <Property Name="IsTeachingStaff" Type="bit" Nullable="false" />
+          <Property Name="FacultyType" Type="nvarchar" MaxLength="20" />
+          <Property Name="UniversityID" Type="nvarchar" MaxLength="450" />
         </EntityType>
         <EntityType Name="tblRoles">
           <Key>
@@ -239,6 +244,8 @@
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" />
           <Property Name="RoleLevel" Type="nvarchar" MaxLength="20" />
           <Property Name="ParentRoleID" Type="nvarchar" MaxLength="450" />
+          <Property Name="TemplateID" Type="int" />
+          <Property Name="IsSystemRole" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="tblSchools">
           <Key>
@@ -1061,7 +1068,6 @@
             <End Role="Material" EntitySet="Materials" />
             <End Role="MaterialCopy" EntitySet="MaterialCopies" />
           </AssociationSet>
-          <EntitySet Name="VisitorManagements" EntityType="ICFAISMSModel.VisitorManagement" />
           <EntitySet Name="tblUsers" EntityType="ICFAISMSModel.tblUser" />
           <AssociationSet Name="FK_Department_HOD" Association="ICFAISMSModel.FK_Department_HOD">
             <End Role="tblUser" EntitySet="tblUsers" />
@@ -1158,6 +1164,7 @@
             <End Role="tblUser" EntitySet="tblUsers" />
             <End Role="PatronNewMaterialRequest" EntitySet="PatronNewMaterialRequests" />
           </AssociationSet>
+          <EntitySet Name="VisitorManagements" EntityType="ICFAISMSModel.VisitorManagement" />
           </EntityContainer>
         <EntityType Name="Author">
           <Key>
@@ -1235,6 +1242,8 @@
           <NavigationProperty Name="tblUserRoles" Relationship="ICFAISMSModel.FK_UserRoles_Roles" FromRole="tblRole" ToRole="tblUserRole" />
           <Property Name="RoleLevel" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="ParentRoleID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="TemplateID" Type="Int32" />
+          <Property Name="IsSystemRole" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="tblSchool">
           <Key>
@@ -1491,19 +1500,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="VisitorManagement">
-          <Key>
-            <PropertyRef Name="VisitorID" />
-          </Key>
-          <Property Name="VisitorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="VisitorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Purpose" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ContactNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="VisitDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="UniversityID" Type="Int32" />
-          <Property Name="SchoolID" Type="Int32" />
-        </EntityType>
         <EntityType Name="tblUser">
           <Key>
             <PropertyRef Name="UserID" />
@@ -1606,6 +1602,9 @@
           <Property Name="EmployeeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_tblEmployee_tblUsers" FromRole="tblEmployee" ToRole="tblUser" />
           <Property Name="DesignationID" Type="Int32" />
+          <Property Name="IsTeachingStaff" Type="Boolean" Nullable="false" />
+          <Property Name="FacultyType" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblUserUniversity">
           <Key>
@@ -2071,6 +2070,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="VisitorManagement">
+          <Key>
+            <PropertyRef Name="VisitorID" />
+          </Key>
+          <Property Name="VisitorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VisitorName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Purpose" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="VisitDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="InTime" Type="DateTime" Precision="3" />
+          <Property Name="OutTime" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2129,6 +2143,8 @@
           <EntitySetMapping Name="tblRoles">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblRole">
               <MappingFragment StoreEntitySet="tblRoles">
+                <ScalarProperty Name="IsSystemRole" ColumnName="IsSystemRole" />
+                <ScalarProperty Name="TemplateID" ColumnName="TemplateID" />
                 <ScalarProperty Name="ParentRoleID" ColumnName="ParentRoleID" />
                 <ScalarProperty Name="RoleLevel" ColumnName="RoleLevel" />
                 <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
@@ -2254,20 +2270,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="VisitorManagements">
-            <EntityTypeMapping TypeName="ICFAISMSModel.VisitorManagement">
-              <MappingFragment StoreEntitySet="VisitorManagement">
-                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
-                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="VisitDate" ColumnName="VisitDate" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
-                <ScalarProperty Name="VisitorName" ColumnName="VisitorName" />
-                <ScalarProperty Name="VisitorID" ColumnName="VisitorID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="tblUsers">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblUser">
               <MappingFragment StoreEntitySet="tblUsers">
@@ -2303,6 +2305,9 @@
           <EntitySetMapping Name="tblEmployees">
             <EntityTypeMapping TypeName="ICFAISMSModel.tblEmployee">
               <MappingFragment StoreEntitySet="tblEmployee">
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="FacultyType" ColumnName="FacultyType" />
+                <ScalarProperty Name="IsTeachingStaff" ColumnName="IsTeachingStaff" />
                 <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
                 <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
@@ -2559,6 +2564,22 @@
                 <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VisitorManagements">
+            <EntityTypeMapping TypeName="ICFAISMSModel.VisitorManagement">
+              <MappingFragment StoreEntitySet="VisitorManagement">
+                <ScalarProperty Name="OutTime" ColumnName="OutTime" />
+                <ScalarProperty Name="InTime" ColumnName="InTime" />
+                <ScalarProperty Name="SchoolID" ColumnName="SchoolID" />
+                <ScalarProperty Name="UniversityID" ColumnName="UniversityID" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="VisitDate" ColumnName="VisitDate" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
+                <ScalarProperty Name="VisitorName" ColumnName="VisitorName" />
+                <ScalarProperty Name="VisitorID" ColumnName="VisitorID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

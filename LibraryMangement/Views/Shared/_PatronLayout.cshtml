@@ -126,7 +126,7 @@
         else if (userRole.Equals("Faculty", StringComparison.OrdinalIgnoreCase))
         {
             dashboardLabel = "Faculty Dashboard";
-            dashboardAction = "PatronDashboard"; 
+            dashboardAction = "PatronDashboard";
         }
     }
 
@@ -205,40 +205,70 @@
 
     <script>
         $(document).ready(function () {
-            // Sidebar toggle for mobile
+
+            // === Restore Last Open Dropdown on Page Load ===
+            const lastOpenMenu = localStorage.getItem("patronLastOpenMenu");
+            if (lastOpenMenu) {
+                $(lastOpenMenu).collapse("show");
+                $(`a[href="${lastOpenMenu}"] i.bi-chevron-down`).addClass("rotate");
+            }
+
+            // === Sidebar Dropdown Toggle ===
+            $('.sidebar a[data-bs-toggle="collapse"]').on('click', function (e) {
+                e.preventDefault();
+                const target = $($(this).attr('href'));
+
+                if (target.hasClass('show')) {
+                    // Close if already open
+                    target.collapse('hide');
+                    $(this).find('i.bi-chevron-down').removeClass('rotate');
+                    localStorage.removeItem("patronLastOpenMenu");
+                } else {
+                    // Close others
+                    $('.sidebar .collapse.show').collapse('hide');
+                    $('.sidebar a[data-bs-toggle="collapse"] i.bi-chevron-down').removeClass('rotate');
+
+                    // Open this one
+                    target.collapse('show');
+                    $(this).find('i.bi-chevron-down').addClass('rotate');
+                    localStorage.setItem("patronLastOpenMenu", `#${target.attr('id')}`);
+                }
+            });
+
+            // === Click Outside to Close Sidebar (and dropdowns) ===
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.sidebar, #sidebarToggle').length) {
+                    $('.sidebar .collapse.show').collapse('hide');
+                    $('.sidebar a[data-bs-toggle="collapse"] i.bi-chevron-down').removeClass('rotate');
+                    localStorage.removeItem("patronLastOpenMenu");
+                    $("#sidebar").removeClass("show"); // auto-close mobile sidebar
+                }
+            });
+
+            // === Mobile Sidebar Toggle ===
             $("#sidebarToggle").click(function () {
                 $("#sidebar").toggleClass("show");
             });
 
-            // Sidebar dropdown toggle
-            $('.sidebar a[data-bs-toggle="collapse"]').on('click', function (e) {
-                var target = $($(this).attr('href'));
-                target.collapse('toggle');
-                $('.sidebar .collapse').not(target).collapse('hide'); // close others
-                $(this).find('i.bi-chevron-down').toggleClass('rotate');
-            });
-
-            // Close dropdown if clicked outside
-            $(document).on('click', function (e) {
-                if (!$(e.target).closest('.sidebar, #sidebarToggle').length) {
-                    $('.sidebar .collapse').collapse('hide');
-                    $('.sidebar a[data-bs-toggle="collapse"] i.bi-chevron-down').removeClass('rotate');
-                    if ($("#sidebar").hasClass("show")) {
-                        $("#sidebar").removeClass("show");
-                    }
+            // === Auto-Close Sidebar on Menu Click (mobile UX improvement) ===
+            $(".sidebar a.nav-link").on("click", function () {
+                if (window.innerWidth <= 992) {
+                    $("#sidebar").removeClass("show");
                 }
             });
 
-            // Logout popup
+            // === Logout Popup ===
             $("#logoutLink").on("click", function (e) {
                 e.preventDefault();
                 $("#logoutPopup").fadeIn(300);
             });
+
             $("#cancelLogout").on("click", function () {
                 $("#logoutPopup").fadeOut(200);
             });
         });
     </script>
+
 
     <!-- Logout popup -->
     <div id="logoutPopup" class="logout-popup shadow-sm bg-light border p-3 rounded">

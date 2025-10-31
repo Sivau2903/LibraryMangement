@@ -58,28 +58,28 @@
                     <thead>
                         <tr>
                             <th>Sl.No</th>
-                            <th>Acc. No</th>
-                            <th>Call No</th>
                             <th>Title</th>
                             <th>Author</th>
-                            <th>Publisher</th>
                             <th>Place of Publishers</th>
-                            <th>Year Published</th>
+                            <th>Year</th>
                             <th>ISBN</th>
-                            <th>Library Resource Type</th>
-                            <th>Total Quantity</th>
                             <th>Edition</th>
                             <th>Pages</th>
                             <th>Vol.</th>
                             <th>Source</th>
                             <th>Price</th>
+                            <th>Library Resource Type</th>
+                            <th>Total Quantity</th>
                         </tr>
                     </thead>
                 </table>
                 <p>Note: Upload 500-1000 Library Resources at a time, not more than that.</p>
             </div>
             <div class="modal-footer">
-                <a href="@Url.Action("DownloadBulkTemplate", "Librarian")" class="btn btn-success">Download Template</a>
+                <a href="@Url.Action("DownloadBulkTemplate", "Librarian")" class="btn btn-success">
+                    Download Template
+                </a>
+
 
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
@@ -106,7 +106,7 @@
     let loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
     const expectedHeaders = [
-        "Sl. No", "Acc.No.", "Call. No", "Title of the Book", "Author",
+        "Sl. No", "Title of the Book", "Author",
         "Place of Publishers", "Year", "Edition", "pages", "Vol.",
         "Source", "Price"
     ];
@@ -143,17 +143,17 @@
             const dataRows = rawData.slice(1);
             previewData = dataRows.map((row, index) => ({
                 RowIndex: parseInt(row[0]) || index + 1,
-                AccountNumber: row[1] || "",
-                CallNumber: row[2] || "",
-                Title: row[3] || "",
-                AuthorName: row[4] || "",
-                PlaceofPublishers: row[5] || null,
-                YearPublished: parseInt(row[6]) || null,
-                Edition: row[7] || null,
-                Pages: parseInt(row[8]) || null,
-                Vol: row[9] || null,
-                Source: row[10] || null,
-                Price: parseFloat(row[11]) || null,
+                //AccountNumber: row[1] || "",
+                //CallNumber: row[2] || "",
+                Title: row[1] || "",
+                AuthorName: row[2] || "",
+                PlaceofPublishers: row[3] || null,
+                YearPublished: parseInt(row[4]) || null,
+                Edition: row[5] || null,
+                Pages: parseInt(row[6]) || null,
+                Vol: row[7] || null,
+                Source: row[8] || null,
+                Price: parseFloat(row[9]) || null,
                 IsDuplicate: false,
                 IsDeleted: false
             }));
@@ -168,7 +168,7 @@
         if (!data.length) return;
 
         const tableHeaders = [
-            "RowIndex", "AccountNumber", "CallNumber", "Title", "AuthorName", "PlaceofPublishers",
+            "RowIndex", "Title", "AuthorName", "PlaceofPublishers",
             "YearPublished", "Edition", "Pages", "Vol", "Source", "Price"
         ];
 
@@ -245,6 +245,11 @@
             // Re-index remaining rows
             document.querySelectorAll('#previewTableContainer tbody tr').forEach((row, i) => row.dataset.index = i);
         }
+    });
+
+    document.querySelector('.btn.btn-success').addEventListener('click', function () {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('templateModal'));
+        modal.hide();
     });
 
     // Save Button

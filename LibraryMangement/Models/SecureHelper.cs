@@ -57,38 +57,37 @@ namespace LibraryMangement.Models
         {
             string encryptionKey = WebConfigurationManager.AppSettings["EncryptionKey"];
 
-            // Restore Base64 characters that were replaced during encryption
+            // Restore Base64 characters
             cipherText = cipherText.Replace("_", "/").Replace("-", "+");
 
-            // Ensure the Base64 string is properly padded
+            // Ensure Base64 is padded correctly
             int padding = cipherText.Length % 4;
             if (padding > 0)
-            {
                 cipherText += new string('=', 4 - padding);
-            }
 
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
 
             using (Aes encryptor = Aes.Create())
             {
+                // Same salt as encryption
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, new byte[] {
             0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64,
             0x76, 0x65, 0x64, 0x65, 0x76 });
 
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
+                encryptor.Mode = CipherMode.CBC;
+                encryptor.Padding = PaddingMode.PKCS7;
 
-                using (MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new MemoryStream(cipherBytes))
+                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                using (StreamReader reader = new StreamReader(cs, Encoding.Unicode))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.FlushFinalBlock();
-                    }
-                    return Encoding.Unicode.GetString(ms.ToArray());
+                    return reader.ReadToEnd();
                 }
             }
         }
+
 
         public static string GetIPAddress()
         {

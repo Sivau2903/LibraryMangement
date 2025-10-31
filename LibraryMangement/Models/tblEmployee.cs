@@ -45,6 +45,9 @@ namespace LibraryMangement.Models
         public string MobileNumber { get; set; }
         public string EmployeeName { get; set; }
         public Nullable<int> DesignationID { get; set; }
+        public bool IsTeachingStaff { get; set; }
+        public string FacultyType { get; set; }
+        public string UniversityID { get; set; }
     
         public virtual tblUser tblUser { get; set; }
     }

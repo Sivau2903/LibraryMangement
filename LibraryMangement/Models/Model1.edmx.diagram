@@ -24,7 +24,6 @@
         <AssociationConnector Association="ICFAISMSModel.FK__BarcodeHi__CopyI__316D4A39" />
         <AssociationConnector Association="ICFAISMSModel.FK__BarcodeHi__CopyI__4FF1D159" />
         <AssociationConnector Association="ICFAISMSModel.FK_MaterialCopies_Materials" />
-        <EntityTypeShape EntityType="ICFAISMSModel.VisitorManagement" Width="1.5" PointX="12.375" PointY="0.75" />
         <EntityTypeShape EntityType="ICFAISMSModel.tblUser" Width="1.5" PointX="0.75" PointY="16" />
         <AssociationConnector Association="ICFAISMSModel.FK_Department_HOD" />
         <AssociationConnector Association="ICFAISMSModel.FK_UserRoles_Users" />
@@ -58,6 +57,7 @@
         <AssociationConnector Association="ICFAISMSModel.FK_FineDetails_tblUsers" />
         <AssociationConnector Association="ICFAISMSModel.FK_FineReasons_FineReasons" />
         <AssociationConnector Association="ICFAISMSModel.FK_PatronNewMaterialRequests_tblUsers" />
+        <EntityTypeShape EntityType="ICFAISMSModel.VisitorManagement" Width="1.5" PointX="10.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -227,7 +227,7 @@
                 </li>
 
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-bookmark"></i> Fine Management</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("BarcodeGeneration", "Librarian")"><i class="bi bi-upc-scan"></i> Barcode Generation</a></li>
+                @*<li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("BarcodeGeneration", "Librarian")"><i class="bi bi-upc-scan"></i> Barcode Generation</a></li>*@
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("NewBookRequests", "Librarian")"><i class="bi bi-person-circle"></i> New Library Resource Requests</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCounter", "Librarian")"><i class="bi bi-person-circle"></i> Add Counter</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCirculationManual", "Librarian")"><i class="bi bi-person-circle"></i> Manual Circulation Entry Form</a></li>
@@ -269,40 +269,60 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Sidebar dropdown toggle
+
+            // === Restore Last Open Dropdown on Page Load ===
+            const lastOpenMenu = localStorage.getItem("lastOpenMenu");
+            if (lastOpenMenu) {
+                $(lastOpenMenu).collapse("show");
+                $(`a[href="${lastOpenMenu}"] i.bi-chevron-down`).addClass("rotate");
+            }
+
+            // === Sidebar Dropdown Toggle ===
             $('.sidebar a[data-bs-toggle="collapse"]').on('click', function (e) {
-                var target = $($(this).attr('href'));
+                e.preventDefault();
+                const target = $($(this).attr('href'));
 
-                // Toggle current dropdown
-                target.collapse('toggle');
-
-                // Close all other open dropdowns
-                $('.sidebar .collapse').not(target).collapse('hide');
-
-                // Rotate chevron
-                $(this).find('i.bi-chevron-down').toggleClass('rotate');
-            });
-
-            // Close dropdown if clicked outside
-            $(document).on('click', function (e) {
-                // Ignore clicks inside sidebar dropdowns
-                if (!$(e.target).closest('.sidebar .collapse, .sidebar a[data-bs-toggle="collapse"]').length) {
-                    $('.sidebar .collapse').collapse('hide');
-                    // Reset chevrons
+                // If the clicked menu is already open, close it
+                if (target.hasClass('show')) {
+                    target.collapse('hide');
+                    $(this).find('i.bi-chevron-down').removeClass('rotate');
+                    localStorage.removeItem("lastOpenMenu");
+                } else {
+                    // Close all others
+                    $('.sidebar .collapse.show').collapse('hide');
                     $('.sidebar a[data-bs-toggle="collapse"] i.bi-chevron-down').removeClass('rotate');
+
+                    // Open this one
+                    target.collapse('show');
+                    $(this).find('i.bi-chevron-down').addClass('rotate');
+
+                    // Save the currently open menu
+                    localStorage.setItem("lastOpenMenu", `#${target.attr('id')}`);
                 }
             });
-            // Sidebar toggle for mobile
+
+            // === Click Outside Sidebar to Close All ===
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.sidebar, [data-bs-toggle="collapse"]').length) {
+                    $('.sidebar .collapse.show').collapse('hide');
+                    $('.sidebar a[data-bs-toggle="collapse"] i.bi-chevron-down').removeClass('rotate');
+                    localStorage.removeItem("lastOpenMenu");
+                }
+            });
+
+            // === Mobile Sidebar Toggle ===
             $("#sidebarToggle").click(function () {
                 $("#sidebar").toggleClass("show");
             });
 
-            // Rotate arrow icons on collapse toggle
-            $('.sidebar a[data-bs-toggle="collapse"]').on('click', function () {
-                $(this).find('i.bi-chevron-down').toggleClass('rotate');
+            // Close sidebar on outside click (mobile)
+            $(document).click(function (event) {
+                if (!$(event.target).closest("#sidebar, #sidebarToggle").length) {
+                    $("#sidebar").removeClass("show");
+                }
             });
 
-            // Logout popup
+            // === Logout Popup ===
             $("#logoutLink").on("click", function (e) {
                 e.preventDefault();
                 $("#logoutPopup").fadeIn(300);
@@ -311,56 +331,13 @@
             $("#cancelLogout").on("click", function () {
                 $("#logoutPopup").fadeOut(200);
             });
-            $(document).click(function (event) {
-                if (!$(event.target).closest("#sidebar, #sidebarToggle").length) {
-                    if ($("#sidebar").hasClass("show")) {
-                        $("#sidebar").removeClass("show");
-                    }
-                }
-            });
-            $(document).ready(function () {
-                var lastOpen = localStorage.getItem("lastOpenMenu");
-                if (lastOpen) {
-                    $(lastOpen).addClass("show");
-                }
-
-                $('.sidebar a[data-bs-toggle="collapse"]').on('click', function () {
-                    var target = $(this).attr('href');
-                    if ($(target).hasClass('show')) {
-                        localStorage.removeItem("lastOpenMenu");
-                    } else {
-                        localStorage.setItem("lastOpenMenu", target);
-                    }
-                });
-            });
-
-
-
-           
-                // Prevent Bootstrap collapse from closing automatically
-                $('.sidebar .collapse').on('hide.bs.collapse', function (e) {
-                    // Only hide if the user actually clicked the same toggle again
-                    var targetId = $(this).attr('id');
-                    var clickedToggle = $(e.target).closest('[data-bs-toggle="collapse"][href="#' + targetId + '"]');
-                    if (clickedToggle.length === 0) {
-                        e.preventDefault(); // Stop from auto-closing
-                    }
-                });
-
-            // Allow toggling manually
-            $('.sidebar a[data-bs-toggle="collapse"]').on('click', function (e) {
-                var target = $($(this).attr('href'));
-            $('.sidebar .collapse').not(target).collapse('hide'); // close others manually
-            target.collapse('toggle');
-            });
         });
-   
-
     </script>
+
 
     @RenderSection("Scripts", required: false)
 
- 
+
     <!-- Top-Center Logout Confirmation Popup -->
     <div id="logoutPopup" class="logout-popup shadow-sm bg-light border p-3 rounded" style="display:none;">
         <h6 class="mb-3 text-center fw-bold">Confirm Logout</h6>

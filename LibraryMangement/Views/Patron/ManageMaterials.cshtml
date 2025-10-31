@@ -5,9 +5,32 @@
     ViewBag.Title = "Manage Materials";
 }
 
-<h2 class="mb-4">Borrow Library Resources</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Left: Heading -->
+    <h2 class="mb-0 flex-grow-1 text-start">Borrow Library Resources</h2>
 
-<button id="reserveSelectedBtn" class="btn btn-success mb-3" disabled>Reserve Selected</button>
+    <!-- Center: Raise Material Request Link -->
+    <div class="text-center flex-grow-1">
+        <a href="@Url.Action("RaiseMaterialRequest", "Patron")" class="text-primary fw-semibold text-decoration-underline">
+            Can't find your material? Click here to raise a request
+        </a>
+    </div>
+
+    <!-- Right: Reserve Button -->
+    <div class="text-end flex-grow-1">
+        <button id="reserveSelectedBtn" class="btn btn-success" disabled>Reserve Selected</button>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
 
 <table id="MaterialsTable" class="table table-hover table-striped display" style="width:100%">
     <thead class="table-primary text-uppercase small">
@@ -45,7 +68,7 @@
                 <td>@material.Pages</td>
                 <td>@material.Vol</td>
                 <td>@material.MaterialType</td>
-                <td>@material.tblSchoolName</td>
+                <td>@material.DepID</td>
                 <td>
                     @if (material.AvailableQuantity > 0)
                     {
@@ -164,13 +187,14 @@
                     data: { materialIds: selectedIds },
                     success: function (res) {
                         $('#confirmReserveModal').modal('hide');
-                        $('#counterInfo').text('Collect your book(s) from Counter Number: ' + res.counterNumber);
+                        $('#counterInfo').text(res.message + (res.counterNumber !== 'N/A' ? ' (Counter: ' + res.counterNumber + ')' : ''));
                         var successModal = new bootstrap.Modal(document.getElementById('successModal'));
                         successModal.show();
 
-                        // Reload page to reflect changes
-                        location.reload();
+                        // Reload page after short delay
+                        setTimeout(() => location.reload(), 15000);
                     },
+
                     error: function () {
                         alert('Error reserving books!');
                     }

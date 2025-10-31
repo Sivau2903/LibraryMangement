@@ -24,9 +24,7 @@ namespace LibraryMangement.Models
         public bool IsActive { get; set; }
         public Nullable<System.DateTime> HoldExpiryDate { get; set; }
         public Nullable<System.DateTime> AssignedDate { get; set; }
-
-        public virtual tblEmployee tblEmployee { get; set; }
-        public virtual tblStudent tblStudent { get; set; }
+    
         public virtual Material Material { get; set; }
         public virtual tblUser tblUser { get; set; }
     }

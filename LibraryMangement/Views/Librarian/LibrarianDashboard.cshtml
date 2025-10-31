@@ -4,9 +4,82 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Librarian Dashboard";
 }
+
+<style>
+    .card-link {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+        .card-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            border: 1px solid #007bff;
+        }
+
+    .add-materials-container {
+        margin: 2rem 0;
+    }
+
+    .add-materials-btn {
+        font-size: 1.20rem;
+        padding: 1rem 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .custom-dropdown {
+        min-width: 220px;
+        font-size: 1.20rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 1rem 0;
+    }
+
+        .custom-dropdown .dropdown-item {
+/*            padding: 1rem 1.5rem;*/
+            font-weight: 500;
+            color: #343a40;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+            .custom-dropdown .dropdown-item:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .custom-dropdown .dropdown-item i {
+                margin-right: 1rem;
+                font-size: 1.5rem;
+            }
+
+    /* Ensure all cards have same height */
+    .card {
+        min-height: 220px; /* or adjust as per content */
+    }
+
+    /* Optional: make text vertically centered in columns */
+    .card-body .row > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <!-- Left: Welcome Heading -->
-    <h2 class="text-primary fw-bold mb-0">Welcome to ICFAI Library Admin Dashboard</h2>
+    @*<h2 class="text-primary fw-bold mb-0">Welcome to ICFAI Library Admin Dashboard</h2>*@
+
+    <div class="mb-4">
+        <h2>Welcome, <strong>@Model.Name</strong></h2>
+        <p class="text-muted mb-1">
+            <i class="bi bi-building me-2"></i><strong>University:</strong> @Model.UniversityName
+        </p>
+        <p class="text-muted">
+            <i class="bi bi-bank me-2"></i><strong>School:</strong> @Model.SchoolName
+        </p>
+    </div>
 
     <!-- Right: Add Materials -->
     <div class="add-materials-container">
@@ -94,7 +167,7 @@
         </div>*@
 
     <div class="col-lg-4 col-md-6 col-sm-12">
-        <a href="@Url.Action("ReturnMaterial", "Librarian")" class="text-decoration-none">
+        <a href="@Url.Action("ActiveIssued", "Librarian")" class="text-decoration-none">
             <div class="card shadow-sm border-0 text-center p-3">
                 <div class="card-body">
                     <div class="mb-2">
@@ -207,68 +280,7 @@
     </div>
 
 </div>
-<style>
-    .card-link {
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-    }
 
-        .card-link:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-            border: 1px solid #007bff;
-        }
-
-    .add-materials-container {
-        margin: 2rem 0;
-    }
-
-    .add-materials-btn {
-        font-size: 1.20rem;
-        padding: 1rem 1rem;
-        border-radius: 0.75rem;
-    }
-
-    .custom-dropdown {
-        min-width: 220px;
-        font-size: 1.20rem;
-        background-color: #f8f9fa;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        padding: 1rem 0;
-    }
-
-        .custom-dropdown .dropdown-item {
-            padding: 1rem 1.5rem;
-            font-weight: 500;
-            color: #343a40;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-            .custom-dropdown .dropdown-item:hover {
-                background-color: #007bff;
-                color: white;
-            }
-
-            .custom-dropdown .dropdown-item i {
-                margin-right: 1rem;
-                font-size: 1.5rem;
-            }
-
-    /* Ensure all cards have same height */
-    .card {
-        min-height: 220px; /* or adjust as per content */
-    }
-
-    /* Optional: make text vertically centered in columns */
-    .card-body .row > div {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-</style>
 
 
 

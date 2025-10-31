@@ -11,8 +11,7 @@ namespace LibraryMangement.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
-
+    
     public partial class Circulation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -39,8 +38,6 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> ExpiryDate { get; set; }
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
-        [NotMapped]
-        public string StudentName { get; set; }
         public Nullable<int> IssuedBy { get; set; }
         public Nullable<int> CounterID { get; set; }
     
