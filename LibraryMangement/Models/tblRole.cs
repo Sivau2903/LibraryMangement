@@ -18,12 +18,12 @@ namespace LibraryMangement.Models
         public tblRole()
         {
             this.tblUserRoles = new HashSet<tblUserRole>();
+            this.tblDesignations = new HashSet<tblDesignation>();
         }
     
         public int RoleID { get; set; }
         public string RoleName { get; set; }
         public string RoleDescription { get; set; }
-        public string UniversityID { get; set; }
         public bool IsGlobalRole { get; set; }
         public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
@@ -38,8 +38,9 @@ namespace LibraryMangement.Models
         public Nullable<int> TemplateID { get; set; }
         public bool IsSystemRole { get; set; }
     
-        public virtual tblUniversity tblUniversity { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblDesignation> tblDesignations { get; set; }
     }
 }

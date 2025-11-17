@@ -27,24 +27,28 @@ namespace LibraryMangement.Models
     
         public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<BarcodeHistory> BarcodeHistories { get; set; }
-        public virtual DbSet<Material> Materials { get; set; }
-        public virtual DbSet<tblRole> tblRoles { get; set; }
         public virtual DbSet<tblSchool> tblSchools { get; set; }
         public virtual DbSet<tblUniversity> tblUniversities { get; set; }
-        public virtual DbSet<tblUserRole> tblUserRoles { get; set; }
-        public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
         public virtual DbSet<tblUser> tblUsers { get; set; }
         public virtual DbSet<tblEmployee> tblEmployees { get; set; }
         public virtual DbSet<tblUserUniversity> tblUserUniversities { get; set; }
         public virtual DbSet<tblUserSchool> tblUserSchools { get; set; }
         public virtual DbSet<tblStudent> tblStudents { get; set; }
         public virtual DbSet<Bookinglisted> Bookinglisteds { get; set; }
-        public virtual DbSet<Circulation> Circulations { get; set; }
         public virtual DbSet<FineDetail> FineDetails { get; set; }
         public virtual DbSet<FineReason> FineReasons { get; set; }
         public virtual DbSet<LibraryCounter> LibraryCounters { get; set; }
         public virtual DbSet<MaterialType> MaterialTypes { get; set; }
         public virtual DbSet<PatronNewMaterialRequest> PatronNewMaterialRequests { get; set; }
+        public virtual DbSet<tblLibrary> tblLibraries { get; set; }
         public virtual DbSet<VisitorManagement> VisitorManagements { get; set; }
+        public virtual DbSet<tblUserRole> tblUserRoles { get; set; }
+        public virtual DbSet<tblRole> tblRoles { get; set; }
+        public virtual DbSet<tblAssistantRequest> tblAssistantRequests { get; set; }
+        public virtual DbSet<tblLibraryAssistant> tblLibraryAssistants { get; set; }
+        public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
+        public virtual DbSet<Material> Materials { get; set; }
+        public virtual DbSet<Circulation> Circulations { get; set; }
+        public virtual DbSet<tblDesignation> tblDesignations { get; set; }
     }
 }

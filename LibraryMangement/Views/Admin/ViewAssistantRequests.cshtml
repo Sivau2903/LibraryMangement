@@ -1,0 +1,124 @@
+﻿@model IEnumerable<LibraryMangement.Models.AssistantRequestViewModel>
+@{
+    ViewBag.Title = "Assistant Librarian Requests";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Pending Assistant Librarian Requests</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="requested-tab" data-bs-toggle="tab"
+                    data-bs-target="#requested" type="button" role="tab">
+                Requested
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="approved-tab" data-bs-toggle="tab"
+                    data-bs-target="#approved" type="button" role="tab">
+                Approved
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+
+        <!-- 🔥 REQUESTED TAB -->
+        <div class="tab-pane fade show active" id="requested" role="tabpanel">
+            <table class="table table-bordered table-hover" id="requestedTable">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Library</th>
+                        <th>Librarian</th>
+                        <th>Assistant</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Where(x => x.Status == "Pending"))
+                    {
+                        <tr>
+                            <td>@r.LibraryName</td>
+                            <td>@r.LibrarianName</td>
+                            <td>@r.AssistantName</td>
+                            <td>@r.RequestDate.ToString("dd-MMM-yyyy")</td>
+                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                            <td>
+                                <div class="d-flex">
+                                    @using (Html.BeginForm("ApproveAssistant", "Admin", FormMethod.Post))
+                                    {
+                                        @Html.Hidden("requestId", r.RequestID)
+                                        <button type="submit" class="btn btn-success btn-sm me-2">Approve</button>
+                                    }
+                                    @using (Html.BeginForm("RejectAssistant", "Admin", FormMethod.Post))
+                                    {
+                                        @Html.Hidden("requestId", r.RequestID)
+                                        <input type="text" name="remarks" placeholder="Reason" class="form-control form-control-sm me-2" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- 🔥 APPROVED TAB -->
+        <div class="tab-pane fade" id="approved" role="tabpanel">
+            <table class="table table-bordered table-hover" id="approvedTable">
+                <thead class="table-success">
+                    <tr>
+                        <th>Library</th>
+                        <th>Librarian</th>
+                        <th>Assistant</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Where(x => x.Status == "Approved"))
+                    {
+                        <tr>
+                            <td>@r.LibraryName</td>
+                            <td>@r.LibrarianName</td>
+                            <td>@r.AssistantName</td>
+                            <td>@r.RequestDate.ToString("dd-MMM-yyyy")</td>
+                            <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        $('#requestedTable').DataTable({
+            order: [[3, "desc"]]   // Sort by date column
+        });
+
+        $('#approvedTable').DataTable({
+            order: [[3, "desc"]]
+        });
+    });
+</script>

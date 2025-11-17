@@ -1,0 +1,96 @@
+﻿
+
+@model IEnumerable<LibraryMangement.Models.LibraryAdminViewModel>
+@{
+    ViewBag.Title = "Library Administration";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mb-4">Manage Libraries - @ViewBag.UniversityName</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div class="alert alert-success alert-dismissible fade show" style="min-width: 250px;">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<div style="max-height: 700px; overflow-y: auto;">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Library Name</th>
+                <th>Librarian</th>
+                <th>Assistant Librarian</th>
+                <th>Created Date</th>
+                <th>Status</th>
+                <th>Update Staff</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var lib in Model)
+            {
+                <tr>
+                    <td>@lib.LibraryName</td>
+                    <td>@lib.LibrarianName</td>
+                    <td>@lib.AssistantName</td>
+                    <td>@lib.CreatedDate.ToString("dd-MM-yyyy")</td>
+
+                    <td>
+                        @if (lib.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </td>
+
+                    <td>
+                        <form method="post" action="@Url.Action("UpdateLibraryStaff","Admin")">
+                            <input type="hidden" name="LibraryID" value="@lib.LibraryID" />
+
+                            <label class="small">Librarian</label>
+                            <select name="LibrarianUserID" class="form-select mb-2">
+                                @foreach (var l in (SelectList)ViewBag.Librarians)
+                                {
+                                    <option value="@l.Value" @(lib.LibrarianUserID == l.Value ? "selected" : "")>@l.Text</option>
+                                }
+                            </select>
+
+                            <label class="small">Assistant</label>
+                            <select name="AssistantUserID" class="form-select mb-2">
+                                @foreach (var a in (SelectList)ViewBag.Assistants)
+                                {
+                                    <option value="@a.Value" @(lib.AssistantUserID == a.Value ? "selected" : "")>@a.Text</option>
+                                }
+                            </select>
+
+                            <button class="btn btn-primary btn-sm w-100">Update</button>
+                        </form>
+                    </td>
+
+
+                    <td>
+                        @if (lib.IsActive)
+                        {
+                            <a href="@Url.Action("DeactivateLibrary","Admin",new { id = lib.LibraryID })"
+                               class="btn btn-danger btn-sm">Deactivate</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("ActivateLibrary","Admin",new { id = lib.LibraryID })"
+                               class="btn btn-success btn-sm">Activate</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

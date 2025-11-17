@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace LibraryMangement.Models
 {
@@ -15,6 +16,8 @@ namespace LibraryMangement.Models
         public int IssuedQuantity { get; set; }
         public int BookLostQuantity { get; set; }
         public int? TotalQuantity { get; internal set; }
+        public bool HasMultipleSchools { get; set; }
+        public List<SelectListItem> SchoolList { get; set; }
     }
 
 }

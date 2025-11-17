@@ -1,0 +1,92 @@
+﻿@model IEnumerable<LibraryMangement.Models.LowStockMaterialViewModel>
+
+<h2 class="mb-4">Low Stock Library Materials</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show text-end" style="width:20%" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show text-end" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+
+<form method="post" action="@Url.Action("UpdateReorderLevel", "Librarian")">
+
+    <table id="lowStockTable" class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Edition</th>
+                <th>Available Qty</th>
+                <th>Reorder Level</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Author</td>
+                    <td>@item.Edition</td>
+                    <td>@item.AvailableQty</td>
+
+                    <td>
+                        <input type="number"
+                               name="reorderLevel"
+                               class="form-control"
+                               style="width:120px;"
+                               value="@(item.ReorderLevel ?? 0)"
+                               min="0"
+                               required />
+                    </td>
+
+                    <td>
+                        <button type="submit"
+                                name="materialId"
+                                value="@item.MaterialID"
+                                onclick="return confirmSave('@item.Title');"
+                                class="btn btn-primary btn-sm">
+
+                            @(item.ReorderLevel == null ? "Save" : "Update")
+
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</form>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#lowStockTable').DataTable({
+            scrollY: "550px",        // inside scroll
+            scrollCollapse: true,
+            paging: true,            // Enable pagination
+            searching: true,         // Enable search bar
+            info: true
+        });
+    });
+
+    function confirmSave(title) {
+        return confirm("Do you want to save/update the reorder level for: " + title + " ?");
+    }
+</script>
+

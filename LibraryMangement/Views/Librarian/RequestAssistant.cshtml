@@ -1,0 +1,73 @@
+﻿@model LibraryMangement.Models.AssistantRequestViewModel
+@{
+    ViewBag.Title = "Request Assistant Librarian";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- LEFT SIDE: REQUEST HISTORY -->
+        <div class="col-md-6">
+            <div class="card shadow p-3">
+                <h5 class="text-primary mb-3">Your Previous Requests</h5>
+
+                @if (Model.ExistingRequests != null && Model.ExistingRequests.Any())
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Assistant</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var req in Model.ExistingRequests)
+                            {
+                                <tr>
+                                    <td>@req.AssistantName</td>
+                                    <td>
+                                        <span class="badge @(req.Status == "Approved" ? "bg-success" : req.Status == "Rejected" ? "bg-danger" : "bg-warning")">
+                                            @req.Status
+                                        </span>
+                                    </td>
+                                    <td>@(string.IsNullOrEmpty(req.Remarks) ? "-" : req.Remarks)</td>
+                                    <td>@req.RequestDate.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">No requests submitted yet.</p>
+                }
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: REQUEST FORM -->
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <h4 class="text-primary mb-4 text-center">Request Assistant Librarian</h4>
+
+                @using (Html.BeginForm("RequestAssistant", "Librarian", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        @Html.DropDownListFor(m => m.LibraryID, Model.LibraryList, "Select Library", new { @class = "form-select" })
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.DropDownListFor(m => m.AssistantUserID, Model.AssistantList, "Select Assistant", new { @class = "form-select" })
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Send Request</button>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

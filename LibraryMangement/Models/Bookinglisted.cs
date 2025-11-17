@@ -25,7 +25,7 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> HoldExpiryDate { get; set; }
         public Nullable<System.DateTime> AssignedDate { get; set; }
     
-        public virtual Material Material { get; set; }
         public virtual tblUser tblUser { get; set; }
+        public virtual Material Material { get; set; }
     }
 }

@@ -42,17 +42,18 @@
 }
 
 <div class="row mb-4">
-    <div class="col-md-3 ms-auto">
-        <form method="get" action="@Url.Action("NewBookRequests", "Library")" class="d-flex">
+    <div class="col-md-3 ms-auto" style="width:15%">
+        <form method="get" action="@Url.Action("NewBookRequests", "Librarian")" class="d-flex align-items-center">
             <label class="me-2 fw-semibold">Role:</label>
-            <select name="selectedRole" class="form-select me-2">
+
+            <select name="selectedRole" class="form-select" onchange="this.form.submit();">
                 <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
                 <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
             </select>
-            <button type="submit" class="btn btn-primary">Filter</button>
         </form>
     </div>
 </div>
+
 
 @if (Model != null && Model.Any())
 {

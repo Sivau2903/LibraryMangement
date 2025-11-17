@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace LibraryMangement.Models
 {
@@ -73,5 +74,11 @@ namespace LibraryMangement.Models
         public List<MaterialType> MaterialTypes { get; set; }  // For dropdown
 
         public int? SchoolID { get; internal set; }
+        public bool HasMultipleSchools { get; set; }
+        public List<SelectListItem> SchoolList { get; set; }
+        public string SelectedSchoolID { get; set; }
+        public IEnumerable<LibrarianPageViewModel> Materials { get; set; }
+       
+
     }
 }

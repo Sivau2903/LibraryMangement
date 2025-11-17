@@ -50,5 +50,6 @@ namespace LibraryMangement.Models
         public string UniversityID { get; set; }
     
         public virtual tblUser tblUser { get; set; }
+        public virtual tblDesignation tblDesignation { get; set; }
     }
 }

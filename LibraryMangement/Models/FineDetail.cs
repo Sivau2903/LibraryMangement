@@ -25,8 +25,8 @@ namespace LibraryMangement.Models
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
     
+        public virtual tblUser tblUser { get; set; }
         public virtual Circulation Circulation { get; set; }
         public virtual Circulation Circulation1 { get; set; }
-        public virtual tblUser tblUser { get; set; }
     }
 }

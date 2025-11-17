@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_PatronLayout.cshtml";
     ViewBag.Title = "Manage Materials";
+    bool librarySelected = !string.IsNullOrEmpty(Request["selectedLibraryId"]);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -22,30 +23,74 @@
     </div>
 </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+<form id="filtersForm" method="get" action="@Url.Action("ManageMaterials", "Patron")" class="row g-3 mb-4">
+    <div class="col-12 col-md-3" style="width:12%">
+        <label class="form-label">Select Library</label>
+        @Html.DropDownList("selectedLibraryId", (SelectList)ViewBag.Libraries,
+            "Select Library", new { @class = "form-select", id = "selectedLibraryId" })
+    </div>
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+    <div class="col-12 col-md-5" style="width:25%">
+        <label class="form-label">Search Title</label>
+        <input type="text"
+               id="titleFilter"
+               name="titleFilter"
+               value="@Request["titleFilter"]"
+               class="form-control"
+               placeholder="Enter book title..."
+               @(librarySelected ? "" : "disabled") />
+    </div>
 
-<table id="MaterialsTable" class="table table-hover table-striped display" style="width:100%">
+    <div class="col-12 col-md-4" style="width:25%">
+        <label class="form-label d-flex align-items-center gap-2">
+            Select Author
+            <span id="authorLoading" class="spinner-border spinner-border-sm text-primary d-none"
+                  role="status" aria-hidden="true"></span>
+        </label>
+
+        @Html.DropDownList(
+            "authorFilter",
+            (SelectList)ViewBag.Authors,
+            "All Authors",
+            new
+                 {
+                @class = "form-select",
+                id = "authorFilter",
+                disabled = (!librarySelected ? "disabled" : null)
+            })
+    </div>
+    <div class="col-md-2 d-flex align-items-end" style="width:15%">
+        <button id="clearFiltersTop" type="button" class="btn btn-outline-secondary">Clear</button>
+
+    </div>
+</form>
+
+@if (!librarySelected)
+{
+    <div class="alert alert-info text-center mt-4">
+        <strong>Please select a library to view available resources.</strong>
+    </div>
+}
+else
+{
+    if (TempData["Success"] != null)
+    { <div class="alert alert-success">@TempData["Success"]</div> }
+if (TempData["Error"] != null)
+{ <div class="alert alert-danger">@TempData["Error"]</div> }
+
+<table id="MaterialsTable" class="table table-hover table-striped display w-100">
     <thead class="table-primary text-uppercase small">
         <tr>
             <th>Select</th>
             <th>Title</th>
             <th>Author</th>
             <th>Edition</th>
-            <th>Description</th>
-            <th>Publishers</th>
+            @*<th>Description</th>*@
+            <th>Place of Publishers</th>
             <th>Year</th>
             <th>Pages</th>
             <th>Volume</th>
             <th>Material Type</th>
-            <th>Department</th>
             <th>Status Action</th>
         </tr>
     </thead>
@@ -56,19 +101,20 @@
                 <td>
                     @if (material.AvailableQuantity > 0)
                     {
-                        <input type="checkbox" class="select-book" value="@material.MaterialID" data-title="@material.Title" />
+                        <input type="checkbox" class="select-book"
+                               value="@material.MaterialID"
+                               data-title="@material.Title" />
                     }
                 </td>
                 <td>@material.Title</td>
                 <td>@material.Author</td>
                 <td>@material.Edition</td>
-                <td>@material.Description</td>
+                @*<td>@material.Description</td>*@
                 <td>@material.PlaceofPublishers</td>
                 <td>@material.YearPublished</td>
                 <td>@material.Pages</td>
                 <td>@material.Vol</td>
                 <td>@material.MaterialType</td>
-                <td>@material.DepID</td>
                 <td>
                     @if (material.AvailableQuantity > 0)
                     {
@@ -93,7 +139,7 @@
         }
     </tbody>
 </table>
-
+}
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmReserveModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -129,77 +175,172 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // DataTables
-            $('#MaterialsTable').DataTable({
-                paging: true,
-                searching: true,
-                ordering: true,
-                info: true,
-                responsive: true,
-                columnDefs: [{ orderable: false, targets: 0 }]
-            });
+$(function () {
 
-            // Enable Reserve button only when checkboxes are selected
-            $('.select-book').on('change', function () {
-                $('#reserveSelectedBtn').prop('disabled', $('.select-book:checked').length === 0);
-            });
-
-            var selectedIds = [];
-            var selectedTitles = [];
-
-            function openConfirmModal(ids, titles) {
-                selectedIds = ids;
-                selectedTitles = titles;
-
-                $('#selectedBooksList').empty();
-                selectedTitles.forEach(title => {
-                    $('#selectedBooksList').append('<li>' + title + '</li>');
-                });
-
-                var confirmModal = new bootstrap.Modal(document.getElementById('confirmReserveModal'));
-                confirmModal.show();
-            }
-
-            // Multiple books
-            $('#reserveSelectedBtn').on('click', function () {
-                var ids = [];
-                var titles = [];
-                $('.select-book:checked').each(function () {
-                    ids.push($(this).val());
-                    titles.push($(this).data('title'));
-                });
-                openConfirmModal(ids, titles);
-            });
-
-            // Single book
-            $('.reserve-single-btn').on('click', function () {
-                var id = $(this).data('id');
-                var title = $(this).data('title');
-                openConfirmModal([id], [title]);
-            });
-
-            // Confirm reservation
-            $('#confirmReserveBtn').on('click', function () {
-                $.ajax({
-                    url: '@Url.Action("ConfirmReservation", "Patron")',
-                    type: 'POST',
-                    data: { materialIds: selectedIds },
-                    success: function (res) {
-                        $('#confirmReserveModal').modal('hide');
-                        $('#counterInfo').text(res.message + (res.counterNumber !== 'N/A' ? ' (Counter: ' + res.counterNumber + ')' : ''));
-                        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                        successModal.show();
-
-                        // Reload page after short delay
-                        setTimeout(() => location.reload(), 15000);
-                    },
-
-                    error: function () {
-                        alert('Error reserving books!');
-                    }
-                });
-            });
+    // Init DataTable
+    @if (librarySelected)
+    {
+        <text>
+        $('#MaterialsTable').DataTable({
+            paging: true,
+            searching: false,
+            ordering: true,
+            responsive: true,
+            info: true,
+            columnDefs: [{ orderable: false, targets: 0 }]
         });
+        </text>
+    }
+
+    // Enable/Disable Reserve Selected Button
+    $('#MaterialsTable').on('change', '.select-book', function () {
+        $('#reserveSelectedBtn').prop('disabled', $('#MaterialsTable .select-book:checked').length === 0);
+    });
+
+    let selectedIds = [];
+    let selectedTitles = [];
+
+    function openConfirmModal(ids, titles) {
+        selectedIds = ids;
+        selectedTitles = titles;
+
+        $('#selectedBooksList').empty();
+        titles.forEach(t => $('#selectedBooksList').append(`<li>${t}</li>`));
+
+        new bootstrap.Modal(document.getElementById('confirmReserveModal')).show();
+    }
+
+    // Reserve Selected
+    $('#reserveSelectedBtn').on('click', function () {
+        let ids = [], titles = [];
+        $('#MaterialsTable .select-book:checked').each(function () {
+            ids.push($(this).val());
+            titles.push($(this).data('title'));
+        });
+        openConfirmModal(ids, titles);
+    });
+
+    // Reserve Single
+    $(document).on('click', '.reserve-single-btn', function () {
+        openConfirmModal([$(this).data('id')], [$(this).data('title')]);
+    });
+
+    // Confirm Reservation
+    $('#confirmReserveBtn').on('click', function () {
+        $.ajax({
+            url: '@Url.Action("ConfirmReservation", "Patron")',
+            type: 'POST',
+            data: { materialIds: selectedIds },
+            success: function (res) {
+
+                $('#confirmReserveModal').modal('hide');
+
+                // Already requested notification
+                if (res.alreadyRequested) {
+                    alert(res.message);
+                    refreshTableOnly();
+                    return;
+                }
+
+                // Success flow
+                $('#counterInfo').text(res.message + (res.counterNumber !== 'N/A' ? ' (Counter: ' + res.counterNumber + ')' : ''));
+                new bootstrap.Modal(document.getElementById('successModal')).show();
+
+                setTimeout(() => refreshTableOnly(), 1500);
+            },
+            error: function () {
+                alert('Error reserving books.');
+            }
+        });
+    });
+
+    // AJAX: Add to Booking List
+    $(document).on("submit", "form[action*='AddToBookingList']", function (e) {
+        e.preventDefault();
+
+        let form = $(this);
+
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: form.serialize(),
+            success: function (res) {
+
+                if (res && res.success === false) {
+                    alert(res.message);
+                    refreshTableOnly();
+                    return;
+                }
+
+                alert("Added to booking list successfully!");
+                refreshTableOnly();
+            },
+            error: function () {
+                alert("Error adding material to booking list.");
+            }
+        });
+    });
+
+    // Dynamic Authors
+    const $lib = $('#selectedLibraryId');
+    const $title = $('#titleFilter');
+    const $author = $('#authorFilter');
+    const $spinner = $('#authorLoading');
+    let authorTimer = null;
+
+    function refreshAuthors() {
+        if (!$lib.val()) return;
+
+        $spinner.removeClass('d-none');
+        $.get('@Url.Action("GetAuthors", "Patron")', { libraryId: $lib.val(), title: $title.val() })
+            .done(function (names) {
+                const prev = $author.val();
+                $author.empty().append(new Option('All Authors', ''));
+
+                if (names && names.length) {
+                    names.forEach(n => $author.append(new Option(n, n)));
+                    $author.prop('disabled', false);
+                    if (prev && names.includes(prev)) $author.val(prev);
+                } else {
+                    $author.prop('disabled', true).val('');
+                }
+            })
+            .always(() => $spinner.addClass('d-none'));
+    }
+
+    // Title Auto Filter
+    $title.on('keyup', function () {
+        if (!@librarySelected.ToString().ToLower()) return;
+        clearTimeout(authorTimer);
+        authorTimer = setTimeout(() => { refreshAuthors(); $('#filtersForm')[0].submit(); }, 500);
+    });
+
+    // Library / Author Filters
+    $lib.on('change', function () { refreshAuthors(); $('#filtersForm')[0].submit(); });
+    $author.on('change', function () { $('#filtersForm')[0].submit(); });
+
+    // Clear Filters
+    $("#clearFilters, #clearFiltersTop").on("click", function () {
+        $title.val('');
+        $author.val('');
+        refreshAuthors();
+        $('#filtersForm')[0].submit();
+    });
+
+    // Refresh table only (no full reload)
+    function refreshTableOnly() {
+        $.get(window.location.href, function (data) {
+            $('#MaterialsTable').html($(data).find('#MaterialsTable').html());
+        });
+    }
+
+    // Sync authors initially
+    @if (librarySelected)
+    {
+        <text> refreshAuthors(); </text>
+    }
+
+});
     </script>
 }
+

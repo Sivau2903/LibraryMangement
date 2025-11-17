@@ -29,7 +29,7 @@ namespace LibraryMangement.Models
         public string CallNumber { get; set; }
         public string Status { get; set; }
         public string UniversityID { get; set; }
-        public Nullable<int> SchoolID { get; set; }
+        public Nullable<int> LibraryID { get; set; }
         public bool IsActive { get; set; }
         public Nullable<bool> IsPrinted { get; set; }
     

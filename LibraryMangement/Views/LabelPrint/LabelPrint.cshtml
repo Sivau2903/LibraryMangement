@@ -1,0 +1,69 @@
+﻿@model LibraryMangement.Controllers.LabelModel
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        page {
+            size: 2in 1in; /* Exact Label Size */
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .label-box {
+            width: 2in;
+            height: 1in;
+            border: 1px solid #000; /* remove if you don't want border */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    @{
+        Layout = null;
+    }
+    <div id="print">
+        <div class="label-box">
+            Shiva
+        </div>
+    </div>
+
+    <button onclick="printLabel('BOOK-001')">Print Label</button>
+
+    <script>
+        function printLabel(text) {
+            
+            /* window.open('/Print/LabelPrint?value=' + encodeURIComponent(text), '_blank');*/
+            //window.print();
+            //window.close();
+
+            /* function printLabel(divId) {*/
+            var divContents = document.getElementById('print').innerHTML;
+            /*console.log(divContents)*/
+            var printWindow = window.open('', '', 'height=500,width=800');
+
+            printWindow.document.write('<html><head><title>Print Label</title>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+            //}
+
+        }
+    </script>
+
+</body>
+
+</html>

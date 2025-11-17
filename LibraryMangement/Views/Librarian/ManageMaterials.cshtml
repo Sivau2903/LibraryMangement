@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Manage Materials";
+    string designation = Session["Designation"]?.ToString();
 }
 
 <h2 class="mb-4">Manage Library Resources</h2>
@@ -68,10 +69,17 @@
                     <td>@material.MaterialType</td>
                     <td>@material.AvailableQuantity</td>
                     <td>
-                        <a class="btn btn-sm btn-primary shadow-sm" href="@Url.Action("EditMaterial", new { id = material.MaterialID })">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                    </td>
+                        @if (designation == "Librarian")
+                        {
+                            <a class="btn btn-sm btn-primary shadow-sm" href="@Url.Action("EditMaterial", new { id = material.MaterialID })">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                        }
+else
+                    {
+                        <p>Nill</p>
+                    }
+                        </td>
                 </tr>
             }
         </tbody>
@@ -86,6 +94,7 @@ else
     <script>
         $(document).ready(function () {
             $('#MaterialsTable').DataTable({
+                scrollY: "550px",
                 paging: true,
                 searching: true,
                 ordering: true,

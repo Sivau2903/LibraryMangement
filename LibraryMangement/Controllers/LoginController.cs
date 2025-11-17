@@ -37,7 +37,7 @@ namespace LibraryMangement.Controllers
                         return View(model);
                     }
                     model.Username = model.Username;
-                    // Encrypt password
+                   
                     model.PasswordHash = SecureHelper.Encrypt(model.PasswordHash);
 
                     //model.tblUserRoles. = model.Role ?? "Patron"; // default if empty
@@ -82,7 +82,7 @@ namespace LibraryMangement.Controllers
             {
                 g.Clear(Color.White);
 
-                // Add noise lines
+               
                 using (Pen pen = new Pen(Color.Gray, 1))
                 {
                     for (int i = 0; i < 8; i++)
@@ -90,7 +90,7 @@ namespace LibraryMangement.Controllers
                             rand.Next(0, bmp.Width), rand.Next(0, bmp.Height));
                 }
 
-                // Draw captcha text with random rotation for each character
+               
                 using (Font font = new Font("Arial", 22, FontStyle.Bold))
                 {
                     for (int i = 0; i < captchaText.Length; i++)
@@ -103,7 +103,7 @@ namespace LibraryMangement.Controllers
                     }
                 }
 
-                // Add random dots for distortion
+               
                 for (int i = 0; i < 50; i++)
                     bmp.SetPixel(rand.Next(bmp.Width), rand.Next(bmp.Height), Color.Gray);
 
@@ -115,28 +115,28 @@ namespace LibraryMangement.Controllers
             }
         }
 
-        private const int SaltSize = 16; // 128-bit
-        private const int HashSize = 32; // 256-bit
-        private const int Iterations = 100_000; // PBKDF2 iterations
+        private const int SaltSize = 16; 
+        private const int HashSize = 32; 
+        private const int Iterations = 100_000; 
 
 
-        // ✅ HashClientPassword: handles Base64 and GUID salts
+       
         public static string HashClientPassword(string clientHashedPasswordHex, string saltBase64)
         {
             byte[] saltBytes;
 
             try
             {
-                // Try normal Base64 decode first
+               
                 saltBytes = Convert.FromBase64String(saltBase64);
             }
             catch (FormatException)
             {
-                // If not Base64, treat as GUID
+               
                 saltBytes = Guid.Parse(saltBase64).ToByteArray();
             }
 
-            // Convert client SHA256 hex string → bytes
+            
             byte[] passwordBytes = new byte[clientHashedPasswordHex.Length / 2];
             for (int i = 0; i < passwordBytes.Length; i++)
             {
@@ -150,16 +150,14 @@ namespace LibraryMangement.Controllers
             }
         }
 
-
-        // ✅ VerifyPassword: simple & static — doesn’t require userId
+       
         public static bool VerifyPassword(string enteredClientHex, string storedHash, string salt)
         {
             string hashOfInput = HashClientPassword(enteredClientHex, salt);
             return hashOfInput == storedHash;
         }
 
-
-        // ✅ UpdateSaltInDatabase: instance method (optional, only if you need to replace GUID salts permanently)
+       
         private void UpdateSaltInDatabase(string userId, string base64Salt)
         {
             var user = db.tblUsers.FirstOrDefault(u => u.UserID == userId);
@@ -170,8 +168,6 @@ namespace LibraryMangement.Controllers
             }
         }
 
-
-        // ✅ Login Action
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
@@ -189,33 +185,68 @@ namespace LibraryMangement.Controllers
                 return View(model);
             }
 
-            // ✅ Fixed VerifyPassword call
+            if (string.IsNullOrEmpty(user.PasswordHash) || string.IsNullOrEmpty(user.PasswordSalt))
+            {
+                ViewBag.ErrorMessage = "User credentials are invalid.";
+                return View(model);
+            }
+
             if (!VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
             {
                 ViewBag.ErrorMessage = "Invalid password";
                 return View(model);
             }
 
-            // ✅ Session assignments
             Session["UserID"] = user.UserID;
             Session["UserName"] = user.Email;
-            Session["Role"] = user.tblUserRoles.FirstOrDefault()?.tblRole.RoleName;
+            Session["Name"] = user.Username;
 
-            // ✅ Redirects
-            string role = Session["Role"].ToString();
-            if (role == "Librarian")
-                return RedirectToAction("LibrarianDashboard", "Librarian");
+            var role = user.tblUserRoles.FirstOrDefault()?.tblRole?.RoleName;
+            if (string.IsNullOrEmpty(role))
+            {
+                ViewBag.ErrorMessage = "User role not assigned. Contact Administrator.";
+                return View(model);
+            }
+
+            Session["Role"] = role;
+            
+
+            string userRole = Session["Role"] as string;
+            if (string.IsNullOrEmpty(userRole))
+            {
+                ViewBag.ErrorMessage = "User role missing. Contact admin.";
+                return View(model);
+            }
+            
+            if (userRole == "Librarian")
+            {
+                var Designation = db.tblEmployees.FirstOrDefault(a => a.UserID == user.UserID);
+                int designationid = (int)Designation.DesignationID;
+
+                var id = db.tblDesignations.FirstOrDefault(b => b.DesignationID == designationid);
+                string Name = id.DesignationName;
+                Session["Designation"] = Name;
+                if (Name == "Assistant Librarian")
+                {
+                    return RedirectToAction("LibrarianDashboard", "Librarian");
+                }
+                else
+                {
+                    return RedirectToAction("LibrarianDashboard", "Librarian");
+                }
+                  
+            }
+            else if (userRole == "UniversityAdmin")
+                return RedirectToAction("Home", "Admin");
             else
                 return RedirectToAction("PatronDashboard", "Patron");
         }
-
 
         public bool ValidateUser(string email, string dobInput)
         {
             var user = db.tblUsers.FirstOrDefault(u => u.PasswordHash == email);
             if (user == null) return false;
 
-            // Normalize DOB format
             DateTime parsedDob;
             if (!DateTime.TryParse(dobInput, out parsedDob))
                 return false;

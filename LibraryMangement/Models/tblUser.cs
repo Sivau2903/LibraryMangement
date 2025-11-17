@@ -18,16 +18,16 @@ namespace LibraryMangement.Models
         public tblUser()
         {
             this.tblSchools = new HashSet<tblSchool>();
-            this.tblUserRoles = new HashSet<tblUserRole>();
             this.tblEmployees = new HashSet<tblEmployee>();
             this.tblUserUniversities = new HashSet<tblUserUniversity>();
             this.tblUserSchools = new HashSet<tblUserSchool>();
             this.tblStudents = new HashSet<tblStudent>();
             this.Bookinglisteds = new HashSet<Bookinglisted>();
-            this.Circulations = new HashSet<Circulation>();
             this.FineDetails = new HashSet<FineDetail>();
             this.FineReasons = new HashSet<FineReason>();
             this.PatronNewMaterialRequests = new HashSet<PatronNewMaterialRequest>();
+            this.tblUserRoles = new HashSet<tblUserRole>();
+            this.Circulations = new HashSet<Circulation>();
         }
     
         public string UserID { get; set; }
@@ -60,8 +60,6 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblSchool> tblSchools { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblEmployee> tblEmployees { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
@@ -72,12 +70,14 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bookinglisted> Bookinglisteds { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Circulation> Circulations { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineDetail> FineDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FineReason> FineReasons { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PatronNewMaterialRequest> PatronNewMaterialRequests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Circulation> Circulations { get; set; }
     }
 }

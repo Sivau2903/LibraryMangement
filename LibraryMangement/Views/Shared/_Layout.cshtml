@@ -1,6 +1,7 @@
 ﻿@{
-    var role = Session["Role"] != null ? Session["Role"].ToString() : "";
+    var designation = Session["Designation"]?.ToString();
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,32 +33,32 @@
             transition: all 0.3s;
         }
 
-        .sidebar h5 {
-            border-bottom: 1px solid #495057;
-            padding-bottom: 0.5rem;
-            padding-top: 30px;
-        }
+            .sidebar h5 {
+                border-bottom: 1px solid #495057;
+                padding-bottom: 0.5rem;
+                padding-top: 30px;
+            }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            transition: all 0.2s ease-in-out;
-        }
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                transition: all 0.2s ease-in-out;
+            }
 
-        .sidebar a:hover {
-            background-color: white;
-            color: #1f2937;
-            text-decoration: none;
-            padding-left: 20px;
-        }
+                .sidebar a:hover {
+                    background-color: white;
+                    color: #1f2937;
+                    text-decoration: none;
+                    padding-left: 20px;
+                }
 
-        .sidebar i {
-            margin-right: 10px;
-        }
+            .sidebar i {
+                margin-right: 10px;
+            }
 
         /* Content */
         .content {
@@ -104,33 +105,54 @@
         }
 
         /* Sidebar hidden on mobile */
-     
-@@media (max-width: 992px) {
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: -250px; /* Hide sidebar */
-        width: 250px;
-        height: 100%;
-        z-index: 1050;
-        transition: left 0.3s ease-in-out;
-    }
-    #sidebar.show {
-        left: 0; /* Slide in */
-    }
-    .content {
-        flex: 1;
-        padding: 20px;
-        background-color: #f8f9fa;
-        transition: margin-left 0.3s ease-in-out;
-    }
-}
 
+        @@media (max-width: 992px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: -250px; /* Hide sidebar */
+                width: 250px;
+                height: 100%;
+                z-index: 1050;
+                transition: left 0.3s ease-in-out;
+            }
+
+                #sidebar.show {
+                    left: 0; /* Slide in */
+                }
+
+            .content {
+                flex: 1;
+                padding: 20px;
+                background-color: #f8f9fa;
+                transition: margin-left 0.3s ease-in-out;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Top Navbar -->
+    <!-- Navbar -->
+    @{
+        // 🧠 Get the Role from Session
+        string userRole = Session["Designation"] != null ? Session["Designation"].ToString() : "";
+
+        // 🏷️ Decide dashboard label and target action based on role
+        string dashboardLabel = "ICFAI User";
+        string dashboardAction = "LibrarianDashboard"; // default
+
+        if (userRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase))
+        {
+            dashboardLabel = "Assistant Librarian Dashboard";
+            dashboardAction = "LibrarianDashboard";  // make sure you have this action
+        }
+        else if (userRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase))
+        {
+            dashboardLabel = "Librarian Dashboard";
+            dashboardAction = "LibrarianDashboard";
+        }
+    }
+
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #0d6efd, #6610f2);">
         <div class="container-fluid">
             <!-- Sidebar Toggle for Mobile -->
@@ -139,13 +161,12 @@
             </button>
 
             <!-- Brand -->
-            <a class="navbar-brand fw-bold fs-4" href="@Url.Action("LibrarianDashboard", "Librarian")">
-                ICFAI Library Admin
-            </a>
+            <a class="navbar-brand fw-bold fs-4" href="@Url.Action(dashboardAction, "Librarian")">@dashboardLabel</a>
 
-            <!-- Right Side: Breadcrumbs + Profile -->
+            <!-- Right Side: Breadcrumbs + School Dropdown + Profile -->
             <div class="d-flex align-items-center ms-auto">
 
+                @* Breadcrumbs (unchanged) *@
                 @if (ViewBag.Breadcrumbs != null)
                 {
                     <div class="me-2">
@@ -153,65 +174,83 @@
                     </div>
                 }
 
+                <!-- 🏫 School Dropdown (Added Here) -->
+
+
+                @{
+                    var schoolList = Session["SchoolList"] as List<SelectListItem>;
+                    var selectedSchool = Session["SelectedSchoolID"];
+                }
+
+                @if (schoolList != null && schoolList.Count > 1)
+                {
+                    <form method="get" action="@Url.Action("LibrarianDashboard", "Librarian")" class="d-flex align-items-center me-3 mb-0">
+                        <select name="selectedSchoolID"
+                                class="form-select form-select-sm"
+                                onchange="this.form.submit();"
+                                style="width:120px; background-color: #fff; color: #000; border: none; border-radius: 6px; padding: 4px 8px;">
+                            @foreach (var school in schoolList)
+                            {
+                                <option value="@school.Value" @(school.Selected ? "selected" : "")>@school.Text</option>
+                            }
+                        </select>
+                    </form>
+                }
+                else if (schoolList != null)
+                {
+                    <div class="text-white fw-semibold me-3" style="width:10%">
+                        <i class="bi bi-bank me-1"></i>@schoolList.FirstOrDefault(s => s.Selected)?.Text
+                    </div>
+                }
+
+
                 <!-- Profile Dropdown -->
-                <ul class="navbar-nav align-items-center ms-3">
+                <ul class="navbar-nav align-items-center">
                     <li class="nav-item dropdown">
                         <a class="nav-link fw-bold fs-4 dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             My Profile
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="profileDropdown" style="min-width: 200px;">
-                            <li><a class="dropdown-item d-flex align-items-center" href="@Url.Action("MyProfile", "Librarian")"><i class="bi bi-person-circle me-2"></i> View Profile</a></li>
-                            <li><a class="dropdown-item d-flex align-items-center" href="@Url.Action("ChangePassword", "Librarian")"><i class="bi bi-key me-2"></i> Change Password</a></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="@Url.Action("MyProfile", "Librarian")">
+                                    <i class="bi bi-person-circle me-2"></i> View Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="@Url.Action("ChangePassword", "Librarian")">
+                                    <i class="bi bi-key me-2"></i> Change Password
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item d-flex align-items-center text-danger" href="#" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center text-danger" href="#" id="logoutLink">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-
             </div>
         </div>
     </nav>
 
+
     <div class="d-flex">
         <!-- Sidebar Menu -->
         <div class="sidebar" id="sidebar">
+
             <h5 class="mb-4" style="color:white">Menu</h5>
             <ul class="nav flex-column">
 
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("LibrarianDashboard", "Librarian")"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-
-                <!-- Catalog Management -->
+                <!-- Always Visible: Dashboard -->
                 <li class="nav-item mb-2">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageMaterials" role="button" aria-expanded="false">
-                        <span><i class="bi bi-archive"></i> Catalog Management</span>
-                        <i class="bi bi-chevron-down"></i>
+                    <a class="nav-link" href="@Url.Action("LibrarianDashboard", "Librarian")">
+                        <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
-                    <div class="collapse ps-3" id="manageMaterials">
-                        <ul class="nav flex-column">
-                            @*<li class="nav-item">
-                                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#addMaterialSubmenu" role="button" aria-expanded="false">
-                                        Add Resource
-                                        <i class="bi bi-chevron-down"></i>
-                                    </a>
-                                    <div class="collapse ps-3" id="addMaterialSubmenu">
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AddMaterial","Librarian")">Add Library Resource</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("BulkUploadMaterials","Librarian")">Add Bulk Library Resource (Excel)</a></li>
-                                        </ul>
-                                    </div>
-                                </li>*@
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AddMaterial","Librarian")">Add Library Resource</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("BulkUploadMaterials","Librarian")">Add Bulk Library Resource (Excel)</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterials","Librarian")">Library Resources</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterialCopies","Librarian")">Library Resource Copies</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AddMaterialType","Librarian")">Add Library Resource Type</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AddAuthor","Librarian")">Add Author</a></li>
-                        </ul>
-                    </div>
                 </li>
 
-                <!-- Circulation -->
+                <!-- Circulation (Both Roles Can See) -->
                 <li class="nav-item mb-2">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#circulationMenu" role="button" aria-expanded="false">
                         <span><i class="bi bi-arrow-repeat"></i> Circulations</span>
@@ -219,38 +258,63 @@
                     </a>
                     <div class="collapse ps-3" id="circulationMenu">
                         <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("IssueMaterial","Librarian")">Issue Books</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial","Librarian")">Return / Renew Books</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingList","Librarian")">Booking Lists</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("IssueMaterial", "Librarian")">Books</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ReturnMaterial", "Librarian")">Return / Renew Books</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("BookingList", "Librarian")">Booking Lists</a></li>
                         </ul>
                     </div>
                 </li>
-
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-bookmark"></i> Fine Management</a></li>
-                @*<li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("BarcodeGeneration", "Librarian")"><i class="bi bi-upc-scan"></i> Barcode Generation</a></li>*@
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("NewBookRequests", "Librarian")"><i class="bi bi-person-circle"></i> New Library Resource Requests</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCounter", "Librarian")"><i class="bi bi-person-circle"></i> Add Counter</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCirculationManual", "Librarian")"><i class="bi bi-person-circle"></i> Manual Circulation Entry Form</a></li>
                 <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("VisitorManagement", "Librarian")"><i class="bi bi-person-circle"></i> Visitor Management</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("WalkInIssue", "Librarian")"><i class="bi bi-person-circle"></i> WalkIn Issue</a></li>
+               
 
-                <!-- Reports -->
-                <li class="nav-item mb-2">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportmenue" role="button" aria-expanded="false">
-                        <span><i class="bi bi-file-earmark-bar-graph"></i> Reports</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </a>
-                    <div class="collapse ps-3" id="reportmenue">
-                        <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("AvailabilityReport", "Librarian")">Availability Report</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("RequestReport", "Librarian")">Request Report</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("IssuedReport", "Librarian")">Issued Report</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("OverdueReports", "Librarian")">Overdue Reports</a></li>
-                            <li class="nav-item"><a class="nav-link" href="@Url.Action("FineReport", "Librarian")">Fine Report</a></li>
-                        </ul>
-                    </div>
-                </li>
+                @if (designation == "Librarian")  // ✅ Only Librarian sees the rest
+                {
+                    <!-- Catalog Management -->
+                    <li class="nav-item mb-2">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageMaterials" role="button" aria-expanded="false">
+                            <span><i class="bi bi-archive"></i> Catalog Management</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse ps-3" id="manageMaterials">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("AddMaterial", "Librarian")">Add Library Resource</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("BulkUploadMaterials", "Librarian")">Add Bulk Library Resource (Excel)</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterials", "Librarian")">Library Resources</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageMaterialCopies", "Librarian")">Library Resource Copies</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("AddMaterialType", "Librarian")">Add Library Resource Type</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("AddAuthor", "Librarian")">Add Author</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-bookmark"></i> Fine Management</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCounter", "Librarian")"><i class="bi bi-person-circle"></i> Add Counter</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("RequestAssistant", "Librarian")"><i class="bi bi-person-circle"></i> Request Assistant</a></li>
+
+                    <!-- Reports -->
+                    <li class="nav-item mb-2">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportmenue" role="button" aria-expanded="false">
+                            <span><i class="bi bi-file-earmark-bar-graph"></i> Reports</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse ps-3" id="reportmenue">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("AvailabilityReport", "Librarian")">Availability Report</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("RequestReport", "Librarian")">Request Report</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("IssuedReport", "Librarian")">Issued Report</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("OverdueReports", "Librarian")">Overdue Reports</a></li>
+                                <li class="nav-item"><a class="nav-link" href="@Url.Action("FineReport", "Librarian")">Fine Report</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                }
 
             </ul>
+
+            
         </div>
 
         <!-- Main Content Area -->

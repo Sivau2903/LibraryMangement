@@ -16,29 +16,29 @@ namespace LibraryMangement.Controllers
     public class PatronController : HomeController
     {
         private readonly ICFAISMSEntities db = new ICFAISMSEntities();
-        // GET: Patron
+       
         public ActionResult PatronDashboard()
         {
-            // 1️⃣ Check if user is logged in
+           
             if (Session["UserID"] == null)
                 return RedirectToAction("Login", "Login");
 
             string userId = Session["UserID"].ToString();
             string role = Session["Role"]?.ToString();
 
-            // 2️⃣ Get university & school details from tblUserSchools using UserID
+           
             var userSchool = db.tblUserSchools
                                .FirstOrDefault(u => u.UserID == userId.ToString());
 
             if (userSchool == null)
                 return HttpNotFound("User's University/School information not found.");
 
-            // Store IDs in Session
+          
             Session["PatronID"] = userId;
             Session["UniversityID"] = userSchool.UniversityID;
             Session["SchoolID"] = userSchool.SchoolID;
 
-            // Get University & School Names
+            
             var universityName = db.tblUniversities
                                    .Where(u => u.UniversityID == userSchool.UniversityID)
                                    .Select(u => u.UniversityName)
@@ -49,7 +49,7 @@ namespace LibraryMangement.Controllers
                                .Select(s => s.SchoolName)
                                .FirstOrDefault();
 
-            // 3️⃣ Get Patron Name based on role
+           
             string patronName = "";
             if (role == "Faculty")
             {
@@ -66,7 +66,7 @@ namespace LibraryMangement.Controllers
                                .FirstOrDefault();
             }
 
-            // 4️⃣ Create and populate dashboard ViewModel
+          
             var model = new PatronDashboardViewModel
             {
 
@@ -90,23 +90,53 @@ namespace LibraryMangement.Controllers
 
 
 
-        // GET: Manage Materials - Simple Search
-        public ActionResult ManageMaterials()
+      
+        public ActionResult ManageMaterials(int? selectedLibraryId, string titleFilter = null, string authorFilter = null)
         {
             var loggedInLibrarianId = Session["UserID"]?.ToString();
             if (string.IsNullOrEmpty(loggedInLibrarianId))
                 return RedirectToAction("Login", "Login");
 
-            int SchoolID = (int)Session["SchoolID"];
-            var schoolName = db.tblSchools
-                              .Where(s => s.SchoolID == SchoolID)
-                              .Select(s => s.SchoolName)
-                              .FirstOrDefault();
+            string universityID = Session["UniversityID"]?.ToString();
+            if (string.IsNullOrEmpty(universityID))
+                return RedirectToAction("Login", "Login");
 
-            var materials = db.Materials
-                              .Include(m => m.Author)
-                              .Where(m => m.SchoolID == SchoolID)
+            
+            var libraries = db.tblLibraries
+                              .Where(l => l.UniversityID.ToString() == universityID)
                               .ToList();
+
+            ViewBag.Libraries = new SelectList(libraries, "LibraryID", "LibraryName", selectedLibraryId);
+
+         
+            int activeLibraryId = selectedLibraryId ?? libraries.FirstOrDefault()?.LibraryID ?? 0;
+            Session["SchoolID"] = activeLibraryId;
+
+            
+            var materialsQuery = db.Materials
+                                   .Include(m => m.Author)
+                                   .Where(m => m.LibraryID == activeLibraryId);
+
+            
+            if (!string.IsNullOrEmpty(titleFilter))
+            {
+                materialsQuery = materialsQuery.Where(m => m.Title.Contains(titleFilter));
+            }
+
+           
+            if (!string.IsNullOrEmpty(authorFilter))
+            {
+                materialsQuery = materialsQuery.Where(m => m.Author.Name == authorFilter);
+            }
+
+            var materials = materialsQuery.ToList();
+
+           
+            ViewBag.Authors = new SelectList(materials
+                                    .Where(m => m.Author != null)
+                                    .Select(m => m.Author.Name)
+                                    .Distinct()
+                                    .ToList());
 
             var model = materials.Select(m => new MaterialViewModel
             {
@@ -122,13 +152,26 @@ namespace LibraryMangement.Controllers
                 Source = m.Source,
                 AvailableQuantity = m.AvailableQuantity ?? 0,
                 TotalQuantity = m.TotalQuantity ?? 0,
-                MaterialType = m.MaterialType,
-                DepID = schoolName
+                MaterialType = m.MaterialType
             }).ToList();
-
 
             return View(model);
         }
+        [HttpGet]
+        public JsonResult GetAuthors(int libraryId, string title)
+        {
+            var authors = db.Materials
+                .Where(m => m.LibraryID == libraryId &&
+                            (string.IsNullOrEmpty(title) || m.Title.Contains(title)))
+                .Where(m => m.Author != null)
+                .Select(m => m.Author.Name)
+                .Distinct()
+                .OrderBy(a => a)
+                .ToList();
+
+            return Json(authors, JsonRequestBehavior.AllowGet);
+        }
+
 
         [HttpGet]
         public JsonResult GetMaterialAutoComplete(string field, string term)
@@ -141,7 +184,7 @@ namespace LibraryMangement.Controllers
             var query = db.Materials.Include(m => m.Author).AsQueryable();
 
             if (SchoolID.HasValue && SchoolID.Value != 0)
-                query = query.Where(m => m.SchoolID == SchoolID.Value);
+                query = query.Where(m => m.LibraryID == SchoolID.Value);
             else if (UniversityID.HasValue && UniversityID.Value != 0)
                 query = query.Where(m => m.UniversityID == UniversityID.Value.ToString());
 
@@ -196,96 +239,96 @@ namespace LibraryMangement.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult AdvancedSearchThreeKeywords(
-     string field1, string keyword1,
-     string field2, string keyword2,
-     string field3, string keyword3,
-     string clear)
-        {
-            var loggedInLibrarianId = Session["UserID"]?.ToString();
-            if (string.IsNullOrEmpty(loggedInLibrarianId))
-                return RedirectToAction("Login", "Login");
+     //   [HttpPost]
+     //   public ActionResult AdvancedSearchThreeKeywords(
+     //string field1, string keyword1,
+     //string field2, string keyword2,
+     //string field3, string keyword3,
+     //string clear)
+     //   {
+     //       var loggedInLibrarianId = Session["UserID"]?.ToString();
+     //       if (string.IsNullOrEmpty(loggedInLibrarianId))
+     //           return RedirectToAction("Login", "Login");
 
-            int schoolID = (int)Session["schoolID"];  
+     //       int schoolID = (int)Session["schoolID"];  
 
-            var model = new List<MaterialViewModel>();
+     //       var model = new List<MaterialViewModel>();
 
-            // If Clear button was pressed
-            if (!string.IsNullOrEmpty(clear) && clear == "true")
-            {
-                ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
-                ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
-                ViewBag.ActiveTab = "Advanced";
-                return View("ManageMaterials", model); 
-            }
+     //       // If Clear button was pressed
+     //       if (!string.IsNullOrEmpty(clear) && clear == "true")
+     //       {
+     //           ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
+     //           ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
+     //           ViewBag.ActiveTab = "Advanced";
+     //           return View("ManageMaterials", model); 
+     //       }
 
-            var materials = db.Materials
-                              .Include(m => m.Author)
-                              .Include(m => m.tblSchool)
-                              .Where(m => m.SchoolID == schoolID)
-                              .AsQueryable();
+     //       var materials = db.Materials
+     //                         .Include(m => m.Author)
+     //                         .Include(m => m.tblLibrary)
+     //                         .Where(m => m.LibraryID == schoolID)
+     //                         .AsQueryable();
 
 
-            keyword1 = keyword1?.Trim();
-            keyword2 = keyword2?.Trim();
-            keyword3 = keyword3?.Trim();
+     //       keyword1 = keyword1?.Trim();
+     //       keyword2 = keyword2?.Trim();
+     //       keyword3 = keyword3?.Trim();
 
-            materials = materials.Where(m =>
-                (string.IsNullOrEmpty(field1) || string.IsNullOrEmpty(keyword1) ||
-                    (field1 == "Title" && m.Title == keyword1) ||
-                    (field1 == "Author" && m.Author != null && m.Author.Name == keyword1) ||
-                    (field1 == "ISBN" && m.ISBN == keyword1) ||
-                    (field1 == "PublisherPlace" && m.PlaceofPublishers == keyword1) ||
-                    (field1 == "Year" && m.YearPublished.ToString() == keyword1) ||
-                    (field1 == "MaterialType" && m.MaterialType == keyword1)
-                )
-                &&
-                (string.IsNullOrEmpty(field2) || string.IsNullOrEmpty(keyword2) ||
-                    (field2 == "Title" && m.Title == keyword2) ||
-                    (field2 == "Author" && m.Author != null && m.Author.Name == keyword2) ||
-                    (field2 == "ISBN" && m.ISBN == keyword2) ||
-                    (field2 == "PublisherPlace" && m.PlaceofPublishers == keyword2) ||
-                    (field2 == "Year" && m.YearPublished.ToString() == keyword2) ||
-                    (field2 == "MaterialType" && m.MaterialType == keyword2)
-                )
-                &&
-                (string.IsNullOrEmpty(field3) || string.IsNullOrEmpty(keyword3) ||
-                    (field3 == "Title" && m.Title == keyword3) ||
-                    (field3 == "Author" && m.Author != null && m.Author.Name == keyword3) ||
-                    (field3 == "ISBN" && m.ISBN == keyword3) ||
-                    (field3 == "PublisherPlace" && m.PlaceofPublishers == keyword3) ||
-                    (field3 == "Year" && m.YearPublished.ToString() == keyword3) ||
-                    (field3 == "MaterialType" && m.MaterialType == keyword3)
-                )
-            );
+     //       materials = materials.Where(m =>
+     //           (string.IsNullOrEmpty(field1) || string.IsNullOrEmpty(keyword1) ||
+     //               (field1 == "Title" && m.Title == keyword1) ||
+     //               (field1 == "Author" && m.Author != null && m.Author.Name == keyword1) ||
+     //               (field1 == "ISBN" && m.ISBN == keyword1) ||
+     //               (field1 == "PublisherPlace" && m.PlaceofPublishers == keyword1) ||
+     //               (field1 == "Year" && m.YearPublished.ToString() == keyword1) ||
+     //               (field1 == "MaterialType" && m.MaterialType == keyword1)
+     //           )
+     //           &&
+     //           (string.IsNullOrEmpty(field2) || string.IsNullOrEmpty(keyword2) ||
+     //               (field2 == "Title" && m.Title == keyword2) ||
+     //               (field2 == "Author" && m.Author != null && m.Author.Name == keyword2) ||
+     //               (field2 == "ISBN" && m.ISBN == keyword2) ||
+     //               (field2 == "PublisherPlace" && m.PlaceofPublishers == keyword2) ||
+     //               (field2 == "Year" && m.YearPublished.ToString() == keyword2) ||
+     //               (field2 == "MaterialType" && m.MaterialType == keyword2)
+     //           )
+     //           &&
+     //           (string.IsNullOrEmpty(field3) || string.IsNullOrEmpty(keyword3) ||
+     //               (field3 == "Title" && m.Title == keyword3) ||
+     //               (field3 == "Author" && m.Author != null && m.Author.Name == keyword3) ||
+     //               (field3 == "ISBN" && m.ISBN == keyword3) ||
+     //               (field3 == "PublisherPlace" && m.PlaceofPublishers == keyword3) ||
+     //               (field3 == "Year" && m.YearPublished.ToString() == keyword3) ||
+     //               (field3 == "MaterialType" && m.MaterialType == keyword3)
+     //           )
+     //       );
 
-            model = materials.Select(m => new MaterialViewModel
-            {
-                MaterialID = m.MaterialID,
-                Title = m.Title,
-                Author = m.Author != null ? m.Author.Name : "",
-                Edition = m.Edition,
-                Description = m.Discription,
-                PlaceofPublishers = m.PlaceofPublishers,
-                YearPublished = (int)m.YearPublished,
-                Pages = m.Pages ?? 0,
-                Vol = m.Vol,
-                Source = m.Source,
-                AvailableQuantity = (int)m.AvailableQuantity,
-                TotalQuantity = (int)m.TotalQuantity,
-                MaterialType = m.MaterialType,
-                DepID = m.tblSchool != null
-                ? m.tblSchool.SchoolName
-                : "N/A"
-            }).ToList();
+     //       model = materials.Select(m => new MaterialViewModel
+     //       {
+     //           MaterialID = m.MaterialID,
+     //           Title = m.Title,
+     //           Author = m.Author != null ? m.Author.Name : "",
+     //           Edition = m.Edition,
+     //           Description = m.Discription,
+     //           PlaceofPublishers = m.PlaceofPublishers,
+     //           YearPublished = (int)m.YearPublished,
+     //           Pages = m.Pages ?? 0,
+     //           Vol = m.Vol,
+     //           Source = m.Source,
+     //           AvailableQuantity = (int)m.AvailableQuantity,
+     //           TotalQuantity = (int)m.TotalQuantity,
+     //           MaterialType = m.MaterialType,
+     //           DepID = m.tblLibrary != null
+     //           ? m.tblLibrary.LibraryName
+     //           : "N/A"
+     //       }).ToList();
 
-            ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
-            ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
-            ViewBag.ActiveTab = "Advanced";
+     //       ViewBag.KeywordFields = new List<string> { "Title", "Author", "ISBN", "PublisherPlace", "Year", "MaterialType" };
+     //       ViewBag.Departments = db.tblSchools.Where(d => d.SchoolID == schoolID).ToList();
+     //       ViewBag.ActiveTab = "Advanced";
 
-            return View("ManageMaterials", model);
-        }
+     //       return View("ManageMaterials", model);
+     //   }
 
 
         //private IQueryable<Material> ApplyExactMatch(IQueryable<Material> query, string field, string keyword)
@@ -355,7 +398,7 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("ManageMaterials");
             }
 
-            // Get session values directly
+            
             int schoolId = 0, universityId = 0;
             //int.TryParse(Session["PatronID"]?.ToString(), out patronId);
             int.TryParse(Session["SchoolID"]?.ToString(), out schoolId);
@@ -363,7 +406,7 @@ namespace LibraryMangement.Controllers
 
             string patronId = Session["PatronID"]?.ToString();
 
-            // Validate required fields in the model
+           
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Please fill all required fields correctly!";
@@ -372,7 +415,7 @@ namespace LibraryMangement.Controllers
 
             try
             {
-                // Create new request entity
+                
                 var request = new PatronNewMaterialRequest
                 {
                     MaterialTitle = model.MaterialTitle?.Trim(),
@@ -386,11 +429,11 @@ namespace LibraryMangement.Controllers
                     Status = "Pending"
                 };
 
-                // Save to database
+               
                 db.PatronNewMaterialRequests.Add(request);
                 db.SaveChanges();
 
-                // After db.SaveChanges();
+               
                 try
                 {
                     string userId = Session["UserID"].ToString();
@@ -399,14 +442,14 @@ namespace LibraryMangement.Controllers
                                        where ur.UserID == userId
                                        select r.RoleName).FirstOrDefault();
 
-                    // Step 4️⃣: Fetch user details based on role
+                   
                     string patronName = "";
                     string patronEmail = "";
                    
 
                     if (!string.IsNullOrEmpty(roleName) && roleName.Equals("Student", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Fetch from tblStudents
+                      
                         var student = db.tblStudents.FirstOrDefault(s => s.UserID == userId);
                         if (student != null)
                         {
@@ -417,7 +460,7 @@ namespace LibraryMangement.Controllers
                     }
                     else
                     {
-                        // Fetch from tblEmployee
+                        
                         var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
                         if (employee != null)
                         {
@@ -443,7 +486,7 @@ namespace LibraryMangement.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log email error
+                   
                     System.Diagnostics.Debug.WriteLine("Email sending failed: " + ex.Message);
                 }
 
@@ -473,63 +516,64 @@ namespace LibraryMangement.Controllers
         }
 
 
-        public ActionResult ReserveSingle(int materialId)
-        {
-            var model = db.Materials
-                          .Include(m => m.tblSchool)
-                          .Where(m => m.MaterialID == materialId)
-                          .Select(m => new MaterialViewModel
-                          {
-                              MaterialID = m.MaterialID,
-                              Title = m.Title,
-                              Author = m.Author != null ? m.Author.Name : "",
-                              Edition = m.Edition,
-                              Description = m.Discription,
-                              PlaceofPublishers = m.PlaceofPublishers,
-                              YearPublished = (int)m.YearPublished,
-                              Pages = m.Pages ?? 0,
-                              Vol = m.Vol,
-                              Source = m.Source,
-                              AvailableQuantity = (int)m.AvailableQuantity,
-                              TotalQuantity = (int)m.TotalQuantity,
-                              MaterialType = m.MaterialType,
-                              DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A",
-                              tblSchoolName = m.tblSchool != null ? m.tblSchool.SchoolName : "",
-                          })
-                          .FirstOrDefault();
+        //public ActionResult ReserveSingle(int materialId)
+        //{
+        //    var model = db.Materials
+        //                  .Include(m => m.tblLibrary)
+        //                  .Where(m => m.MaterialID == materialId)
+        //                  .Select(m => new MaterialViewModel
+        //                  {
+        //                      MaterialID = m.MaterialID,
+        //                      Title = m.Title,
+        //                      Author = m.Author != null ? m.Author.Name : "",
+        //                      Edition = m.Edition,
+        //                      Description = m.Discription,
+        //                      PlaceofPublishers = m.PlaceofPublishers,
+        //                      YearPublished = (int)m.YearPublished,
+        //                      Pages = m.Pages ?? 0,
+        //                      Vol = m.Vol,
+        //                      Source = m.Source,
+        //                      AvailableQuantity = (int)m.AvailableQuantity,
+        //                      TotalQuantity = (int)m.TotalQuantity,
+        //                      MaterialType = m.MaterialType,
+        //                      DepID = m.tblLibrary != null ? m.tblLibrary.LibraryName : "N/A",
+        //                      tblSchoolName = m.tblLibrary != null ? m.tblLibrary.LibraryName : "",
+        //                  })
+        //                  .FirstOrDefault();
 
-            return View("ReservationConfirmation", new List<MaterialViewModel> { model });
-        }
+        //    return View("ReservationConfirmation", new List<MaterialViewModel> { model });
+        //}
 
-        [HttpPost]
-        public ActionResult ReserveMultiple(int[] selectedMaterialIds)
-        {
-            var universityId = Session["UniversityID"];
+        //[HttpPost]
+        //public ActionResult ReserveMultiple(int[] selectedMaterialIds)
+        //{
+        //    var universityId = Session["UniversityID"];
+        //    int libraryID = (int)Session["SchoolID"];
 
-            var models = db.Materials
-                           .Include(m => m.tblSchool)
-                           .Where(m => selectedMaterialIds.Contains(m.MaterialID))
-                           .Select(m => new MaterialViewModel
-                           {
-                               MaterialID = m.MaterialID,
-                               Title = m.Title,
-                               Author = m.Author != null ? m.Author.Name : "",
-                               Edition = m.Edition,
-                               Description = m.Discription,
-                               PlaceofPublishers = m.PlaceofPublishers,
-                               YearPublished = (int)m.YearPublished,
-                               Pages = m.Pages ?? 0,
-                               Vol = m.Vol,
-                               Source = m.Source,
-                               AvailableQuantity = (int)m.AvailableQuantity,
-                               TotalQuantity = (int)m.TotalQuantity,
-                               MaterialType = m.MaterialType,
-                               DepID = m.tblSchool != null ? m.tblSchool.SchoolName : "N/A",
-                               SchoolID = m.SchoolID
-                           })
-                           .ToList();
-            return View("ReservationConfirmation", models);
-        }
+        //    var models = db.Materials
+        //                   .Include(m => m.tblLibrary)
+        //                   .Where(m => selectedMaterialIds.Contains(m.MaterialID))
+        //                   .Select(m => new MaterialViewModel
+        //                   {
+        //                       MaterialID = m.MaterialID,
+        //                       Title = m.Title,
+        //                       Author = m.Author != null ? m.Author.Name : "",
+        //                       Edition = m.Edition,
+        //                       Description = m.Discription,
+        //                       PlaceofPublishers = m.PlaceofPublishers,
+        //                       YearPublished = (int)m.YearPublished,
+        //                       Pages = m.Pages ?? 0,
+        //                       Vol = m.Vol,
+        //                       Source = m.Source,
+        //                       AvailableQuantity = (int)m.AvailableQuantity,
+        //                       TotalQuantity = (int)m.TotalQuantity,
+        //                       MaterialType = m.MaterialType,
+        //                       //DepID = m.tblLibrary != null ? m.tblLibrary.LibraryName : "N/A",
+        //                       SchoolID = (int)libraryID
+        //                   })
+        //                   .ToList();
+        //    return View("ReservationConfirmation", models);
+        //}
 
         [HttpPost]
         public ActionResult ConfirmReservation(int[] materialIds)
@@ -552,40 +596,50 @@ namespace LibraryMangement.Controllers
             int counterIndex = 0;
             string lastAssignedCounter = "N/A";
 
+           
             foreach (var materialId in materialIds)
             {
-                var material = db.Materials.Find(materialId);
-                if (material == null)
-                    continue;
-
-                if (material.AvailableQuantity > 0)
-                {
-                    material.AvailableQuantity -= 1;
-
-                    var circulation = new Circulation
+                var resrevation = db.Circulations.FirstOrDefault(a => a.MaterialID == materialId && a.UserID == patronId && a.Status == "Requested");
+                    if (resrevation != null)
                     {
-                        UserID = patronId,
-                        UniversityID = universityId?.ToString(),
-                        MaterialID = materialId,
-                        SchoolID = schoolID,
-                        RequestedDate = DateTime.Now,
-                        ExpiryDate = DateTime.Now.AddDays(3),
-                        Status = "Requested"
-                    };
-
-                    if (countersAvailable)
-                    {
-                        var assignedCounter = counters[counterIndex];
-                        circulation.CounterID = assignedCounter.CounterID;
-                        lastAssignedCounter = assignedCounter.CounterNumber;
-                        counterIndex = (counterIndex + 1) % counters.Count;
+                        return Json(new { success = false, alreadyRequested = true, message = "This book is already requested by you." });
                     }
 
-                    db.Circulations.Add(circulation);
-                }
-            }
+                else
+                {
+                    var material = db.Materials.Find(materialId);
+                    if (material == null)
+                        continue;
 
-            db.SaveChanges();
+                    if (material.AvailableQuantity > 0)
+                    {
+                        material.AvailableQuantity -= 1;
+
+                        var circulation = new Circulation
+                        {
+                            UserID = patronId,
+                            UniversityID = universityId?.ToString(),
+                            MaterialID = materialId,
+                            SchoolID = schoolID,
+                            RequestedDate = DateTime.Now,
+                            ExpiryDate = DateTime.Now.AddDays(3),
+                            Status = "Requested"
+                        };
+
+                        if (countersAvailable)
+                        {
+                            var assignedCounter = counters[counterIndex];
+                            circulation.CounterID = assignedCounter.CounterID;
+                            lastAssignedCounter = assignedCounter.CounterNumber;
+                            counterIndex = (counterIndex + 1) % counters.Count;
+                        }
+
+                        db.Circulations.Add(circulation);
+                    }
+                }
+                }
+
+                db.SaveChanges();
 
             if (countersAvailable)
                 return Json(new { success = true, message = "Reservation successful!", counterNumber = lastAssignedCounter });
@@ -636,7 +690,7 @@ namespace LibraryMangement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddToBookingList(int materialId)
         {
-            // Get PatronID from session
+           
             string patronId = Session["PatronID"].ToString();
 
             if (patronId == null)
@@ -645,14 +699,14 @@ namespace LibraryMangement.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            // Check if already exists
+            
             var existingBooking = db.Bookinglisteds
                 .FirstOrDefault(b => b.UserID == patronId && b.MaterialID == materialId && b.Status == "Pending");
 
             if (existingBooking != null)
             {
-                TempData["Error"] = "Material is already in your booking list.";
-                return RedirectToAction("ManageMaterials"); 
+                return Json(new { success = false, message = "Material is already in your booking list." });
+
             }
 
             var material = db.Materials.FirstOrDefault(m => m.MaterialID == materialId);
@@ -669,7 +723,7 @@ namespace LibraryMangement.Controllers
                 BookingDate = DateTime.Now,
                 ExpiryDate = DateTime.Now.AddDays(7),  
                 Status = "Pending",
-                SchoolID = material.SchoolID
+                SchoolID = material.LibraryID
             };
 
             db.Bookinglisteds.Add(booking);
@@ -753,7 +807,7 @@ namespace LibraryMangement.Controllers
                              .Include(b => b.FineDetails)
                              .AsQueryable();
 
-            // Apply From/To date filter
+            
             if (!string.IsNullOrEmpty(fromDate) && DateTime.TryParse(fromDate, out DateTime from))
             {
                 bookings = bookings.Where(b => b.RequestedDate >= from);
@@ -774,7 +828,7 @@ namespace LibraryMangement.Controllers
 
         public ActionResult MyProfile()
         {
-            // 1️⃣ Validate session
+           
             if (Session["UserID"] == null || Session["Role"] == null)
                 return RedirectToAction("Login", "Login");
 
@@ -783,7 +837,7 @@ namespace LibraryMangement.Controllers
 
             MyProfileViewModel profile = null;
 
-            // 2️⃣ Common lookup for University & School by UserID
+          
             var userSchool = (from us in db.tblUserSchools
                               join uni in db.tblUniversities on us.UniversityID equals uni.UniversityID
                               join sch in db.tblSchools on us.SchoolID equals sch.SchoolID
@@ -797,7 +851,7 @@ namespace LibraryMangement.Controllers
             string universityName = userSchool?.UniversityName ?? "N/A";
             string schoolName = userSchool?.SchoolName ?? "N/A";
 
-            // 3️⃣ Fetch data based on role
+           
             if (role.Equals("Faculty", StringComparison.OrdinalIgnoreCase))
             {
                 profile = (from emp in db.tblEmployees
@@ -835,11 +889,11 @@ namespace LibraryMangement.Controllers
                            }).FirstOrDefault();
             }
 
-            // 4️⃣ If no record found → back to login
+            
             if (profile == null)
                 return RedirectToAction("Login", "Login");
 
-            // 5️⃣ Return the populated profile view
+          
             return View(profile);
         }
 
@@ -850,14 +904,14 @@ namespace LibraryMangement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult MyProfile(MyProfileViewModel model)
         {
-            // 1️⃣ Check session
+           
             if (Session["UserID"] == null || Session["Role"] == null)
                 return RedirectToAction("Login", "Login");
 
             string userId = Session["UserID"].ToString();
             string role = Session["Role"].ToString();
 
-            // 2️⃣ Get the User record
+           
             var user = db.tblUsers.FirstOrDefault(u => u.UserID == userId);
             if (user == null)
             {
@@ -867,7 +921,7 @@ namespace LibraryMangement.Controllers
 
             bool updated = false;
 
-            // 3️⃣ Update based on role
+           
             if (role.Equals("Faculty", StringComparison.OrdinalIgnoreCase))
             {
                 var employee = db.tblEmployees.FirstOrDefault(e => e.UserID == userId);
@@ -891,13 +945,10 @@ namespace LibraryMangement.Controllers
                 }
             }
 
-           
-
-            // 5️⃣ Save changes if anything was updated
             if (updated)
             {
                 db.SaveChanges();
-                Session["UserName"] = model.Username; // update session username if changed
+                Session["UserName"] = model.Username; 
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
             else
@@ -959,7 +1010,7 @@ namespace LibraryMangement.Controllers
             vm.SuccessMessage = "Password changed successfully!";
             vm.CurrentPassword = vm.NewPassword = vm.ConfirmPassword = string.Empty;
 
-            // Redirect to dashboard
+           
             string role = Session["Role"]?.ToString();
             if (role == "Librarian")
                 return RedirectToAction("LibrarianDashboard", "Librarian");

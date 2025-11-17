@@ -86,6 +86,9 @@ namespace LibraryMangement.Models
         public string Gender { get; set; }
         public string BloodGroup { get; set; }
         public Nullable<bool> domicile { get; set; }
+        public Nullable<int> BranchID { get; set; }
+        public Nullable<int> CurrentBatchID { get; set; }
+        public string CleanCourse { get; set; }
     
         public virtual tblSchool tblSchool { get; set; }
         public virtual tblStudent tblStudent1 { get; set; }

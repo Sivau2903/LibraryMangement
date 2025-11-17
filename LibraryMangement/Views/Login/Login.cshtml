@@ -58,15 +58,14 @@
             </button>
 
             <!-- Forgot Password Link -->
-            <div class="forgot-password">
+            @*<div class="forgot-password">
                 <a href="@Url.Action("ForgotPassword", "Login")">Forgot Password?</a>
-            </div>
+            </div>*@
         }
     </div>
 </div>
 
 <style>
-    /* Global styles */
     * {
         margin: 0;
         padding: 0;
@@ -74,22 +73,22 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    /* Wrapper */
+   
     .login-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-       background-image: url('@Url.Content("~/Images/Login.jpg")');
+       background-image: url('@Url.Content("~/Images/Login1.jpg")');
 
         background-repeat: no-repeat;
         background-position: center center;
-        background-size: cover;
+        background-size: 200%;
         position: relative;
         overflow: hidden;
     }
 
-        /* Overlay for better contrast */
+        
         .login-wrapper::before {
             content: '';
             position: absolute;
@@ -101,7 +100,7 @@
             z-index: 1;
         }
 
-    /* Card */
+   
     .login-card {
         background: rgba(255, 255, 255, 0.85);
         padding: 35px 30px;
@@ -122,7 +121,7 @@
             box-shadow: 0 12px 45px rgba(0, 0, 0, 0.3);
         }*/
 
-    /* Logo */
+   
     .logo {
         display: flex;
         align-items: center;
@@ -163,7 +162,7 @@
             font-size: 0.95rem;
         }
 
-    /* Input fields */
+    
     .form-control {
         width: 100%;
         padding: 12px 15px 12px 40px;
@@ -181,7 +180,7 @@
             background: #fff;
         }
 
-    /* Captcha container */
+  
     .captcha-box {
         display: flex;
         align-items: center;

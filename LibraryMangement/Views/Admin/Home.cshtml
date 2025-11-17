@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-primary">🏛️ Admin Dashboard</h1>
+        <p class="text-muted fs-5">Welcome back, <strong>@Session["Name"]</strong>!</p>
+        <hr class="w-25 mx-auto border-primary opacity-75" />
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-person-gear text-primary mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="fw-semibold mb-3">Welcome to Admin Control Panel</h3>
+                    <p class="text-muted mb-4">
+                        Here you can manage libraries, assign librarians, view reports, and monitor assistant requests.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="@Url.Action("AdminDashboard", "Admin")" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-building-add me-2"></i> Create Library
+                        </a>
+                        <a href="@Url.Action("ViewAssistantRequests", "Admin")" class="btn btn-outline-primary px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-person-plus me-2"></i> Manage Requests
+                        </a>
+                        @*<a href="@Url.Action("AdminReports", "Admin")" class="btn btn-outline-secondary px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-bar-chart-line me-2"></i> View Reports
+                        </a>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+
+<style>
+    .card {
+        background-color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    footer {
+        letter-spacing: 0.5px;
+    }
+</style>

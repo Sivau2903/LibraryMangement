@@ -5,6 +5,12 @@
     ViewBag.Title = "Add Material";
     var currentYear = DateTime.Now.Year;
 }
+<style>
+    .is-invalid {
+        border: 1px solid red !important;
+        box-shadow: 0 0 4px rgba(255,0,0,0.4);
+    }
+</style>
 
 <div class="container mt-4 mb-5">
     <div class="card shadow-lg border-0">
@@ -45,10 +51,10 @@
                         <input type="text" id="Author" name="Author" class="form-control" required placeholder="Start typing author name..." />
                     </div>
 
-                    <div class="col-md-4">
+                    @*<div class="col-md-4">
                         <label class="form-label fw-semibold">Publisher</label>
                         <input type="text" name="Publisher" class="form-control" required placeholder="Enter publisher name" />
-                    </div>
+                    </div>*@
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Place of Publishers</label>
@@ -88,10 +94,11 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+
+                    @*<div class="col-md-4">
                         <label class="form-label fw-semibold">Description</label>
                         <textarea name="Description" class="form-control" placeholder="Short description..."></textarea>
-                    </div>
+                    </div>*@
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Pages</label>
@@ -204,4 +211,5 @@
             }, 4000);
         });
     </script>
+
 }

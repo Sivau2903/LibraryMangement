@@ -17,12 +17,14 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblUniversity()
         {
-            this.tblRoles = new HashSet<tblRole>();
             this.tblSchools = new HashSet<tblSchool>();
-            this.tblUserRoles = new HashSet<tblUserRole>();
-            this.tblUserRoles1 = new HashSet<tblUserRole>();
             this.tblUserUniversities = new HashSet<tblUserUniversity>();
             this.tblUserSchools = new HashSet<tblUserSchool>();
+            this.tblLibraries = new HashSet<tblLibrary>();
+            this.tblUserRoles = new HashSet<tblUserRole>();
+            this.tblUserRoles1 = new HashSet<tblUserRole>();
+            this.tblAssistantRequests = new HashSet<tblAssistantRequest>();
+            this.tblLibraryAssistants = new HashSet<tblLibraryAssistant>();
         }
     
         public string UniversityID { get; set; }
@@ -69,16 +71,20 @@ namespace LibraryMangement.Models
         public byte[] RowVersion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblRole> tblRoles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblSchool> tblSchools { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblUserSchool> tblUserSchools { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblLibrary> tblLibraries { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserRole> tblUserRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserRole> tblUserRoles1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblUserUniversity> tblUserUniversities { get; set; }
+        public virtual ICollection<tblAssistantRequest> tblAssistantRequests { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblUserSchool> tblUserSchools { get; set; }
+        public virtual ICollection<tblLibraryAssistant> tblLibraryAssistants { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace LibraryMangement.Models
         public tblSchool()
         {
             this.BarcodeHistories = new HashSet<BarcodeHistory>();
-            this.Materials = new HashSet<Material>();
             this.tblUserSchools = new HashSet<tblUserSchool>();
             this.tblStudents = new HashSet<tblStudent>();
         }
@@ -44,8 +43,6 @@ namespace LibraryMangement.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BarcodeHistory> BarcodeHistories { get; set; }
         public virtual tblUniversity tblUniversity { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Material> Materials { get; set; }
         public virtual tblUser tblUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblUserSchool> tblUserSchools { get; set; }

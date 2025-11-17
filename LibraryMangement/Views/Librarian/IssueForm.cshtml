@@ -1,0 +1,42 @@
+﻿@model  LibraryMangement.Models.WalkInIssueVM
+@{
+    ViewBag.Title = "Issue Book";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Issue Book</h4>
+<div class="card p-3">
+    @using (Html.BeginForm("IssueForm", "Librarian", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.MaterialID)
+        @Html.HiddenFor(m => m.CopyID)
+        @Html.HiddenFor(m => m.UniversityID)
+        @Html.HiddenFor(m => m.SchoolID)
+        @Html.HiddenFor(m => m.IssuedBy)
+
+        <div class="mb-3">
+            <label class="form-label">User ID</label>
+            @Html.TextBoxFor(m => m.UserID, new { @class = "form-control", required = "required", placeholder = "Enter Patron UserID" })
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Barcode</label>
+                @Html.TextBoxFor(m => m.BarcodeNumber, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Issued Date</label>
+                @Html.TextBoxFor(m => m.IssuedDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local", required = "required" })
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Due Date</label>
+                @Html.TextBoxFor(m => m.DueDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local", required = "required" })
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Confirm Issue</button>
+        <a href="@Url.Action("WalkInIssue","Librarian")" class="btn btn-secondary ms-2">Cancel</a>
+    }
+</div>

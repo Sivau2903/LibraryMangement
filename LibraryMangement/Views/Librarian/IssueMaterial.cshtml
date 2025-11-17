@@ -85,6 +85,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+
                         <td>
                             <input type="checkbox" class="reserve-select"
                                    data-circid="@item.CirculationID"
@@ -225,9 +226,8 @@
                 }
             });
 
-            // ----------------------------------------------------------
             // ✅ Print or Reprint Barcode
-            // ----------------------------------------------------------
+
             $(document).on('click', '.print-barcode-btn, .reprint-barcode-btn', function () {
                 var isReprint = $(this).hasClass('reprint-barcode-btn');
                 var row = $(this).closest('tr');
@@ -238,32 +238,35 @@
                 // Open print window
                 var printWindow = window.open('', '_blank');
                 printWindow.document.write(`<html><head><title>Print Barcode</title></head><body>`);
-                printWindow.document.write(`<h3>Barcode: ${barcode}</h3><svg id="barcode"></svg>`);
+                printWindow.document.write(`<svg id="barcode"></svg>`);
                 printWindow.document.write(`<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>`);
                 printWindow.document.write(
                     '<script>' +
-                    'JsBarcode("#barcode", "' + barcode + '", { format: "CODE128", width: 2, height: 60 });' +
+                    'JsBarcode("#barcode", "' + barcode + '", { format: "CODE128", width: 1.5,   height: 60, });' +
                     'window.print();' +
                     '<\/script>'
                 );
                 printWindow.document.write(`</body></html>`);
 
                 // Update DB only if it was not printed before
-                if (!isReprint) {
-                    $.post('/Librarian/MarkBarcodePrinted', {
-                        barcode: barcode,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    }).done(function () {
-                        dropdown.find('option:selected')
-                            .text(barcode + " (Printed)")
-                            .data('isprinted', true);
-                        row.find('.print-status').html(`
-                <span class="badge bg-success">Printed</span>
-                <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
-            `);
-                    });
-                }
-            });
+               if (!isReprint) {
+
+    $.post('@Url.Action("MarkBarcodePrinted", "Librarian")', {
+        barcode: barcode,
+        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+    })
+    .done(function () {
+        dropdown.find('option:selected')
+            .text(barcode + " (Printed)")
+            .data('isprinted', true);
+
+        row.find('.print-status').html(`
+            <span class="badge bg-success">Printed</span>
+            <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
+        `);
+    });
+}
+
 
 
             // ----------------------------------------------------------
@@ -275,7 +278,7 @@
                     var circId = $(this).data('circid');
                     var patronId = $(this).data('patronid');
                     var barcode = $(this).closest('tr').find('.reserve-barcode').val();
-                   
+
 
                     if (!barcode) {
                         showAlert('Please select a barcode for all selected items.', 'danger');
@@ -303,7 +306,8 @@
                 var patronId = window.selectedReserves[0].PatronID;
 
                 $.ajax({
-                    url: '/Librarian/IssueSelectedReserves',
+                    //url: '/Librarian/IssueSelectedReserves',
+                       url: '@Url.Action("IssueSelectedReserves", "Librarian", new { area = "" })',
                     method: 'POST',
                     data: {
                         selectedRole: selectedRole,    // ✅ send separately

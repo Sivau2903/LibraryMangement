@@ -105,7 +105,7 @@ $(document).ready(function () {
         var barcode = $("#barcodeInput").val().trim();
         if (!barcode) { alert("Please scan or enter barcode."); return; }
 
-        $.getJSON("/Librarian/GetReturnDetailsByBarcode", { barcode: barcode }, function(res){
+        $.getJSON( '@Url.Action("GetReturnDetailsByBarcode", "Librarian", new { area = "" })', { barcode: barcode }, function(res){
             if(res.success) addRow(res.record);
             else alert(res.message);
             $("#barcodeInput").val('').focus();

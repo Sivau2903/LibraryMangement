@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace LibraryMangement.Models
 {
@@ -22,6 +23,9 @@ namespace LibraryMangement.Models
         public string Name { get; internal set; }
         public string UniversityName { get; internal set; }
         public string SchoolName { get; internal set; }
+        public List<SelectListItem> SchoolList { get; set; }
+        public bool HasMultipleSchools { get; set; }
+
     }
 
 }

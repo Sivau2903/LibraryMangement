@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Librarian Dashboard";
+    string designation = Session["Designation"]?.ToString();
 }
 
 <style>
@@ -28,7 +29,7 @@
     }
 
     .custom-dropdown {
-        min-width: 220px;
+        min-width: 150px;
         font-size: 1.20rem;
         background-color: #f8f9fa;
         border-radius: 0.5rem;
@@ -50,7 +51,7 @@
 
             .custom-dropdown .dropdown-item i {
                 margin-right: 1rem;
-                font-size: 1.5rem;
+                font-size: 1rem;
             }
 
     /* Ensure all cards have same height */
@@ -77,30 +78,33 @@
             <i class="bi bi-building me-2"></i><strong>University:</strong> @Model.UniversityName
         </p>
         <p class="text-muted">
-            <i class="bi bi-bank me-2"></i><strong>School:</strong> @Model.SchoolName
+            <i class="bi bi-bank me-2"></i><strong>Selected Library:</strong> @Model.SchoolName
         </p>
     </div>
 
     <!-- Right: Add Materials -->
-    <div class="add-materials-container">
-        <div class="dropdown d-inline-block">
-            <button class="btn btn-primary dropdown-toggle add-materials-btn" type="button" id="addMaterialDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-plus-circle"></i> Add Books
-            </button>
-            <ul class="dropdown-menu custom-dropdown" aria-labelledby="addMaterialDropdown">
-                <li>
-                    <a class="dropdown-item" href="@Url.Action("AddMaterial", "Librarian")">
-                        <i class="bi bi-journal-medical"></i> Add Library Resource
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="@Url.Action("BulkUploadMaterials", "Librarian")">
-                        <i class="bi bi-file-earmark-spreadsheet"></i> Add Bulk Library Resource (Excel)
-                    </a>
-                </li>
-            </ul>
+    @if (designation == "Librarian")
+    {
+        <div class="add-materials-container">
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-primary dropdown-toggle add-materials-btn" type="button" id="addMaterialDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-plus-circle"></i> Add Books
+                </button>
+                <ul class="dropdown-menu custom-dropdown" aria-labelledby="addMaterialDropdown">
+                    <li>
+                        <a class="dropdown-item" href="@Url.Action("AddMaterial", "Librarian")">
+                            <i class="bi bi-journal-medical"></i> Add Library Resource
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="@Url.Action("BulkUploadMaterials", "Librarian")">
+                            <i class="bi bi-file-earmark-spreadsheet"></i> Add Bulk Library Resource (Excel)
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 
@@ -268,15 +272,18 @@
     </div>
 
     <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="card shadow-sm border-0 text-center p-3">
-            <div class="card-body">
-                <div class="mb-2">
-                    <i class="bi bi-box-seam fs-1 text-secondary"></i>
+        <a href="@Url.Action("LowStockMaterials", "Librarian")" class="text-decoration-none">
+            <div class="card shadow-sm border-0 text-center p-3">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="bi bi-box-seam fs-1 text-secondary"></i>
+                    </div>
+                    <h6 class="text-uppercase fw-semibold">Low Stock Library Resources</h6>
+                    <h3 class="fw-bold">@Model.MaterialsBelowStockLimit</h3>
+                    <span class="text-primary small fw-semibold">View Details →</span>
                 </div>
-                <h6 class="text-uppercase fw-semibold">Low Stock Library Resources</h6>
-                <h3 class="fw-bold">@Model.MaterialsBelowStockLimit</h3>
             </div>
-        </div>
+            </a>
     </div>
 
 </div>

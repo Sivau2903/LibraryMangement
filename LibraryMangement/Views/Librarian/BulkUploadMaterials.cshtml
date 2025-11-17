@@ -1,4 +1,4 @@
-﻿@model List<LibraryMangement.Models.MaterialBulkUploadPreviewModel>
+﻿﻿@model List<LibraryMangement.Models.MaterialBulkUploadPreviewModel>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Bulk Upload Materials";
@@ -41,8 +41,8 @@
 
     <!-- Delete Selected Button -->
     @*<div class="my-2 d-flex justify-content-end">
-        <button type="button" class="btn btn-danger btn-sm" id="deleteSelectedBtn">Delete Selected</button>
-    </div>*@
+            <button type="button" class="btn btn-danger btn-sm" id="deleteSelectedBtn">Delete Selected</button>
+        </div>*@
 </div>
 
 <!-- Template Modal -->
@@ -57,19 +57,20 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Sl.No</th>
-                            <th>Title</th>
+                            <th>S.No</th>
+                            <th>Library Acc.No</th>
+                            <th>Title of the Book</th>
                             <th>Author</th>
                             <th>Place of Publishers</th>
                             <th>Year</th>
                             <th>ISBN</th>
                             <th>Edition</th>
-                            <th>Pages</th>
+                            <th>pages</th>
                             <th>Vol.</th>
                             <th>Source</th>
                             <th>Price</th>
-                            <th>Library Resource Type</th>
-                            <th>Total Quantity</th>
+                            <th>Bill No. and Date</th>
+                           
                         </tr>
                     </thead>
                 </table>
@@ -106,9 +107,9 @@
     let loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
     const expectedHeaders = [
-        "Sl. No", "Title of the Book", "Author",
+        "S.No", "Library Acc.No", "Title of the Book", "Author",
         "Place of Publishers", "Year", "Edition", "pages", "Vol.",
-        "Source", "Price"
+        "Source", "Price", "Bill No. and Date"
     ];
 
     document.getElementById('previewBtn').addEventListener('click', function () {
@@ -133,27 +134,28 @@
                 return;
             }
 
-            const excelHeaders = rawData[0];
+            const excelHeaders = rawData[2];
             const missingHeaders = expectedHeaders.filter(h => !excelHeaders.includes(h));
             if (missingHeaders.length) {
                 alert("Excel headers are invalid or missing:\n" + missingHeaders.join(", "));
                 return;
             }
 
-            const dataRows = rawData.slice(1);
+            const dataRows = rawData.slice(3);
             previewData = dataRows.map((row, index) => ({
                 RowIndex: parseInt(row[0]) || index + 1,
-                //AccountNumber: row[1] || "",
+                AccountNumber: row[1] || "",
                 //CallNumber: row[2] || "",
-                Title: row[1] || "",
-                AuthorName: row[2] || "",
-                PlaceofPublishers: row[3] || null,
-                YearPublished: parseInt(row[4]) || null,
-                Edition: row[5] || null,
-                Pages: parseInt(row[6]) || null,
-                Vol: row[7] || null,
-                Source: row[8] || null,
-                Price: parseFloat(row[9]) || null,
+                Title: row[2] || "",
+                AuthorName: row[3] || "",
+                PlaceofPublishers: row[4] || null,
+                YearPublished: parseInt(row[5]) || null,
+                Edition: row[6] || null,
+                Pages: parseInt(row[7]) || null,
+                Vol: row[8] || null,
+                Source: row[9] || null,
+                Price: parseFloat(row[10]) || null,
+                BillNoAndDate: row[11] || null,
                 IsDuplicate: false,
                 IsDeleted: false
             }));
@@ -168,8 +170,8 @@
         if (!data.length) return;
 
         const tableHeaders = [
-            "RowIndex", "Title", "AuthorName", "PlaceofPublishers",
-            "YearPublished", "Edition", "Pages", "Vol", "Source", "Price"
+            "RowIndex", "AccountNumber","Title", "AuthorName", "PlaceofPublishers",
+            "YearPublished", "Edition", "Pages", "Vol", "Source", "Price","BillNoAndDate"
         ];
 
         let html = `<table class="table table-bordered mt-3"><thead><tr>`;
@@ -263,7 +265,7 @@
         loadingModal.show();
 
         currentRequest = $.ajax({
-            url: '/Librarian/BulkUploadMaterialsAjax',
+             url: '@Url.Action("BulkUploadMaterialsAjax", "Librarian", new { area = "" })',
             type: 'POST',
             headers: { 'RequestVerificationToken': token },
             data: { materialsJson: JSON.stringify(previewData) },
