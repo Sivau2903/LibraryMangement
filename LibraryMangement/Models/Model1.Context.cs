@@ -48,7 +48,7 @@ namespace LibraryMangement.Models
         public virtual DbSet<tblLibraryAssistant> tblLibraryAssistants { get; set; }
         public virtual DbSet<MaterialCopy> MaterialCopies { get; set; }
         public virtual DbSet<Material> Materials { get; set; }
-        public virtual DbSet<Circulation> Circulations { get; set; }
         public virtual DbSet<tblDesignation> tblDesignations { get; set; }
+        public virtual DbSet<Circulation> Circulations { get; set; }
     }
 }

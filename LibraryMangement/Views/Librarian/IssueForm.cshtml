@@ -16,10 +16,20 @@
         @Html.HiddenFor(m => m.SchoolID)
         @Html.HiddenFor(m => m.IssuedBy)
 
-        <div class="mb-3">
-            <label class="form-label">User ID</label>
-            @Html.TextBoxFor(m => m.UserID, new { @class = "form-control", required = "required", placeholder = "Enter Patron UserID" })
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">User Type</label>
+            <select id="UserType" name="UserType" class="form-select shadow-sm">
+                <option value="Student">Student</option>
+                <option value="Faculty">Faculty</option>
+            </select>
         </div>
+                                      
+        <div class="col-md-3">
+            <label id="UserIdentifierLabel" class="form-label fw-semibold">Enrollment Number</label>
+            <input type="text" id="UserIdentifier" name="UserIdentifier"
+                   class="form-control shadow-sm" required />
+        </div>
+
 
         <div class="row">
             <div class="col-md-4 mb-3">
@@ -40,3 +50,20 @@
         <a href="@Url.Action("WalkInIssue","Librarian")" class="btn btn-secondary ms-2">Cancel</a>
     }
 </div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Change label for student/faculty
+            $('#UserType').change(function () {
+                $('#UserIdentifierLabel').text($(this).val() === "Student" ? "Enrollment Number" : "Employee ID");
+            });
+        });
+    </script>
+}
+
+

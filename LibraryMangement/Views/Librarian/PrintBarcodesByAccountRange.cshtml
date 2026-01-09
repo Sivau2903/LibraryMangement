@@ -1,0 +1,192 @@
+﻿@model LibraryMangement.Models.AccountRangePrintViewModel
+
+@{
+    ViewBag.Title = "Print Barcodes by Account Range";
+}
+
+<h2>Print Barcodes by Accession Range</h2>
+
+@using (Html.BeginForm("PrintBarcodesByAccountRange", "Librarian", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>From Accession Number</label>
+            @Html.TextBoxFor(m => m.FromAccountNumber, new { @class = "form-control", autocomplete = "off" })
+            @Html.ValidationMessageFor(m => m.FromAccountNumber, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-3">
+            <label>To Accession Number</label>
+            @Html.TextBoxFor(m => m.ToAccountNumber, new { @class = "form-control", autocomplete = "off" })
+            @Html.ValidationMessageFor(m => m.ToAccountNumber, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+}
+
+@if (Model.FoundCopies != null && Model.FoundCopies.Any())
+{
+    <hr />
+    <h4>Available Accession Numbers under this Library</h4>
+
+    @*<button type="button" class="btn btn-success mb-2" id="printSelected">Print Selected</button>*@
+
+    <!-- Global Print Controls -->
+    <div class="row mb-2">
+        <div class="col-md-3">
+            <label><strong>Print Count (For All Selected)</strong></label>
+            <input type="number"
+                   id="globalPrintCount"
+                   class="form-control"
+                   value="1"
+                   min="1"
+                   max="20" />
+        </div>
+
+        <div class="col-md-3 align-self-end">
+            <button type="button" class="btn btn-success" id="printSelected">
+                Print Selected
+            </button>
+        </div>
+    </div>
+
+    <!-- Scrollable Table Wrapper -->
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; border: 1px solid #ccc;">
+        <table class="table table-bordered" id="barcodeTable">
+            <thead style="position: sticky; top: 0; background: #fff; z-index: 10;">
+                <tr>
+                    <th><input type="checkbox" id="selectAllRows" /></th>
+                    <th>Accession Number</th>
+                    <th>Barcode Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.FoundCopies.Count; i++)
+                {
+                    var item = Model.FoundCopies[i];
+                    <tr data-barcode="@item.BarcodeNumber">
+                        <td>
+                            <input type="checkbox" class="rowCheckbox" />
+                        </td>
+                        <td>@item.AccountNumber</td>
+                        <td>@item.BarcodeNumber</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-sm btn-warning print-one-btn">
+                                Print
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}
+
+@if (Model.MissingAccountNumbers != null && Model.MissingAccountNumbers.Any())
+{
+    <hr />
+    <h4>Missing Accession Numbers under this LibraryID</h4>
+    <p>The following Accession numbers in the given range do <strong>not</strong> exist in MaterialCopies for this Library:</p>
+    <div class="border p-2" style="max-height:200px; overflow:auto;">
+        @string.Join(", ", Model.MissingAccountNumbers)
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <script>
+        // Select / Deselect all rows
+        $(document).on('change', '#selectAllRows', function () {
+            $('.rowCheckbox').prop('checked', this.checked);
+        });
+
+        // ✅ Print ONE row (uses GLOBAL print count)
+        $(document).on('click', '.print-one-btn', function () {
+            var row = $(this).closest('tr');
+            var barcode = row.data('barcode');
+
+            if (!barcode) {
+                alert("No barcode found for this row.");
+                return;
+            }
+
+            var count = parseInt($('#globalPrintCount').val(), 10) || 1;
+            if (count < 1) count = 1;
+
+            var barcodes = [];
+            for (var i = 0; i < count; i++) {
+                barcodes.push({ value: barcode, text: barcode });
+            }
+
+            openPrintWindowForBarcodes(barcodes);
+        });
+
+        // ✅ Print SELECTED rows (all use same GLOBAL print count)
+        $(document).on('click', '#printSelected', function () {
+            var count = parseInt($('#globalPrintCount').val(), 10) || 1;
+            if (count < 1) count = 1;
+
+            var barcodes = [];
+
+            $('#barcodeTable tbody tr').each(function () {
+                var $row = $(this);
+                if (!$row.find('.rowCheckbox').is(':checked')) return;
+
+                var barcode = $row.data('barcode');
+                if (!barcode) return;
+
+                for (var i = 0; i < count; i++) {
+                    barcodes.push({ value: barcode, text: barcode });
+                }
+            });
+
+            if (barcodes.length === 0) {
+                alert("Please select at least one row to print.");
+                return;
+            }
+
+            openPrintWindowForBarcodes(barcodes);
+        });
+
+        // ✅ Script-only printing
+        function openPrintWindowForBarcodes(barcodes) {
+            var printWindow = window.open('', '_blank');
+            var doc = printWindow.document;
+
+            doc.open();
+            doc.write('<html><head><title>Print Barcodes</title>');
+            doc.write('<style>.barcode-block{margin:10px;text-align:center}</style>');
+            doc.write('<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>');
+            doc.write('</head><body>');
+
+            for (var i = 0; i < barcodes.length; i++) {
+                doc.write('<div class="barcode-block">');
+                doc.write('<svg id="barcode' + i + '"></svg>');
+                //doc.write('<div>' + barcodes[i].text + '</div>');
+                doc.write('</div>');
+            }
+
+            doc.write('<script>');
+            doc.write('window.onload=function(){');
+            for (var i = 0; i < barcodes.length; i++) {
+                doc.write('JsBarcode("#barcode' + i + '","' + barcodes[i].value + '",{format:"CODE128",width:1.3,height:40});');
+            }
+            doc.write('window.print();};');
+            doc.write('<\/script>');
+
+            doc.write('</body></html>');
+            doc.close();
+        }
+
+    </script>
+}

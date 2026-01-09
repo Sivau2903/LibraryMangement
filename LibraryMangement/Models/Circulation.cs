@@ -38,7 +38,7 @@ namespace LibraryMangement.Models
         public Nullable<System.DateTime> ExpiryDate { get; set; }
         public Nullable<int> SchoolID { get; set; }
         public bool IsActive { get; set; }
-        public Nullable<int> IssuedBy { get; set; }
+        public string IssuedBy { get; set; }
         public Nullable<int> CounterID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -1,232 +1,242 @@
 ﻿@model LibraryMangement.Models.CirculationViewModel
 
-@{
-    ViewBag.Title = "Manual Circulation Entry";
-}
-
 <div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h4 class="text-center text-primary mb-4">Manual Circulation Entry</h4>
+    <div class="card shadow-lg p-4 rounded-4">
+        <h4 class="text-center text-primary mb-4 fw-bold">Manual Circulation Entry</h4>
 
-        <!-- Success Message Overlay -->
-        @if (TempData["Success"] != null)
-        {
-            <div class="position-fixed top-0 start-50 translate-middle-x w-auto p-3" style="z-index: 1050;">
-                <div class="alert alert-success d-flex align-items-center justify-content-center shadow-lg rounded" role="alert">
-                    <i class="bi bi-check-circle-fill me-2 display-6"></i>
-                    <div>
-                        @TempData["Success"]
-                    </div>
-                </div>
-            </div>
-        }
+        <form id="manualCirculationForm">
+            <div class="row g-4 mb-4">
 
-        <!-- Error Message -->
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger mb-3 shadow-sm">@TempData["Error"]</div>
-        }
-
-        @using (Html.BeginForm("AddCirculationManual", "Librarian", FormMethod.Post, new { @id = "manualCirculationForm" }))
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">User ID</label>
-                    @Html.TextBoxFor(m => m.UserID, new { @class = "form-control", @required = "required", @placeholder = "Enter Patron ID" })
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Requested Date</label>
-                    @Html.TextBoxFor(m => m.RequestedDate, new
-                    {
-                        @type = "date",
-                        @class = "form-control",
-                        @Value = Model.RequestedDate != DateTime.MinValue ? Model.RequestedDate.ToString("yyyy-MM-dd") : ""
-                    })
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Issued Date</label>
-                    @Html.TextBoxFor(m => m.IssuedDate, new
-                    {
-                        @type = "date",
-                        @class = "form-control",
-                        @Value = Model.IssuedDate != DateTime.MinValue ? Model.IssuedDate.ToString("yyyy-MM-dd") : ""
-                    })
-                </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Title</label>
-                    <input type="text" id="Title" name="Title" class="form-control" placeholder="Enter Book Title" autocomplete="off" required />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Author</label>
-                    @Html.DropDownListFor(m => m.AuthorName,
-                        new List<SelectListItem> { new SelectListItem { Text = "-- Select Author --", Value = "" } },
-                        new { @id = "AuthorName", @class = "form-select", @required = "required" })
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Edition</label>
-                    @Html.DropDownListFor(m => m.Edition,
-                        new List<SelectListItem> { new SelectListItem { Text = "-- Select Edition --", Value = "" } },
-                        new { @id = "Edition", @class = "form-select", @required = "required" })
-                </div>
-                @Html.HiddenFor(m => m.MaterialID, new { id = "MaterialID" })
-            </div>
-
-            <div class="row g-3 align-items-end">
+                <!-- USER TYPE -->
                 <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    @Html.TextBoxFor(m => m.Status, new { @class = "form-control", @readonly = "readonly", @value = "Issued" })
+                    <label class="form-label fw-semibold">User Type</label>
+                    <select id="UserType" class="form-select shadow-sm">
+                        <option>Student</option>
+                        <option>Faculty</option>
+                    </select>
                 </div>
 
-                <div class="col-md-5">
-                    <label class="form-label">Barcode (Auto Assigned)</label>
-                    @Html.TextBoxFor(m => m.Barcode, new { @class = "form-control", @id = "Barcode", @readonly = "readonly" })
-
-                    <div class="text-center mt-3" id="barcodeSection" style="display:none;">
-                        <div id="barcodeToPrint">
-                            <svg id="barcodeSVG"></svg>
-                        </div>
-                        <button type="button" class="btn btn-outline-secondary mt-2" onclick="printBarcode()">Print Barcode</button>
-                    </div>
+                <!-- USER IDENTIFIER -->
+                <div class="col-md-3">
+                    <label id="UserIdentifierLabel" class="form-label fw-semibold">Enrollment Number</label>
+                    <input type="text" id="UserIdentifier" class="form-control shadow-sm" required />
                 </div>
 
-                <div class="col-md-4 text-center">
-                    <button type="submit" class="btn btn-success btn-lg mt-3 w-75">Save</button>
+                <!-- REQUESTED DATE -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Requested Date</label>
+                    @Html.TextBoxFor(m => m.RequestedDate, new { @type = "date", @class = "form-control shadow-sm", @id = "RequestedDate" })
+                </div>
+
+                <!-- ISSUED DATE -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Issued Date</label>
+                    @Html.TextBoxFor(m => m.IssuedDate, new { @type = "date", @class = "form-control shadow-sm", @id = "IssuedDate" })
                 </div>
             </div>
-        }
+            <!-- STATUS -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select id="Status" class="form-select shadow-sm">
+                        <option value="Issued">Issued</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+
+                <!-- Overdue Days -->
+                <div class="col-md-3" id="overdueSection" style="display:none;">
+                    <label class="form-label fw-semibold">Overdue Days</label>
+                    <input type="number" id="OverdueDays" name="OverdueDays"
+                           class="form-control shadow-sm" min="1" />
+                </div>
+
+            </div>
+
+            <!-- TITLE SEARCH -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Title</label>
+                    <input type="text" id="Title" placeholder="Search Title"
+                           class="form-control shadow-sm" autocomplete="off" />
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <table id="materialsTable" class="table table-bordered table-striped" style="display:none;">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Material ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Year</th>
+                        <th>Edition</th>
+                        <th>Available Barcode</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- HIDDEN FIELDS -->
+            <input type="hidden" id="MaterialID" />
+            <input type="hidden" id="SelectedBarcode" />
+
+
+
+            @*<div class="text-center mt-4">
+            <button type="button" id="SaveIssue" class="btn btn-success btn-lg px-4">Save</button>
+        </div>*@
+        </form>
     </div>
 </div>
-
-<style>
-    /* Success overlay animation */
-    .alert-success {
-        animation: pop 0.5s ease-out;
-    }
-
-    @@keyframes pop {
-        0% { transform: scale(0.8); opacity: 0; }
-        50% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); }
-    }
-</style>
 
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" />
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
     <script>
-        $(document).ready(function () {
+$(document).ready(function () {
 
-            // Autocomplete for Title
-            $('#Title').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '@Url.Action("GetMaterialTitles", "Librarian")',
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return { label: item.Title, value: item.Title };
-                            }));
-                        }
-                    });
-                },
-                select: function (event, ui) {
-                    $('#Title').val(ui.item.value);
-                    fetchAuthorsForTitle(ui.item.value);
-                }
+    // Change label for student/faculty
+    $('#UserType').change(function () {
+        $('#UserIdentifierLabel').text($(this).val() === "Student" ? "Enrollment Number" : "Employee ID");
+    });
+
+    // Show overdue days only when overdue selected
+    $('#Status').change(function () {
+        if ($(this).val() === "Overdue") {
+            $('#overdueSection').show();
+        } else {
+            $('#overdueSection').hide();
+            $('#OverdueDays').val('');
+        }
+    });
+
+    // Autocomplete for title
+    $('#Title').autocomplete({
+        source: function (req, res) {
+            $.get('@Url.Action("GetMaterialTitles","Librarian")', { term: req.term }, function (data) {
+                res($.map(data, function (i) { return { label: i.Title, value: i.Title }; }));
             });
+        },
+        select: function (e, ui) {
+            loadMaterials(ui.item.value);
+        }
+    });
 
-            // Fetch authors based on Title
-            function fetchAuthorsForTitle(title) {
-                $.ajax({
-                    url: '@Url.Action("GetAuthorsByTitle", "Librarian")',
-                    data: { title: title },
-                    success: function (data) {
-                        $('#AuthorName').empty().append('<option value="">-- Select Author --</option>');
-                        $.each(data, function (i, author) {
-                            $('#AuthorName').append('<option value="' + author + '">' + author + '</option>');
-                        });
-                        $('#Edition').empty().append('<option value="">-- Select Edition --</option>');
-                        $('#Barcode').val('');
-                        $('#barcodeSection').hide();
-                    }
-                });
-            }
+  function loadMaterials(title) {
 
-            // Fetch editions based on Title + Author
-            $('#AuthorName').change(function () {
-                var title = $('#Title').val();
-                var author = $(this).val();
-                if (title && author) {
-                    $.ajax({
-                        url: '@Url.Action("GetEditionsByTitleAuthor", "Librarian")',
-                        data: { title: title, author: author },
-                        success: function (data) {
-                            $('#Edition').empty().append('<option value="">-- Select Edition --</option>');
-                            $.each(data, function (i, edition) {
-                                $('#Edition').append('<option value="' + edition + '">' + edition + '</option>');
-                            });
-                            $('#Barcode').val('');
-                            $('#barcodeSection').hide();
-                        }
-                    });
-                }
-            });
+    $.get('@Url.Action("GetMaterialsByTitle","Librarian")', { title: title }, function (data) {
 
-            // Fetch barcode on Edition select
-            $('#Edition').change(function () {
-                var title = $('#Title').val();
-                var author = $('#AuthorName').val();
-                var edition = $(this).val();
+        console.log("Material API Response:", data);
 
-                if (title && author && edition) {
-                    $.ajax({
-                        url: '@Url.Action("GetAvailableBarcodeExact", "Librarian")',
-                        data: { title: title, authorName: author, edition: edition },
-                        success: function (data) {
-                            if (data && data.BarcodeNumber) {
-                                $('#MaterialID').val(data.MaterialID);
-                                $('#Barcode').val(data.BarcodeNumber);
-                                $('#barcodeSection').show();
-                                JsBarcode("#barcodeSVG", data.BarcodeNumber, { format: "CODE128", width: 2, height: 70, displayValue: true });
-                            } else {
-                                alert("No unprinted copy available for this exact book!");
-                                $('#Barcode').val('');
-                                $('#barcodeSection').hide();
-                            }
-                        }
-                    });
-                }
-            });
+        let tbody = $("#materialsTable tbody");
+        tbody.empty();
+
+        if (!data || data.length === 0) {
+            $("#materialsTable").hide();
+            return;
+        }
+
+        $.each(data, function (_, item) {
+            tbody.append(`
+                <tr>
+                    <td>${item.MaterialID}</td>
+                    <td>${item.Title}</td>
+                    <td>${item.Author}</td>
+                    <td>${item.Year}</td>
+                    <td>${item.Edition}</td>
+                    <td>${item.AvailableBarcode ?? "None"}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm issue-now"
+                                data-id="${item.MaterialID}"
+                                data-bc="${item.AvailableBarcode}">
+                            Mark as Issued
+                        </button>
+                    </td>
+                </tr>
+            `);
         });
 
-        function printBarcode() {
-            var printWindow = window.open('', '_blank');
-            var barcodeHTML = document.getElementById('barcodeToPrint').innerHTML;
+        $("#materialsTable").show();
+    });
+}
 
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Print Barcode</title>
-                    <style>
-                        body { text-align:center; margin-top:50px; }
-                        svg { width:250px; height:100px; }
-                    </style>
-                </head>
-                <body>${barcodeHTML}</body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-        }
+
+
+    // Select material
+  $(document).on("click", ".issue-now", function () {
+
+    $("#OverdueDays").blur();  // ← IMPORTANT FIX
+
+    let materialID = $(this).data("id");
+    let barcode = $(this).data("bc");
+
+    if (!barcode) {
+        alert("No available barcode for this material!");
+        return;
+    }
+
+    let overdueValue = 0;
+
+    if ($("#Status").val() === "Overdue") {
+        let enteredValue = $("#OverdueDays").val();
+
+        console.log("RAW OverdueDays:", enteredValue);
+
+        overdueValue = parseInt(enteredValue || "0");
+    }
+
+    let issueData = {
+        UserType: $("#UserType").val(),
+        UserIdentifier: $("#UserIdentifier").val(),
+        RequestedDate: $("#RequestedDate").val(),
+        IssuedDate: $("#IssuedDate").val(),
+        MaterialID: materialID,
+        Status: $("#Status").val(),
+        OverdueDays: overdueValue
+    };
+
+    console.log("Sending OverdueDays:", overdueValue);
+
+    $.post('@Url.Action("SaveManualIssue","Librarian")', issueData, function (msg) {
+        alert(msg);
+        loadMaterials($("#Title").val());
+    });
+});
+
+
+
+
+    // Save issue
+   $("#SaveIssue").click(function () {
+
+    let overdueValue = 0;
+
+    if ($("#Status").val() === "Overdue") {
+        overdueValue = parseInt($("#OverdueDays").val() || "0");
+    }
+
+    let data = {
+        UserType: $("#UserType").val(),
+        UserIdentifier: $("#UserIdentifier").val(),
+        RequestedDate: $("#RequestedDate").val(),
+        IssuedDate: $("#IssuedDate").val(),
+        MaterialID: $("#MaterialID").val(),
+        Status: $("#Status").val(),
+        OverdueDays: overdueValue
+    };
+
+    console.log("Sending OverdueDays:", overdueValue); // DEBUG
+
+    $.post('@Url.Action("SaveManualIssue","Librarian")', data, function (msg) {
+        alert(msg);
+        location.reload();
+    });
+});
+
+});
     </script>
 }

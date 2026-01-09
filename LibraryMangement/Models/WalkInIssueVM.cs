@@ -18,5 +18,7 @@ namespace LibraryMangement.Models
         public string UniversityID { get; set; }
         public int SchoolID { get; set; }
         public string IssuedBy { get; set; }   // current logged-in UserID or EmployeeName
+        public string UserType { get;  set; }
+        public string UserIdentifier { get;  set; }
     }
 }

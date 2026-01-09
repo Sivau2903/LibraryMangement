@@ -20,7 +20,11 @@ namespace LibraryMangement.Models
         public string Edition { get; set; }
         public bool HasMultipleSchools { get; set; }
         public List<SelectListItem> SchoolList { get; set; }
-        public string Title { get;  set; }
-       
+        public string Title { get; set; }
+        public DateTime year { get; set; }
+        public string UserType { get; set; }   // Student / Faculty
+        public string UserIdentifier { get; set; }  // Enrollment / EmployeeID input
+        public int? OverdueDays { get; set; }
+
     }
 }

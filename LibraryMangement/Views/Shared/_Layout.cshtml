@@ -264,11 +264,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("NewBookRequests", "Librarian")"><i class="bi bi-person-circle"></i> New Library Resource Requests</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCirculationManual", "Librarian")"><i class="bi bi-person-circle"></i> Manual Circulation Entry Form</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("VisitorManagement", "Librarian")"><i class="bi bi-person-circle"></i> Visitor Management</a></li>
-                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("WalkInIssue", "Librarian")"><i class="bi bi-person-circle"></i> WalkIn Issue</a></li>
-               
+
 
                 @if (designation == "Librarian")  // ✅ Only Librarian sees the rest
                 {
@@ -291,10 +287,6 @@
                     </li>
 
                     <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddFineReason", "Librarian")"><i class="bi bi-bookmark"></i> Fine Management</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCounter", "Librarian")"><i class="bi bi-person-circle"></i> Add Counter</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("RequestAssistant", "Librarian")"><i class="bi bi-person-circle"></i> Request Assistant</a></li>
-
-                    <!-- Reports -->
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportmenue" role="button" aria-expanded="false">
                             <span><i class="bi bi-file-earmark-bar-graph"></i> Reports</span>
@@ -310,7 +302,18 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCounter", "Librarian")"><i class="bi bi-person-circle"></i> Add Counter</a></li>
+                    @*<li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("RequestAssistant", "Librarian")"><i class="bi bi-person-circle"></i> Request Assistant</a></li>*@
+                    <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("PrintBarcodesByAccountRange", "Librarian")"><i class="bi bi-person-circle"></i> Print Bulk</a></li>
+
+                    <!-- Reports -->
+
                 }
+
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("NewBookRequests", "Librarian")"><i class="bi bi-person-circle"></i> New Library Resource Requests</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("AddCirculationManual", "Librarian")"><i class="bi bi-person-circle"></i> Manual Circulation Entry Form</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("VisitorManagement", "Librarian")"><i class="bi bi-person-circle"></i> Visitor Management</a></li>
+                <li class="nav-item mb-2"><a class="nav-link" href="@Url.Action("WalkInIssue", "Librarian")"><i class="bi bi-person-circle"></i> WalkIn Issue</a></li>
 
             </ul>
 

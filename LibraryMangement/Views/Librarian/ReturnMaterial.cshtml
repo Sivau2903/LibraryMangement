@@ -15,10 +15,10 @@
             <tr>
                 <th>Barcode</th>
                 <th>Title</th>
-                <th>Patron Name</th>
-                <th>Patron ID</th>
+                <th>Name</th>
+                @*<th>Patron ID</th>*@
                 <th>Email</th>
-                <th>Patron Type</th>
+                @*<th>Patron Type</th>*@
                 <th>Requested Date</th>
                 <th>Issue Date</th>
                 <th>Due Date</th>
@@ -64,9 +64,9 @@ $(document).ready(function () {
     <td>${record.BarcodeNumber}</td>
     <td>${record.MaterialTitle}</td>
     <td>${record.PatronName}</td>
-    <td>${record.PatronID}</td>
+   
     <td>${record.PatronEmail}</td>
-    <td>${record.PatronType}</td>
+    
     <td>${formatDate(record.RequestedDate)}</td>
     <td>${formatDate(record.IssueDate)}</td>
     <td>${formatDate(record.DueDate)}</td>
@@ -105,7 +105,7 @@ $(document).ready(function () {
         var barcode = $("#barcodeInput").val().trim();
         if (!barcode) { alert("Please scan or enter barcode."); return; }
 
-        $.getJSON( '@Url.Action("GetReturnDetailsByBarcode", "Librarian", new { area = "" })', { barcode: barcode }, function(res){
+        $.getJSON( '@Url.Action("GetReturnDetailsByBarcode", "Librarian")', { barcode: barcode }, function(res){
             if(res.success) addRow(res.record);
             else alert(res.message);
             $("#barcodeInput").val('').focus();

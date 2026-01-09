@@ -16,57 +16,73 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
+<style>
+    .dataTables_wrapper .dataTables_scrollBody {
+        border: 1px solid #dee2e6;
+    }
+
+    table.dataTable thead th {
+        background-color: #212529;
+        color: white;
+    }
+    .table-scroll {
+        max-height: 700px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+    }
+
+</style>
 
 
 <form method="post" action="@Url.Action("UpdateReorderLevel", "Librarian")">
-
-    <table id="lowStockTable" class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Edition</th>
-                <th>Available Qty</th>
-                <th>Reorder Level</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-scroll">
+        <table id="lowStockTable" class="table table-bordered table-striped w-100">
+            <thead class="table-dark">
                 <tr>
-                    <td>@item.Title</td>
-                    <td>@item.Author</td>
-                    <td>@item.Edition</td>
-                    <td>@item.AvailableQty</td>
-
-                    <td>
-                        <input type="number"
-                               name="reorderLevel"
-                               class="form-control"
-                               style="width:120px;"
-                               value="@(item.ReorderLevel ?? 0)"
-                               min="0"
-                               required />
-                    </td>
-
-                    <td>
-                        <button type="submit"
-                                name="materialId"
-                                value="@item.MaterialID"
-                                onclick="return confirmSave('@item.Title');"
-                                class="btn btn-primary btn-sm">
-
-                            @(item.ReorderLevel == null ? "Save" : "Update")
-
-                        </button>
-                    </td>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Edition</th>
+                    <th>Available Qty</th>
+                    <th>Reorder Level</th>
+                    <th>Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
 
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.Author</td>
+                        <td>@item.Edition</td>
+                        <td>@item.AvailableQty</td>
+
+                        <td>
+                            <input type="number"
+                                   name="reorderLevel"
+                                   class="form-control"
+                                   style="width:120px;"
+                                   value="@(item.ReorderLevel ?? 0)"
+                                   min="0"
+                                   required />
+                        </td>
+
+                        <td>
+                            <button type="submit"
+                                    name="materialId"
+                                    value="@item.MaterialID"
+                                    onclick="return confirmSave('@item.Title');"
+                                    class="btn btn-primary btn-sm">
+
+                                @(item.ReorderLevel == null ? "Save" : "Update")
+
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </form>
 
 
@@ -76,13 +92,15 @@
 
 <script>
     $(document).ready(function () {
-        $('#lowStockTable').DataTable({
-            scrollY: "550px",        // inside scroll
-            scrollCollapse: true,
-            paging: true,            // Enable pagination
-            searching: true,         // Enable search bar
-            info: true
-        });
+        
+            $('#lowStockTable').DataTable({
+                paging: true,
+                searching: true,
+                info: true,
+                ordering: true
+            });
+            
+       
     });
 
     function confirmSave(title) {

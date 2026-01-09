@@ -49,11 +49,12 @@
         <!-- Select Role -->
         <div class="col-auto">
             <label for="roleSelect" class="form-label fw-bold">Select Role:</label>
-            <select id="roleSelect" class="form-select" style="width:150px;">
+            <select id="roleSelect" class="form-select w-auto">
                 <option value="Student" @(ViewBag.SelectedRole == "Student" ? "selected" : "")>Student</option>
                 <option value="Faculty" @(ViewBag.SelectedRole == "Faculty" ? "selected" : "")>Faculty</option>
             </select>
         </div>
+
 
         <!-- Filter by Patron ID -->
         <div class="col-auto">
@@ -139,212 +140,211 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            // 🔹 Patron Filter
-            $('#patronFilter').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $("#reservedTable tbody tr").filter(function () {
-                    $(this).toggle($(this).find('.user-id').text().toLowerCase().indexOf(value) > -1);
-                });
+        // 🔹 Patron Filter
+        $('#patronFilter').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            $("#reservedTable tbody tr").filter(function () {
+                $(this).toggle($(this).find('.user-id').text().toLowerCase().indexOf(value) > -1);
             });
+        });
 
-            // 🔹 Role change: reload page with selected role
-            $('#roleSelect').change(function () {
-                var role = $(this).val();
-                window.location.href = '@Url.Action("IssueMaterial","Librarian")?selectedRole=' + role;
-            });
+        $('#roleSelect').on('change', function () {
+            var role = $(this).val();
+            if (!role) return;
 
-            // ----------------------------------------------------------
-            // ✅ Load Available Barcodes dynamically
-            // ----------------------------------------------------------
-            $(document).on('focus', '.reserve-barcode', function () {
-                var dropdown = $(this);
-                var materialId = dropdown.data('materialid');
+            var url = '@Url.Action("IssueMaterial", "Librarian")' + '?selectedRole=' + encodeURIComponent(role);
+            window.location.href = url;
+        });
 
-                if (!materialId) return;
+        // ----------------------------------------------------------
+        // ✅ Load Available Barcodes dynamically
+        // ----------------------------------------------------------
+        $(document).on('focus', '.reserve-barcode', function () {
+            var dropdown = $(this);
+            var materialId = dropdown.data('materialid');
 
-                // Prevent reloading if already loaded
-                if (dropdown.data('loaded') === true) return;
+            if (!materialId) return;
 
-                console.log("Fetching barcodes for MaterialID:", materialId);
+            // Prevent reloading if already loaded
+            if (dropdown.data('loaded') === true) return;
 
-                $.ajax({
-                    url: '@Url.Action("GetAvailableBarcodes", "Librarian", new { area = "" })',
-                    type: 'GET',
-                    data: { materialId: materialId },
-                    success: function (response) {
-                        console.log("Barcodes Response:", response);
-                        dropdown.empty().append('<option value="">-- Select Barcode --</option>');
+            console.log("Fetching barcodes for MaterialID:", materialId);
 
-                        if (response.success && response.barcodes.length > 0) {
-                            $.each(response.barcodes, function (i, code) {
-                                dropdown.append(
-                                    `<option value="${code.Barcode}" data-isprinted="${code.IsPrinted}">
-                                        ${code.Barcode}
-                                     </option>`
-                                );
-                            });
-                            dropdown.data('loaded', true);
-                        } else {
-                            dropdown.append('<option value="">No barcodes available</option>');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error fetching barcodes:", error);
-                        dropdown.empty().append('<option value="">Error loading barcodes</option>');
+            $.ajax({
+                url: '@Url.Action("GetAvailableBarcodes", "Librarian", new { area = "" })',
+                type: 'GET',
+                data: { materialId: materialId },
+                success: function (response) {
+                    console.log("Barcodes Response:", response);
+                    dropdown.empty().append('<option value="">-- Select Barcode --</option>');
+
+                    if (response.success && response.barcodes.length > 0) {
+                        $.each(response.barcodes, function (i, code) {
+                            dropdown.append(
+                                `<option value="${code.Barcode}" data-isprinted="${code.IsPrinted}">
+                                    ${code.Barcode}
+                                 </option>`
+                            );
+                        });
+                        dropdown.data('loaded', true);
+                    } else {
+                        dropdown.append('<option value="">No barcodes available</option>');
                     }
-                });
-            });
-
-            // ----------------------------------------------------------
-            // ✅ Update Print Status Column dynamically
-            // ----------------------------------------------------------
-            $(document).on('change', '.reserve-barcode', function () {
-                var selectedOption = $(this).find('option:selected');
-                var row = $(this).closest('tr');
-                var printCell = row.find('.print-status');
-                var isPrinted = selectedOption.data('isprinted');
-
-                printCell.empty(); // Clear previous content
-
-                if (!$(this).val()) {
-                    printCell.html('<span class="badge bg-secondary">N/A</span>');
-                    return;
-                }
-
-                if (isPrinted === true) {
-                    printCell.html(`
-            <span class="badge bg-success">Printed</span>
-            <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
-        `);
-                } else {
-                    printCell.html(`
-            <button class="btn btn-sm btn-warning print-barcode-btn">Print</button>
-        `);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching barcodes:", error);
+                    dropdown.empty().append('<option value="">Error loading barcodes</option>');
                 }
             });
+        });
 
-            // ✅ Print or Reprint Barcode
+        // ----------------------------------------------------------
+        // ✅ Update Print Status Column dynamically
+        // ----------------------------------------------------------
+        $(document).on('change', '.reserve-barcode', function () {
+            var selectedOption = $(this).find('option:selected');
+            var row = $(this).closest('tr');
+            var printCell = row.find('.print-status');
+            var isPrinted = selectedOption.data('isprinted');
 
-            $(document).on('click', '.print-barcode-btn, .reprint-barcode-btn', function () {
-                var isReprint = $(this).hasClass('reprint-barcode-btn');
-                var row = $(this).closest('tr');
-                var dropdown = row.find('.reserve-barcode');
-                var barcode = dropdown.val();
-                if (!barcode) { alert("Select a barcode first."); return; }
+            printCell.empty(); // Clear previous content
 
-                // Open print window
-                var printWindow = window.open('', '_blank');
-                printWindow.document.write(`<html><head><title>Print Barcode</title></head><body>`);
-                printWindow.document.write(`<svg id="barcode"></svg>`);
-                printWindow.document.write(`<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>`);
-                printWindow.document.write(
-                    '<script>' +
-                    'JsBarcode("#barcode", "' + barcode + '", { format: "CODE128", width: 1.5,   height: 60, });' +
-                    'window.print();' +
-                    '<\/script>'
-                );
-                printWindow.document.write(`</body></html>`);
+            if (!$(this).val()) {
+                printCell.html('<span class="badge bg-secondary">N/A</span>');
+                return;
+            }
 
-                // Update DB only if it was not printed before
-               if (!isReprint) {
-
-    $.post('@Url.Action("MarkBarcodePrinted", "Librarian")', {
-        barcode: barcode,
-        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-    })
-    .done(function () {
-        dropdown.find('option:selected')
-            .text(barcode + " (Printed)")
-            .data('isprinted', true);
-
-        row.find('.print-status').html(`
-            <span class="badge bg-success">Printed</span>
-            <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
-        `);
-    });
-}
-
-
-
-            // ----------------------------------------------------------
-            // ✅ Issue Selected Reserves
-            // ----------------------------------------------------------
-            $('#issueSelectedReserves').click(function () {
-                var selected = [];
-                $('.reserve-select:checked').each(function () {
-                    var circId = $(this).data('circid');
-                    var patronId = $(this).data('patronid');
-                    var barcode = $(this).closest('tr').find('.reserve-barcode').val();
-
-
-                    if (!barcode) {
-                        showAlert('Please select a barcode for all selected items.', 'danger');
-                        selected = [];
-                        return false;
-                    }
-
-                    selected.push({  CirculationID: circId, PatronID: patronId, Barcode: barcode });
-                });
-
-                if (!selected.length) {
-                    showAlert('Select at least one reserve to issue.', 'warning');
-                    return;
-                }
-
-                window.selectedReserves = selected;
-                $('#confirmIssueModal').modal('show');
-            });
-
-            // ----------------------------------------------------------
-            // ✅ Confirm Issue
-            // ----------------------------------------------------------
-            $('#confirmIssueBtn').click(function () {
-                var selectedRole = $('#roleSelect').val(); // ✅ get role from dropdown again
-                var patronId = window.selectedReserves[0].PatronID;
-
-                $.ajax({
-                    //url: '/Librarian/IssueSelectedReserves',
-                       url: '@Url.Action("IssueSelectedReserves", "Librarian", new { area = "" })',
-                    method: 'POST',
-                    data: {
-                        selectedRole: selectedRole,    // ✅ send separately
-                        userId: patronId,              // ✅ match controller parameter name
-                        selectedReserves: window.selectedReserves,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (data) {
-                        $('#confirmIssueModal').modal('hide');
-                        if (data.success) {
-                            showAlert('Selected materials issued successfully!', 'success');
-                            setTimeout(() => location.reload(), 2500);
-                        } else {
-                            showAlert(data.message || 'Error issuing reserves.', 'danger');
-                        }
-                    },
-                    error: function () {
-                        $('#confirmIssueModal').modal('hide');
-                        showAlert('An error occurred while issuing materials.', 'danger');
-                    }
-                });
-            });
-
-
-            // ----------------------------------------------------------
-            // ✅ Alert Utility
-            // ----------------------------------------------------------
-            function showAlert(message, type) {
-                var alertBox = $(`
-                    <div class="alert alert-${type} alert-dismissible fade show alert-floating">
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>`);
-                $('#alertContainer').append(alertBox);
-                setTimeout(() => alertBox.alert('close'), 4000);
+            if (isPrinted === true) {
+                printCell.html(`
+                    <span class="badge bg-success">Printed</span>
+                    <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
+                `);
+            } else {
+                printCell.html(`
+                    <button class="btn btn-sm btn-warning print-barcode-btn">Print</button>
+                `);
             }
         });
+
+        // ✅ Print or Reprint Barcode
+        $(document).on('click', '.print-barcode-btn, .reprint-barcode-btn', function () {
+            var isReprint = $(this).hasClass('reprint-barcode-btn');
+            var row = $(this).closest('tr');
+            var dropdown = row.find('.reserve-barcode');
+            var barcode = dropdown.val();
+
+            if (!barcode) {
+                alert("Select a barcode first.");
+                return;
+            }
+
+            // Open print window
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write(`<html><head><title>Print Barcode</title></head><body>`);
+            printWindow.document.write(`<svg id="barcode"></svg>`);
+            printWindow.document.write(`<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>`);
+            printWindow.document.write(
+                '<script>' +
+                'JsBarcode("#barcode", "' + barcode + '", { format: "CODE128", width: 1.5, height: 60 });' +
+                'window.print();' +
+                '<\/script>'
+            );
+            printWindow.document.write(`</body></html>`);
+
+            // Update DB only if it was not printed before
+            if (!isReprint) {
+                $.post('@Url.Action("MarkBarcodePrinted", "Librarian")', {
+                    barcode: barcode,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                })
+                .done(function () {
+                    dropdown.find('option:selected')
+                        .text(barcode + " (Printed)")
+                        .data('isprinted', true);
+
+                    row.find('.print-status').html(`
+                        <span class="badge bg-success">Printed</span>
+                        <button class="btn btn-sm btn-outline-primary reprint-barcode-btn ms-2">Reprint</button>
+                    `);
+                });
+            }
+        });   // ✅ THIS was missing
+
+        // ----------------------------------------------------------
+        // ✅ Issue Selected Reserves
+        // ----------------------------------------------------------
+        $('#issueSelectedReserves').click(function () {
+            var selected = [];
+            $('.reserve-select:checked').each(function () {
+                var circId = $(this).data('circid');
+                var patronId = $(this).data('patronid');
+                var barcode = $(this).closest('tr').find('.reserve-barcode').val();
+
+                if (!barcode) {
+                    showAlert('Please select a barcode for all selected items.', 'danger');
+                    selected = [];
+                    return false;
+                }
+
+                selected.push({ CirculationID: circId, PatronID: patronId, Barcode: barcode });
+            });
+
+            if (!selected.length) {
+                showAlert('Select at least one reserve to issue.', 'warning');
+                return;
+            }
+
+            window.selectedReserves = selected;
+            $('#confirmIssueModal').modal('show');
+        });
+
+        // ----------------------------------------------------------
+        // ✅ Confirm Issue
+        // ----------------------------------------------------------
+        $('#confirmIssueBtn').click(function () {
+            var selectedRole = $('#roleSelect').val(); // ✅ get role from dropdown again
+            var patronId = window.selectedReserves[0].PatronID;
+
+            $.ajax({
+                url: '@Url.Action("IssueSelectedReserves", "Librarian")',
+                method: 'POST',
+                data: {
+                    selectedRole: selectedRole,
+                    userId: patronId,
+                    selectedReserves: window.selectedReserves,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    $('#confirmIssueModal').modal('hide');
+                    if (data.success) {
+                        showAlert('Selected materials issued successfully!', 'success');
+                        setTimeout(() => location.reload(), 2500);
+                    } else {
+                        showAlert(data.message || 'Error issuing reserves.', 'danger');
+                    }
+                },
+                error: function () {
+                    $('#confirmIssueModal').modal('hide');
+                    showAlert('An error occurred while issuing materials.', 'danger');
+                }
+            });
+        });
+
+        function showAlert(message, type) {
+            var alertBox = $(`
+                <div class="alert alert-${type} alert-dismissible fade show alert-floating">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`);
+            $('#alertContainer').append(alertBox);
+            setTimeout(() => alertBox.alert('close'), 4000);
+        }
+    });
     </script>
+
 }
 

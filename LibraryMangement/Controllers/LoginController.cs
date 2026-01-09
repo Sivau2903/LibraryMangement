@@ -150,14 +150,12 @@ namespace LibraryMangement.Controllers
             }
         }
 
-       
         public static bool VerifyPassword(string enteredClientHex, string storedHash, string salt)
         {
             string hashOfInput = HashClientPassword(enteredClientHex, salt);
             return hashOfInput == storedHash;
         }
 
-       
         private void UpdateSaltInDatabase(string userId, string base64Salt)
         {
             var user = db.tblUsers.FirstOrDefault(u => u.UserID == userId);

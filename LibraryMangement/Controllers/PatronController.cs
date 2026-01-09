@@ -103,7 +103,7 @@ namespace LibraryMangement.Controllers
 
             
             var libraries = db.tblLibraries
-                              .Where(l => l.UniversityID.ToString() == universityID)
+                              .Where(l => l.UniversityID.ToString() == universityID && l.IsActive==true)
                               .ToList();
 
             ViewBag.Libraries = new SelectList(libraries, "LibraryID", "LibraryName", selectedLibraryId);

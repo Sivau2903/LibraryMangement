@@ -171,6 +171,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccountRangePrintViewModel.cs" />
     <Compile Include="Models\ActiveBookingViewModel.cs" />
     <Compile Include="Models\ActiveIssueViewModel.cs" />
     <Compile Include="Models\AssistantRequestViewModel.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Models\MaterialCopy.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\MaterialCopyPrintDto.cs" />
     <Compile Include="Models\MaterialCopyViewModel.cs" />
     <Compile Include="Models\MaterialRequestViewModel.cs" />
     <Compile Include="Models\MaterialType.cs">
@@ -429,6 +431,7 @@
     <Content Include="Views\Librarian\LowStockMaterials.cshtml" />
     <Content Include="Views\Admin\ManageLibraries.cshtml" />
     <Content Include="Templates\BulkUploadTemplate.xlsx" />
+    <Content Include="Views\Librarian\PrintBarcodesByAccountRange.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

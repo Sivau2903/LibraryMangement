@@ -59,27 +59,30 @@
                         <tr>
                             <th>S.No</th>
                             <th>Library Acc.No</th>
+                            <th>Call. No</th>
                             <th>Title of the Book</th>
                             <th>Author</th>
                             <th>Place of Publishers</th>
                             <th>Year</th>
-                            <th>ISBN</th>
                             <th>Edition</th>
                             <th>pages</th>
                             <th>Vol.</th>
                             <th>Source</th>
                             <th>Price</th>
                             <th>Bill No. and Date</th>
-                           
+                            <th>Remarks</th>
                         </tr>
                     </thead>
                 </table>
                 <p>Note: Upload 500-1000 Library Resources at a time, not more than that.</p>
             </div>
             <div class="modal-footer">
-                <a href="@Url.Action("DownloadBulkTemplate", "Librarian")" class="btn btn-success">
+                <a href="@Url.Action("DownloadBulkTemplate", "Librarian")"
+                   class="btn btn-success"
+                   data-bs-dismiss="modal">
                     Download Template
                 </a>
+
 
 
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -107,9 +110,9 @@
     let loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
     const expectedHeaders = [
-        "S.No", "Library Acc.No", "Title of the Book", "Author",
+        "S.No", "Library Acc.No","Call. No", "Title of the Book", "Author",
         "Place of Publishers", "Year", "Edition", "pages", "Vol.",
-        "Source", "Price", "Bill No. and Date"
+        "Source", "Price", "Bill No. and Date","Remarks"
     ];
 
     document.getElementById('previewBtn').addEventListener('click', function () {
@@ -145,17 +148,18 @@
             previewData = dataRows.map((row, index) => ({
                 RowIndex: parseInt(row[0]) || index + 1,
                 AccountNumber: row[1] || "",
-                //CallNumber: row[2] || "",
-                Title: row[2] || "",
-                AuthorName: row[3] || "",
-                PlaceofPublishers: row[4] || null,
-                YearPublished: parseInt(row[5]) || null,
-                Edition: row[6] || null,
-                Pages: parseInt(row[7]) || null,
-                Vol: row[8] || null,
-                Source: row[9] || null,
-                Price: parseFloat(row[10]) || null,
-                BillNoAndDate: row[11] || null,
+                CallNumber: row[2] || "",
+                Title: row[3] || "",
+                AuthorName: row[4] || "",
+                PlaceofPublishers: row[5] || null,
+                YearPublished: parseInt(row[6]) || null,
+                Edition: row[7] || null,
+                Pages: parseInt(row[8]) || null,
+                Vol: row[9] || null,
+                Source: row[10] || null,
+                Price: parseFloat(row[11]) || null,
+                BillNoAndDate: row[12] || null,
+                Remarks: row[13] || null,
                 IsDuplicate: false,
                 IsDeleted: false
             }));
@@ -167,23 +171,41 @@
     });
 
     function renderPreviewTable(data) {
-        if (!data.length) return;
+        console.log("renderPreviewTable received:", data);
+
+        if (!Array.isArray(data)) {
+            console.error("renderPreviewTable: data is not an array", data);
+            return;
+        }
 
         const tableHeaders = [
-            "RowIndex", "AccountNumber","Title", "AuthorName", "PlaceofPublishers",
-            "YearPublished", "Edition", "Pages", "Vol", "Source", "Price","BillNoAndDate"
+            "RowIndex", "AccountNumber", "Call. No", "Title", "AuthorName", "PlaceofPublishers",
+            "YearPublished", "Edition", "Pages", "Vol", "Source", "Price", "BillNoAndDate", "Remarks"
         ];
+
+        // 1️⃣ Filter out completely empty rows
+        const filtered = data.filter(r => {
+            if (!r) return false;
+            return Object.values(r).some(v => (v ?? '').toString().trim() !== '');
+        });
+
+        console.log("Total rows from Excel:", data.length, "After filtering empty:", filtered.length);
+
+        // 2️⃣ Limit how many rows we render in preview
+        const maxPreviewRows = 5000000; // adjust if you want more/less
+        const rowsToRender = filtered.slice(0, maxPreviewRows);
 
         let html = `<table class="table table-bordered mt-3"><thead><tr>`;
         html += `<th><input type="checkbox" id="selectAll"></th>`;
         tableHeaders.forEach(header => html += `<th>${header}</th>`);
         html += `<th>Action</th></tr></thead><tbody>`;
 
-        data.forEach((row, index) => {
+        rowsToRender.forEach((row, index) => {
             html += `<tr data-index="${index}">`;
             html += `<td><input type="checkbox" class="rowCheckbox"></td>`;
             tableHeaders.forEach(header => {
-                html += `<td><input type="text" class="form-control" value="${row[header] ?? ''}" data-key="${header}" /></td>`;
+                const value = row[header] ?? ''; // safely handle undefined
+                html += `<td><input type="text" class="form-control" value="${value}" data-key="${header}" /></td>`;
             });
             html += `<td><button type="button" class="btn btn-danger btn-sm deleteRow">Delete</button></td>`;
             html += `</tr>`;
@@ -193,6 +215,10 @@
         document.getElementById('previewTableContainer').innerHTML = html;
         document.getElementById('saveBtn').style.display = 'inline-block';
 
+        // Important: sync global previewData with the filtered/limited rows
+        // so your save logic uses the same data user sees
+        window.previewData = rowsToRender;
+
         // Row Delete Button
         document.querySelectorAll('.deleteRow').forEach(btn => {
             btn.addEventListener('click', function () {
@@ -201,7 +227,8 @@
                 const idx = tr.dataset.index;
                 previewData.splice(idx, 1);
                 tr.remove();
-                document.querySelectorAll('#previewTableContainer tbody tr').forEach((row, i) => row.dataset.index = i);
+                document.querySelectorAll('#previewTableContainer tbody tr')
+                    .forEach((row, i) => row.dataset.index = i);
             });
         });
 
@@ -229,6 +256,7 @@
         });
     }
 
+
     // Delete multiple selected rows
     document.getElementById('deleteSelectedBtn').addEventListener('click', function () {
         const selected = document.querySelectorAll('.rowCheckbox:checked');
@@ -249,10 +277,14 @@
         }
     });
 
-    document.querySelector('.btn.btn-success').addEventListener('click', function () {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('templateModal'));
-        modal.hide();
+    document.querySelector('#templateModal .btn.btn-success').addEventListener('click', function () {
+        const modalEl = document.getElementById('templateModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) {
+            modal.hide();
+        }
     });
+
 
     // Save Button
     document.getElementById('saveBtn').addEventListener('click', function () {

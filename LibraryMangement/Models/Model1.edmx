@@ -53,7 +53,7 @@
           <Property Name="ReturnDate" Type="datetime" />
           <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="FineAmount" Type="decimal" Precision="8" Scale="2" />
-          <Property Name="UniversityID" Type="varchar" MaxLength="50" />
+          <Property Name="UniversityID" Type="varchar" MaxLength="450" />
           <Property Name="MaterialID" Type="int" />
           <Property Name="RequestedDate" Type="datetime" />
           <Property Name="BarcodeNumber" Type="varchar" MaxLength="50" />
@@ -62,7 +62,7 @@
           <Property Name="ExpiryDate" Type="datetime" />
           <Property Name="SchoolID" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IssuedBy" Type="int" />
+          <Property Name="IssuedBy" Type="varchar" MaxLength="450" />
           <Property Name="CounterID" Type="int" />
         </EntityType>
         <EntityType Name="FineDetails">
@@ -1290,6 +1290,23 @@
             <End Role="tblLibrary" EntitySet="tblLibraries" />
             <End Role="Material" EntitySet="Materials" />
           </AssociationSet>
+          <AssociationSet Name="FK_tblAssistantRequests_tblUniversity" Association="ICFAISMSModel.FK_tblAssistantRequests_tblUniversity">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblAssistantRequest" EntitySet="tblAssistantRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblLibraryAssistants_tblUniversity" Association="ICFAISMSModel.FK_tblLibraryAssistants_tblUniversity">
+            <End Role="tblUniversity" EntitySet="tblUniversities" />
+            <End Role="tblLibraryAssistant" EntitySet="tblLibraryAssistants" />
+          </AssociationSet>
+          <EntitySet Name="tblDesignations" EntityType="ICFAISMSModel.tblDesignation" />
+          <AssociationSet Name="FK_tblDesignation_Role" Association="ICFAISMSModel.FK_tblDesignation_Role">
+            <End Role="tblRole" EntitySet="tblRoles" />
+            <End Role="tblDesignation" EntitySet="tblDesignations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblEmployee_tblDesignation" Association="ICFAISMSModel.FK_tblEmployee_tblDesignation">
+            <End Role="tblDesignation" EntitySet="tblDesignations" />
+            <End Role="tblEmployee" EntitySet="tblEmployees" />
+          </AssociationSet>
           <EntitySet Name="Circulations" EntityType="ICFAISMSModel.Circulation" />
           <AssociationSet Name="FK__FineDetai__Circu__3726238F" Association="ICFAISMSModel.FK__FineDetai__Circu__3726238F">
             <End Role="Circulation" EntitySet="Circulations" />
@@ -1310,23 +1327,6 @@
           <AssociationSet Name="FK_Circulation_tblUsers" Association="ICFAISMSModel.FK_Circulation_tblUsers">
             <End Role="tblUser" EntitySet="tblUsers" />
             <End Role="Circulation" EntitySet="Circulations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblAssistantRequests_tblUniversity" Association="ICFAISMSModel.FK_tblAssistantRequests_tblUniversity">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblAssistantRequest" EntitySet="tblAssistantRequests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblLibraryAssistants_tblUniversity" Association="ICFAISMSModel.FK_tblLibraryAssistants_tblUniversity">
-            <End Role="tblUniversity" EntitySet="tblUniversities" />
-            <End Role="tblLibraryAssistant" EntitySet="tblLibraryAssistants" />
-          </AssociationSet>
-          <EntitySet Name="tblDesignations" EntityType="ICFAISMSModel.tblDesignation" />
-          <AssociationSet Name="FK_tblDesignation_Role" Association="ICFAISMSModel.FK_tblDesignation_Role">
-            <End Role="tblRole" EntitySet="tblRoles" />
-            <End Role="tblDesignation" EntitySet="tblDesignations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblEmployee_tblDesignation" Association="ICFAISMSModel.FK_tblEmployee_tblDesignation">
-            <End Role="tblDesignation" EntitySet="tblDesignations" />
-            <End Role="tblEmployee" EntitySet="tblEmployees" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Author">
@@ -1819,7 +1819,7 @@
           <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_FineDetails_tblUsers" FromRole="FineDetail" ToRole="tblUser" />
           <NavigationProperty Name="Circulation" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="FineDetail" ToRole="Circulation" />
           <NavigationProperty Name="Circulation1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="FineDetail" ToRole="Circulation" />
-        </EntityType>
+          </EntityType>
         <EntityType Name="FineReason">
           <Key>
             <PropertyRef Name="FineReasonID" />
@@ -2167,8 +2167,8 @@
           <NavigationProperty Name="Bookinglisteds" Relationship="ICFAISMSModel.FK_Booking_Material" FromRole="Material" ToRole="Bookinglisted" />
           <NavigationProperty Name="MaterialCopies" Relationship="ICFAISMSModel.FK_MaterialCopies_Materials" FromRole="Material" ToRole="MaterialCopy" />
           <NavigationProperty Name="tblLibrary" Relationship="ICFAISMSModel.FK_Materials_tblLibraries" FromRole="Material" ToRole="tblLibrary" />
-          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Material" ToRole="Circulation" />
           <Property Name="StockLimit" Type="Int32" />
+          <NavigationProperty Name="Circulations" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Material" ToRole="Circulation" />
         </EntityType>
         <Association Name="FK_Materials_Authors">
           <End Type="ICFAISMSModel.Author" Role="Author" Multiplicity="0..1" />
@@ -2215,95 +2215,6 @@
             </Principal>
             <Dependent Role="Material">
               <PropertyRef Name="LibraryID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Circulation">
-          <Key>
-            <PropertyRef Name="CirculationID" />
-          </Key>
-          <Property Name="CirculationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CopyID" Type="Int32" />
-          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
-          <Property Name="IssueDate" Type="DateTime" Precision="3" />
-          <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="ReturnDate" Type="DateTime" Precision="3" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="FineAmount" Type="Decimal" Precision="8" Scale="2" />
-          <Property Name="UniversityID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="MaterialID" Type="Int32" />
-          <Property Name="RequestedDate" Type="DateTime" Precision="3" />
-          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsOverdue" Type="Boolean" />
-          <Property Name="LastFineUpdateDate" Type="DateTime" Precision="3" />
-          <Property Name="ExpiryDate" Type="DateTime" Precision="3" />
-          <Property Name="SchoolID" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IssuedBy" Type="Int32" />
-          <Property Name="CounterID" Type="Int32" />
-          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="Circulation" ToRole="FineDetail" />
-          <NavigationProperty Name="FineDetails1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="Circulation" ToRole="FineDetail" />
-          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Circulation" ToRole="Material" />
-          <NavigationProperty Name="MaterialCopy" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="Circulation" ToRole="MaterialCopy" />
-          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Circulation_tblUsers" FromRole="Circulation" ToRole="tblUser" />
-        </EntityType>
-        <Association Name="FK__FineDetai__Circu__3726238F">
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Circulation">
-              <PropertyRef Name="CirculationID" />
-            </Principal>
-            <Dependent Role="FineDetail">
-              <PropertyRef Name="CirculationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__FineDetai__Circu__52CE3E04">
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Circulation">
-              <PropertyRef Name="CirculationID" />
-            </Principal>
-            <Dependent Role="FineDetail">
-              <PropertyRef Name="CirculationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Circulation_Material">
-          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Material">
-              <PropertyRef Name="MaterialID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="MaterialID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Circulation_MaterialCopies">
-          <End Type="ICFAISMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaterialCopy">
-              <PropertyRef Name="CopyID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="CopyID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Circulation_tblUsers">
-          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
-          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="Circulation">
-              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2370,6 +2281,95 @@
             </Principal>
             <Dependent Role="tblEmployee">
               <PropertyRef Name="DesignationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Circulation">
+          <Key>
+            <PropertyRef Name="CirculationID" />
+          </Key>
+          <Property Name="CirculationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CopyID" Type="Int32" />
+          <Property Name="UserID" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="IssueDate" Type="DateTime" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="ReturnDate" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FineAmount" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="UniversityID" Type="String" MaxLength="450" FixedLength="false" Unicode="false" />
+          <Property Name="MaterialID" Type="Int32" />
+          <Property Name="RequestedDate" Type="DateTime" Precision="3" />
+          <Property Name="BarcodeNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsOverdue" Type="Boolean" />
+          <Property Name="LastFineUpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="3" />
+          <Property Name="SchoolID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IssuedBy" Type="String" MaxLength="450" FixedLength="false" Unicode="false" />
+          <Property Name="CounterID" Type="Int32" />
+          <NavigationProperty Name="FineDetails" Relationship="ICFAISMSModel.FK__FineDetai__Circu__3726238F" FromRole="Circulation" ToRole="FineDetail" />
+          <NavigationProperty Name="FineDetails1" Relationship="ICFAISMSModel.FK__FineDetai__Circu__52CE3E04" FromRole="Circulation" ToRole="FineDetail" />
+          <NavigationProperty Name="Material" Relationship="ICFAISMSModel.FK_Circulation_Material" FromRole="Circulation" ToRole="Material" />
+          <NavigationProperty Name="MaterialCopy" Relationship="ICFAISMSModel.FK_Circulation_MaterialCopies" FromRole="Circulation" ToRole="MaterialCopy" />
+          <NavigationProperty Name="tblUser" Relationship="ICFAISMSModel.FK_Circulation_tblUsers" FromRole="Circulation" ToRole="tblUser" />
+        </EntityType>
+        <Association Name="FK__FineDetai__Circu__3726238F">
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Circulation">
+              <PropertyRef Name="CirculationID" />
+            </Principal>
+            <Dependent Role="FineDetail">
+              <PropertyRef Name="CirculationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FineDetai__Circu__52CE3E04">
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.FineDetail" Role="FineDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Circulation">
+              <PropertyRef Name="CirculationID" />
+            </Principal>
+            <Dependent Role="FineDetail">
+              <PropertyRef Name="CirculationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Circulation_Material">
+          <End Type="ICFAISMSModel.Material" Role="Material" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material">
+              <PropertyRef Name="MaterialID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="MaterialID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Circulation_MaterialCopies">
+          <End Type="ICFAISMSModel.MaterialCopy" Role="MaterialCopy" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaterialCopy">
+              <PropertyRef Name="CopyID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="CopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Circulation_tblUsers">
+          <End Type="ICFAISMSModel.tblUser" Role="tblUser" Multiplicity="0..1" />
+          <End Type="ICFAISMSModel.Circulation" Role="Circulation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Circulation">
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2888,6 +2888,23 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tblDesignations">
+            <EntityTypeMapping TypeName="ICFAISMSModel.tblDesignation">
+              <MappingFragment StoreEntitySet="tblDesignation">
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="DesignationName" ColumnName="DesignationName" />
+                <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Circulations">
             <EntityTypeMapping TypeName="ICFAISMSModel.Circulation">
               <MappingFragment StoreEntitySet="Circulation">
@@ -2910,23 +2927,6 @@
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="CopyID" ColumnName="CopyID" />
                 <ScalarProperty Name="CirculationID" ColumnName="CirculationID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tblDesignations">
-            <EntityTypeMapping TypeName="ICFAISMSModel.tblDesignation">
-              <MappingFragment StoreEntitySet="tblDesignation">
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-                <ScalarProperty Name="ModifiedIPAddress" ColumnName="ModifiedIPAddress" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedIPAddress" ColumnName="CreatedIPAddress" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
-                <ScalarProperty Name="DesignationName" ColumnName="DesignationName" />
-                <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
